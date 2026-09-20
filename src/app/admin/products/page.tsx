@@ -71,24 +71,45 @@ export default function AdminProductsPage() {
   const [uploadingImages, setUploadingImages] = useState(false);
 
   // 1. Fetch products & categories list
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
   const loadData = async () => {
     try {
+      setLoading(true);
+      setFetchError(null);
+
       const prodRes = await fetch('/api/admin/products');
       const catRes = await fetch('/api/categories');
-      if (prodRes.ok && catRes.ok) {
-        const prodData = await prodRes.json();
-        const catData = await catRes.json();
-        const loadedCats = catData.categories || [];
-        setCategories(loadedCats);
-        if (loadedCats.length > 0) {
-          setFormValues((prev) => ({
-            ...prev,
-            categoryId: prev.categoryId || loadedCats[0]._id,
-          }));
-        }
+
+      if (prodRes.status === 401) {
+        setFetchError('Admin session required. Please log in to view and manage products.');
+        setLoading(false);
+        return;
       }
-    } catch (e) {
-      console.error(e);
+
+      if (!prodRes.ok) {
+        const errData = await prodRes.json().catch(() => ({}));
+        setFetchError(errData.error || `Server returned error status ${prodRes.status}`);
+        setLoading(false);
+        return;
+      }
+
+      const prodData = await prodRes.json();
+      const catData = catRes.ok ? await catRes.json() : { categories: [] };
+
+      setProducts(prodData.products || []);
+      const loadedCats = catData.categories || [];
+      setCategories(loadedCats);
+
+      if (loadedCats.length > 0) {
+        setFormValues((prev) => ({
+          ...prev,
+          categoryId: prev.categoryId || loadedCats[0]._id,
+        }));
+      }
+    } catch (e: any) {
+      console.error('Failed to load products:', e);
+      setFetchError('Network error while fetching products from server.');
     } finally {
       setLoading(false);
     }
@@ -281,6 +302,23 @@ export default function AdminProductsPage() {
           </button>
         )}
       </div>
+
+      {fetchError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+            <span className="font-bold text-sm">{fetchError}</span>
+          </div>
+          {fetchError.includes('Admin session required') && (
+            <a
+              href="/admin/login"
+              className="px-4 py-2 bg-[#1A2A4A] hover:bg-[#101A2D] text-white font-bold text-xs rounded-lg transition-colors shrink-0 shadow-xs"
+            >
+              Go to Admin Login →
+            </a>
+          )}
+        </div>
+      )}
 
       {/* 1. ADD / EDIT PRODUCT OVERLAY FORM */}
       {formOpen && (
@@ -661,71 +699,150 @@ export default function AdminProductsPage() {
           </div>
 
           <div className="bg-white rounded-xl border border-gray-150 shadow-2xs overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[650px]">
+            <table className="w-full text-left border-collapse min-w-[750px]">
               <thead>
-                <tr className="bg-gray-100 text-gray-500 uppercase font-bold border-b border-gray-150">
+                <tr className="bg-gray-100 text-gray-500 uppercase font-bold border-b border-gray-150 text-xs tracking-wider">
                   <th className="p-4">Product Details</th>
                   <th className="p-4">Category</th>
-                  <th className="p-4">Retail Price</th>
-                  <th className="p-4">Stock</th>
+                  <th className="p-4">Pricing (Retail / Comm / B2B)</th>
+                  <th className="p-4">Stock Status</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-150 font-semibold text-gray-700">
-                {filteredProducts.map((prod) => {
-                  const isLow = prod.stock <= prod.lowStockThreshold;
-
-                  return (
-                    <tr key={prod._id} className="hover:bg-gray-50">
-                      {/* Image + Name */}
-                      <td className="p-4 flex items-center gap-3">
-                        <div
-                          className="w-10 h-10 bg-cover bg-center rounded-lg border border-gray-200 shrink-0 bg-gray-50"
-                          style={{ backgroundImage: `url('${prod.images[0] || '/images/hero_banner.png'}')` }}
-                        />
-                        <div>
-                          <p className="text-[#101A2D] font-bold line-clamp-1">{prod.name}</p>
-                        </div>
-                      </td>
-
-                      <td className="p-4 text-gray-500">{prod.categoryId?.name}</td>
-                      <td className="p-4 font-bold text-[#101A2D]">{formatCurrency(prod.retailPrice)}</td>
-                      
-                      {/* Stock with Alert warnings */}
-                      <td className="p-4">
-                        {isLow ? (
-                          <span className="bg-red-50 text-red-700 border border-red-100 px-2 py-0.5 rounded-sm font-extrabold flex items-center gap-1 w-fit">
-                            <AlertTriangle className="w-3.5 h-3.5" />
-                            {prod.stock} left
-                          </span>
-                        ) : (
-                          <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-sm font-extrabold flex items-center gap-1 w-fit">
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                            {prod.stock}
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Actions */}
-                      <td className="p-4 text-right space-x-2">
+              <tbody className="divide-y divide-gray-150 text-xs font-semibold text-gray-700">
+                {filteredProducts.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-gray-500 space-y-3">
+                      <Package className="w-10 h-10 mx-auto text-gray-300 stroke-1" />
+                      <p className="font-bold text-gray-700 text-sm">No products found</p>
+                      <p className="text-xs text-gray-400">
+                        {searchQuery ? `No product matching "${searchQuery}"` : 'Your catalog is currently empty. Click "+ Add Product" to create your first item.'}
+                      </p>
+                      {searchQuery && (
                         <button
-                          onClick={() => handleOpenEdit(prod)}
-                          className="p-1.5 text-gray-400 hover:text-black rounded-md hover:bg-gray-100 transition-colors inline-flex items-center"
-                          title="Edit Product"
+                          onClick={() => setSearchQuery('')}
+                          className="mt-2 text-xs font-bold text-[#1A2A4A] hover:underline"
                         >
-                          <Edit className="w-3.5 h-3.5" />
+                          Clear Search Filter
                         </button>
-                        <button
-                          onClick={() => handleDeleteProduct(prod._id)}
-                          className="p-1.5 text-gray-400 hover:text-red-650 rounded-md hover:bg-red-55/10 transition-colors inline-flex items-center"
-                          title="Delete Product"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                      )}
+                    </td>
+                  </tr>
+                ) : (
+                  filteredProducts.map((prod) => {
+                    const isLow = prod.stock <= prod.lowStockThreshold;
+
+                    return (
+                      <tr key={prod._id} className="hover:bg-gray-50/70 transition-colors">
+                        {/* Image + Full Product Details */}
+                        <td className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div
+                              className="w-12 h-12 bg-cover bg-center rounded-lg border border-gray-250 shrink-0 bg-gray-50"
+                              style={{ backgroundImage: `url('${prod.images[0] || '/images/hero_banner.png'}')` }}
+                            />
+                            <div className="space-y-1 max-w-xs sm:max-w-sm">
+                              <p className="text-[#101A2D] font-extrabold text-sm line-clamp-1">{prod.name}</p>
+                              
+                              {/* SKU & Short Description */}
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-mono text-[10px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded border border-gray-200 font-bold">
+                                  SKU: {prod.sku}
+                                </span>
+                                {prod.shortDescription && (
+                                  <span className="text-[11px] text-gray-500 line-clamp-1">
+                                    {prod.shortDescription}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Badges: Active / Featured / Best Seller / New */}
+                              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-sm ${prod.isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-500 border border-gray-200'}`}>
+                                  {prod.isActive ? 'Active' : 'Disabled'}
+                                </span>
+                                {prod.isFeatured && (
+                                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-sm bg-amber-50 text-amber-800 border border-amber-200">
+                                    ⭐ Featured
+                                  </span>
+                                )}
+                                {prod.isBestSeller && (
+                                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-sm bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                    🔥 Best Seller
+                                  </span>
+                                )}
+                                {prod.isNewArrival && (
+                                  <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-sm bg-blue-50 text-blue-700 border border-blue-200">
+                                    ✨ New
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Category Name */}
+                        <td className="p-4">
+                          <span className="inline-block bg-gray-100 text-[#101A2D] font-bold px-2.5 py-1 rounded-md text-xs border border-gray-200">
+                            {prod.categoryId?.name || 'Uncategorized'}
+                          </span>
+                        </td>
+
+                        {/* Pricing Tiers */}
+                        <td className="p-4 space-y-0.5">
+                          <div className="font-extrabold text-[#101A2D]">
+                            Retail: <span className="text-gray-900">{formatCurrency(prod.retailPrice)}</span>
+                          </div>
+                          {prod.communityPrice !== undefined && prod.communityPrice !== prod.retailPrice && (
+                            <div className="text-[11px] text-indigo-700 font-semibold">
+                              Community: {formatCurrency(prod.communityPrice)}
+                            </div>
+                          )}
+                          {prod.wholesalePrice !== undefined && (
+                            <div className="text-[11px] text-amber-800 font-semibold">
+                              B2B: {formatCurrency(prod.wholesalePrice)} <span className="text-gray-400 font-normal">(min {prod.wholesaleMinQty ?? 1})</span>
+                            </div>
+                          )}
+                        </td>
+                        
+                        {/* Stock status with alert badge */}
+                        <td className="p-4">
+                          {isLow ? (
+                            <span className="bg-red-50 text-red-700 border border-red-200 px-2.5 py-1 rounded-md font-extrabold flex items-center gap-1.5 w-fit text-xs">
+                              <AlertTriangle className="w-3.5 h-3.5" />
+                              {prod.stock} left (Low Stock)
+                            </span>
+                          ) : (
+                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md font-extrabold flex items-center gap-1.5 w-fit text-xs">
+                              <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                              {prod.stock} in stock
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="p-4 text-right space-x-2">
+                          <button
+                            onClick={() => handleOpenEdit(prod)}
+                            className="p-2 text-gray-500 hover:text-black rounded-lg hover:bg-gray-100 border border-gray-200 transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                            title="Edit Product"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProduct(prod._id)}
+                            className="p-2 text-red-600 hover:text-red-700 rounded-lg hover:bg-red-50 border border-red-200 transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>

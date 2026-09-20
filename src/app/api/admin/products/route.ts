@@ -53,9 +53,30 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const products = await Product.find()
+    // Ensure Category model is explicitly evaluated in Mongoose schema registry
+    const _ = Category;
+
+    let products = await Product.find()
       .populate('categoryId', 'name slug')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Map unpopulated string category IDs if any exist
+    const allCategories = await Category.find({}).lean();
+    const catMap = new Map();
+    allCategories.forEach((c: any) => {
+      catMap.set(String(c._id), c);
+      if (c.slug) catMap.set(c.slug, c);
+    });
+
+    products = products.map((p: any) => {
+      if (!p.categoryId || typeof p.categoryId === 'string') {
+        const catIdStr = String(p.categoryId || '');
+        const matchedCat = catMap.get(catIdStr) || catMap.get(catIdStr.replace(/^cat_/, '').replace(/_\d+$/, ''));
+        p.categoryId = matchedCat ? { _id: matchedCat._id, name: matchedCat.name, slug: matchedCat.slug } : { name: 'General' };
+      }
+      return p;
+    });
 
     return NextResponse.json({ products });
   } catch (error) {
@@ -108,16 +129,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Selected Category does not exist in database' }, { status: 400 });
     }
 
-    // Verify slug uniqueness
-    const slugExists = await Product.findOne({ slug: slug.trim().toLowerCase() });
+    // Ensure slug uniqueness automatically if collision occurs
+    let finalSlug = slug.trim().toLowerCase();
+    const slugExists = await Product.findOne({ slug: finalSlug });
     if (slugExists) {
-      return NextResponse.json({ error: 'Product slug is already in use' }, { status: 400 });
+      finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
+    }
+
+    // Ensure SKU uniqueness automatically if collision occurs
+    let finalSku = sku.trim().toUpperCase();
+    const skuExists = await Product.findOne({ sku: finalSku });
+    if (skuExists) {
+      finalSku = `${finalSku}-${Math.floor(100 + Math.random() * 900)}`;
     }
 
     const newProduct = await Product.create({
       name: name.trim(),
-      slug: slug.trim().toLowerCase(),
-      sku: sku.trim().toUpperCase(),
+      slug: finalSlug,
+      sku: finalSku,
       description: description.trim(),
       shortDescription: shortDescription?.trim(),
       images: images || [],
@@ -198,11 +227,21 @@ export async function PUT(request: Request) {
 
     // Verify slug uniqueness if slug changed
     if (slug && slug.trim().toLowerCase() !== product.slug) {
-      const slugExists = await Product.findOne({ slug: slug.trim().toLowerCase() });
-      if (slugExists) {
-        return NextResponse.json({ error: 'Product slug is already in use' }, { status: 400 });
+      let finalSlug = slug.trim().toLowerCase();
+      const slugExists = await Product.findOne({ slug: finalSlug });
+      if (slugExists && slugExists._id.toString() !== product._id.toString()) {
+        finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
       }
-      product.slug = slug.trim().toLowerCase();
+      product.slug = finalSlug;
+    }
+
+    if (sku && sku.trim().toUpperCase() !== product.sku) {
+      let finalSku = sku.trim().toUpperCase();
+      const skuExists = await Product.findOne({ sku: finalSku });
+      if (skuExists && skuExists._id.toString() !== product._id.toString()) {
+        finalSku = `${finalSku}-${Math.floor(100 + Math.random() * 900)}`;
+      }
+      product.sku = finalSku;
     }
 
     if (categoryId) {
