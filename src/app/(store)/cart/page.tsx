@@ -1,11 +1,16 @@
 import React, { Suspense } from 'react';
+import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CartContentClient from '@/components/cart/CartContentClient';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Your Cart - VENTERSHOP',
   description: 'View your selected products, apply voucher codes, and check out.',
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function CartPage() {

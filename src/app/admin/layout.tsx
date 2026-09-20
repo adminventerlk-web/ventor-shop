@@ -1,9 +1,14 @@
 import React, { Suspense } from 'react';
+import { Metadata } from 'next';
 import AdminGuard from '@/components/admin/AdminGuard';
 
-export const metadata = {
-  title: 'Admin Dashboard - VENTERSHOP',
+export const metadata: Metadata = {
+  title: 'Admin Control Center - VENTERSHOP',
   description: 'Manage products, orders, customers, vouchers, and storefront configurations.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

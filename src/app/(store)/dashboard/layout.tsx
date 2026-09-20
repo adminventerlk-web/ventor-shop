@@ -1,11 +1,16 @@
 import React, { Suspense } from 'react';
+import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
-export const metadata = {
-  title: 'My Dashboard - VENTERSHOP',
+export const metadata: Metadata = {
+  title: 'My Customer Account Dashboard - VENTERSHOP',
   description: 'Manage your profile, shipping addresses, track orders, and view vouchers.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

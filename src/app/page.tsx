@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Hero from '@/components/storefront/Hero';
 import DualFeatureCards from '@/components/storefront/DualFeatureCards';
@@ -10,9 +11,27 @@ import WhyShopBanner from '@/components/storefront/WhyShopBanner';
 import TrustBadges from '@/components/storefront/TrustBadges';
 import Footer from '@/components/layout/Footer';
 
-export const metadata = {
-  title: 'VENTERSHOP - Your Trusted Online Store for Quality Products | Sri Lanka',
-  description: 'Free Delivery on Orders over LKR 7,500. Premium Groceries, Rani Animal Feed, Books, Electronics, and Daily Essentials.',
+export const metadata: Metadata = {
+  title: 'VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export | Sri Lanka',
+  description: 'Free Fast Delivery on Orders over LKR 7,500. Premium Groceries, Rani Animal Feed, Ceylon Spices, Books, Electronics, and Direct Commercial Exports.',
+  keywords: [
+    'VENTERSHOP Sri Lanka',
+    'Online Groceries Sri Lanka',
+    'Rani Animal Feed',
+    'Ceylon Spices Export',
+    'Books & Stationery Sri Lanka',
+    'V2CC Community Vouchers',
+    'Multi-Category Online Store',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export',
+    description: 'Free Fast Delivery on Orders over LKR 7,500. Premium Groceries, Rani Animal Feed, Ceylon Spices, Books, Electronics, and Direct Commercial Exports.',
+    url: 'https://ventershop.vercel.app',
+    images: [{ url: '/images/hero_banner.png', width: 1200, height: 630, alt: 'VENTERSHOP Home' }],
+  },
 };
 
 export default function HomePage() {
@@ -63,7 +82,7 @@ export default function HomePage() {
         <TrustBadges />
       </Suspense>
 
-      {/* 10. Global Forest Green Footer */}
+      {/* 10. Global Footer */}
       <Footer />
     </div>
   );

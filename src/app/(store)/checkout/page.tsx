@@ -1,11 +1,16 @@
 import React, { Suspense } from 'react';
+import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CheckoutContentClient from '@/components/checkout/CheckoutContentClient';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Secure Checkout - VENTERSHOP',
   description: 'Provide your shipping address, review order details, and place your order securely.',
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function CheckoutPage() {
