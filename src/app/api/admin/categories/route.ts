@@ -1,8 +1,40 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
+
+async function findCategorySafely(catId: any) {
+  if (!catId) return null;
+  const idStr = typeof catId === 'object' ? (catId._id || catId.slug || String(catId)) : String(catId);
+  
+  if (mongoose.Types.ObjectId.isValid(idStr)) {
+    const cat = await Category.findOne({ $or: [{ _id: idStr }, { slug: idStr }] } as any);
+    if (cat) return cat;
+  }
+  
+  let cat = await Category.findOne({ slug: idStr.trim().toLowerCase() });
+  if (cat) return cat;
+
+  const cleanedSlug = idStr.replace(/^cat_/, '').replace(/_\d+$/, '').toLowerCase();
+  if (cleanedSlug && cleanedSlug !== idStr.toLowerCase()) {
+    cat = await Category.findOne({ slug: cleanedSlug });
+    if (cat) return cat;
+  }
+
+  try {
+    cat = (await Category.collection.findOne({ _id: idStr as any })) as any;
+    if (cat) return cat;
+  } catch {}
+
+  try {
+    cat = await Category.findOne({ name: new RegExp('^' + idStr + '$', 'i') });
+    if (cat) return cat;
+  } catch {}
+
+  return null;
+}
 
 // 1. POST: Create a new category
 export async function POST(request: Request) {
@@ -20,15 +52,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name and slug are required' }, { status: 400 });
     }
 
-    // Check slug uniqueness
-    const slugExists = await Category.findOne({ slug: slug.trim().toLowerCase() });
+    // Check slug uniqueness automatically
+    let finalSlug = slug.trim().toLowerCase();
+    const slugExists = await Category.findOne({ slug: finalSlug });
     if (slugExists) {
-      return NextResponse.json({ error: 'Category slug is already in use' }, { status: 400 });
+      finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
     }
 
     const newCategory = await Category.create({
       name: name.trim(),
-      slug: slug.trim().toLowerCase(),
+      slug: finalSlug,
       icon: icon || 'Layers',
       image: image || '',
       displayOrder: parseInt(displayOrder) || 0,
@@ -61,18 +94,19 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
     }
 
-    const category = await Category.findOne({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
+    const category = await findCategorySafely(categoryId);
     if (!category) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
     // Check slug uniqueness if it changed
     if (slug && slug.trim().toLowerCase() !== category.slug) {
-      const slugExists = await Category.findOne({ slug: slug.trim().toLowerCase() });
-      if (slugExists) {
-        return NextResponse.json({ error: 'Category slug is already in use' }, { status: 400 });
+      let finalSlug = slug.trim().toLowerCase();
+      const slugExists = await Category.findOne({ slug: finalSlug });
+      if (slugExists && slugExists._id.toString() !== category._id.toString()) {
+        finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
       }
-      category.slug = slug.trim().toLowerCase();
+      category.slug = finalSlug;
     }
 
     if (name) category.name = name.trim();
@@ -110,19 +144,23 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
     }
 
+    const category = await findCategorySafely(categoryId);
+    if (!category) {
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+    }
+
     // Safety Constraint: Check if active products belong to this category
-    const productsCount = await Product.countDocuments({ categoryId });
+    const productsCount = await Product.countDocuments({
+      $or: [{ categoryId: category._id }, { categoryId: category.slug }, { categoryId: categoryId }]
+    });
     if (productsCount > 0) {
       return NextResponse.json(
-        { error: 'Cannot delete category. Active products are categorized under it. Re-assign them first.' },
+        { error: `Cannot delete category "${category.name}". ${productsCount} product(s) are categorized under it. Re-assign or delete those products first.` },
         { status: 400 }
       );
     }
 
-    const category = await Category.findOneAndDelete({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
-    if (!category) {
-      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
-    }
+    await Category.deleteOne({ _id: category._id });
 
     return NextResponse.json({
       message: 'Category deleted successfully',
