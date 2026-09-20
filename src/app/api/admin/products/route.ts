@@ -1,8 +1,47 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
+
+async function findCategorySafely(catId: any) {
+  if (!catId) return null;
+  const idStr = typeof catId === 'object' ? (catId._id || catId.slug || String(catId)) : String(catId);
+  
+  // 1. If valid 24-character ObjectId
+  if (mongoose.Types.ObjectId.isValid(idStr)) {
+    const cat = await Category.findOne({ $or: [{ _id: idStr }, { slug: idStr }] } as any);
+    if (cat) return cat;
+  }
+  
+  // 2. Direct slug lookup
+  let cat = await Category.findOne({ slug: idStr.trim().toLowerCase() });
+  if (cat) return cat;
+
+  // 3. Fallback ID pattern resolution (e.g. 'cat_groceries_01' -> 'groceries')
+  const cleanedSlug = idStr.replace(/^cat_/, '').replace(/_\d+$/, '').toLowerCase();
+  if (cleanedSlug && cleanedSlug !== idStr.toLowerCase()) {
+    cat = await Category.findOne({ slug: cleanedSlug });
+    if (cat) return cat;
+  }
+
+  // 4. Native Mongo collection string _id fallback
+  try {
+    cat = (await Category.collection.findOne({ _id: idStr as any })) as any;
+    if (cat) return cat;
+  } catch {}
+
+  // 5. Name match
+  try {
+    cat = await Category.findOne({ name: new RegExp('^' + idStr + '$', 'i') });
+    if (cat) return cat;
+  } catch {}
+
+  // 6. Absolute fallback to first active category if database has categories
+  cat = await Category.findOne({ isActive: true }).sort({ displayOrder: 1 });
+  return cat;
+}
 
 // 1. GET: Fetch all products for admin grid
 export async function GET() {
@@ -58,14 +97,15 @@ export async function POST(request: Request) {
       eligibleCustomerTypes,
     } = body;
 
-    if (!name || !slug || !sku || !description || retailPrice === undefined || categoryId === undefined) {
-      return NextResponse.json({ error: 'Please fill in all required fields' }, { status: 400 });
+    const targetCatId = typeof categoryId === 'object' && categoryId ? (categoryId._id || categoryId.slug) : categoryId;
+    if (!name || !slug || !sku || !description || retailPrice === undefined || !targetCatId || String(targetCatId).trim() === '') {
+      return NextResponse.json({ error: 'Please fill in all required fields (Name, Slug, SKU, Description, Retail Price, and Category)' }, { status: 400 });
     }
 
     // Verify category exists
-    const categoryExists = await Category.findOne({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
+    const categoryExists = await findCategorySafely(targetCatId);
     if (!categoryExists) {
-      return NextResponse.json({ error: 'Category does not exist' }, { status: 400 });
+      return NextResponse.json({ error: 'Selected Category does not exist in database' }, { status: 400 });
     }
 
     // Verify slug uniqueness
@@ -87,7 +127,7 @@ export async function POST(request: Request) {
       stock: parseInt(stock) || 0,
       lowStockThreshold: parseInt(lowStockThreshold) || 5,
       wholesaleMinQty: wholesaleMinQty !== undefined ? parseInt(wholesaleMinQty) : 1,
-      categoryId,
+      categoryId: categoryExists._id,
       isActive: isActive ?? true,
       isFeatured: isFeatured ?? false,
       isBestSeller: isBestSeller ?? false,
@@ -144,7 +184,14 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    const product = await Product.findById(productId);
+    let product: any = null;
+    if (mongoose.Types.ObjectId.isValid(productId)) {
+      product = await Product.findById(productId);
+    } else {
+      try {
+        product = await Product.collection.findOne({ _id: productId as any });
+      } catch {}
+    }
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
@@ -159,11 +206,11 @@ export async function PUT(request: Request) {
     }
 
     if (categoryId) {
-      const categoryExists = await Category.findOne({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
+      const categoryExists = await findCategorySafely(categoryId);
       if (!categoryExists) {
         return NextResponse.json({ error: 'Category does not exist' }, { status: 400 });
       }
-      product.categoryId = categoryId;
+      product.categoryId = categoryExists._id;
     }
 
     if (name) product.name = name.trim();

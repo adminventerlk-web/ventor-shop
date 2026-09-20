@@ -78,8 +78,14 @@ export default function AdminProductsPage() {
       if (prodRes.ok && catRes.ok) {
         const prodData = await prodRes.json();
         const catData = await catRes.json();
-        setProducts(prodData.products || []);
-        setCategories(catData.categories || []);
+        const loadedCats = catData.categories || [];
+        setCategories(loadedCats);
+        if (loadedCats.length > 0) {
+          setFormValues((prev) => ({
+            ...prev,
+            categoryId: prev.categoryId || loadedCats[0]._id,
+          }));
+        }
       }
     } catch (e) {
       console.error(e);
@@ -115,6 +121,13 @@ export default function AdminProductsPage() {
     setFormSubmitting(true);
     setFormError(null);
 
+    const effectiveCategoryId = formValues.categoryId || categories[0]?._id || '';
+    if (!effectiveCategoryId) {
+      setFormError('Please select or create a Category before adding a product.');
+      setFormSubmitting(false);
+      return;
+    }
+
     const images = formValues.imagesStr
       .split(',')
       .map((img) => img.trim())
@@ -123,6 +136,7 @@ export default function AdminProductsPage() {
     const payload = {
       productId: editingId,
       ...formValues,
+      categoryId: effectiveCategoryId,
       images,
       bulkPricing,
     };

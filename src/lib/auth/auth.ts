@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
+import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import User from '@/models/User';
 import Admin from '@/models/Admin';
@@ -54,10 +55,19 @@ export async function getCurrentUser() {
     let dbRecord: any = null;
     try {
       await connectToDatabase();
+      const isObjId = mongoose.Types.ObjectId.isValid(session.userId);
       if (session.role === 'ADMIN' || session.role === 'SUPER_ADMIN') {
-        dbRecord = await Admin.findById(session.userId);
+        if (isObjId) {
+          dbRecord = await Admin.findById(session.userId);
+        } else {
+          dbRecord = await Admin.findOne({ email: session.email });
+        }
       } else {
-        dbRecord = await User.findById(session.userId);
+        if (isObjId) {
+          dbRecord = await User.findById(session.userId);
+        } else {
+          dbRecord = await User.findOne({ email: session.email });
+        }
       }
     } catch (dbErr) {
       console.warn('Database error in getCurrentUser, falling back to JWT session payload:', dbErr);
@@ -105,7 +115,11 @@ export async function getCurrentCustomer() {
     let user: any = null;
     try {
       await connectToDatabase();
-      user = await User.findById(session.userId);
+      if (mongoose.Types.ObjectId.isValid(session.userId)) {
+        user = await User.findById(session.userId);
+      } else {
+        user = await User.findOne({ email: session.email });
+      }
     } catch (dbErr) {
       console.warn('Database error in getCurrentCustomer, falling back to JWT session payload:', dbErr);
     }
@@ -154,7 +168,11 @@ export async function getCurrentAdmin() {
     let dbRecord: any = null;
     try {
       await connectToDatabase();
-      dbRecord = await Admin.findById(session.userId);
+      if (mongoose.Types.ObjectId.isValid(session.userId)) {
+        dbRecord = await Admin.findById(session.userId);
+      } else {
+        dbRecord = await Admin.findOne({ email: session.email });
+      }
     } catch (dbErr) {
       console.warn('Database error in getCurrentAdmin:', dbErr);
     }

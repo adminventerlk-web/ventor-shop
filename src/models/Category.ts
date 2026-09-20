@@ -14,7 +14,7 @@ export interface ICategory extends Document {
 
 const CategorySchema = new Schema(
   {
-    _id: { type: Schema.Types.Mixed },
+    _id: { type: Schema.Types.Mixed, default: () => new mongoose.Types.ObjectId() },
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
     description: { type: String },
