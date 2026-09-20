@@ -10,27 +10,31 @@ try {
   // ignore
 }
 
-// 1. Parse .env.local manually to load environment variables
-try {
-  const envLocalPath = path.resolve(process.cwd(), '.env.local');
-  if (fs.existsSync(envLocalPath)) {
-    const envConfig = fs.readFileSync(envLocalPath, 'utf-8');
-    for (const line of envConfig.split('\n')) {
-      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
-      if (match) {
-        const key = match[1];
-        let val = (match[2] || '').trim();
-        if (val.startsWith('"') && val.endsWith('"')) {
-          val = val.substring(1, val.length - 1);
-        } else if (val.startsWith("'") && val.endsWith("'")) {
-          val = val.substring(1, val.length - 1);
+// 1. Parse .env or .env.local manually to load environment variables
+for (const envFile of ['.env', '.env.local']) {
+  try {
+    const envPath = path.resolve(process.cwd(), envFile);
+    if (fs.existsSync(envPath)) {
+      const envConfig = fs.readFileSync(envPath, 'utf-8');
+      for (const line of envConfig.split('\n')) {
+        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+        if (match) {
+          const key = match[1];
+          let val = (match[2] || '').trim();
+          if (val.startsWith('"') && val.endsWith('"')) {
+            val = val.substring(1, val.length - 1);
+          } else if (val.startsWith("'") && val.endsWith("'")) {
+            val = val.substring(1, val.length - 1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = val;
+          }
         }
-        process.env[key] = val;
       }
     }
+  } catch (e) {
+    // ignore
   }
-} catch (e) {
-  console.warn('Could not parse .env.local file. Proceeding with system environment variables.');
 }
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -90,6 +94,14 @@ async function seed() {
     firstName: 'System',
     lastName: 'Admin',
     email: 'admin@ventershop.ca',
+    password: hashPassword('admin123'),
+    role: 'SUPER_ADMIN',
+    isActive: true,
+  });
+  const adminVenter = await Admin.create({
+    firstName: 'Admin',
+    lastName: 'Venter',
+    email: 'adminventerlk@gmail.com',
     password: hashPassword('admin123'),
     role: 'SUPER_ADMIN',
     isActive: true,

