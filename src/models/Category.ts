@@ -12,8 +12,9 @@ export interface ICategory extends Document {
   updatedAt: Date;
 }
 
-const CategorySchema = new Schema<ICategory>(
+const CategorySchema = new Schema(
   {
+    _id: { type: Schema.Types.Mixed },
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
     description: { type: String },
@@ -26,6 +27,6 @@ const CategorySchema = new Schema<ICategory>(
 );
 
 // Prevent mongoose from recreating model on hot reloading
-const Category: Model<ICategory> = mongoose.models.Category || mongoose.model<ICategory>('Category', CategorySchema);
+const Category: Model<ICategory> = (mongoose.models.Category as Model<ICategory>) || mongoose.model<ICategory>('Category', CategorySchema);
 
 export default Category;

@@ -9,7 +9,7 @@ export interface IProduct extends Document {
   name: string;
   slug: string;
   sku: string;
-  categoryId: mongoose.Types.ObjectId;
+  categoryId: any;
   description: string;
   shortDescription?: string;
   images: string[]; // Cloudinary secure URLs
@@ -39,7 +39,7 @@ const ProductSchema = new Schema<IProduct>(
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
     sku: { type: String, required: true, unique: true, index: true, trim: true },
-    categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    categoryId: { type: Schema.Types.Mixed, ref: 'Category', required: true },
     description: { type: String, required: true },
     shortDescription: { type: String },
     images: { type: [String], default: [] },

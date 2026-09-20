@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     }
 
     // Verify category exists
-    const categoryExists = await Category.findById(categoryId);
+    const categoryExists = await Category.findOne({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
     if (!categoryExists) {
       return NextResponse.json({ error: 'Category does not exist' }, { status: 400 });
     }
@@ -159,7 +159,7 @@ export async function PUT(request: Request) {
     }
 
     if (categoryId) {
-      const categoryExists = await Category.findById(categoryId);
+      const categoryExists = await Category.findOne({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
       if (!categoryExists) {
         return NextResponse.json({ error: 'Category does not exist' }, { status: 400 });
       }

@@ -61,7 +61,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 });
     }
 
-    const category = await Category.findById(categoryId);
+    const category = await Category.findOne({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
     if (!category) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
@@ -119,7 +119,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const category = await Category.findByIdAndDelete(categoryId);
+    const category = await Category.findOneAndDelete({ $or: [{ _id: categoryId }, { slug: categoryId }] } as any);
     if (!category) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
