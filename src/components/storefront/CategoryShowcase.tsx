@@ -117,7 +117,7 @@ export default function CategoryShowcase() {
           >
             {categories.map((category) => (
               <Link
-                key={category._id}
+                key={String(category._id)}
                 href={`/shop?category=${category.slug}`}
                 className="group flex-shrink-0 flex flex-col items-center gap-3.5 snap-center transition-transform duration-300 transform hover:-translate-y-2 text-center"
                 style={{ width: '160px' }}
