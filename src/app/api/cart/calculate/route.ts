@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/lib/auth/auth';
 import { PricingService } from '@/lib/services/pricingService';
 import { VoucherService } from '@/lib/services/voucherService';
 import Setting from '@/models/Setting';
+import StudentVoucher from '@/models/StudentVoucher';
 
 export async function POST(request: Request) {
   try {
@@ -52,8 +53,22 @@ export async function POST(request: Request) {
     let voucherError: string | null = null;
     let appliedVoucher = null;
 
-    // 2. Validate voucher if present
-    if (voucherCode) {
+    // 2. Validate voucher if present (or check if user has active VERIFIED Student Voucher)
+    if (userId) {
+      const activeStudentVoucher = await StudentVoucher.findOne({
+        userId: userId,
+        status: 'VERIFIED',
+      });
+      if (activeStudentVoucher && (!voucherCode || voucherCode.toUpperCase() === 'STUDENT-V2CC')) {
+        voucherDiscount = Math.min(activeStudentVoucher.voucherAmount, breakdown.subtotal);
+        appliedVoucher = {
+          code: activeStudentVoucher.discountCode || 'STUDENT-V2CC',
+          discountAmount: voucherDiscount,
+        };
+      }
+    }
+
+    if (!appliedVoucher && voucherCode) {
       if (voucherCode.toUpperCase() === 'WELCOME10') {
         voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
         appliedVoucher = {

@@ -8,7 +8,6 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import {
   User,
-  ShieldCheck,
   Mail,
   Clock,
   Phone,
@@ -418,7 +417,7 @@ function LoginContent() {
               <input
                 type="email"
                 required
-                placeholder="e.g. customer@ventershop.ca"
+                placeholder="e.g. customer@ventershop.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-bold"
@@ -725,11 +724,7 @@ function LoginContent() {
         </form>
       )}
 
-      {/* Security Reassurance */}
-      <div className="pt-2 border-t border-gray-100 flex items-center justify-center gap-2 text-gray-400 text-[11px]">
-        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-        <span>256-Bit Encrypted & Privacy Protected</span>
-      </div>
+
 
     </div>
   );

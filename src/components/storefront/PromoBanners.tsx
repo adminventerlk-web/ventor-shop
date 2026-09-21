@@ -1,14 +1,151 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-import { ArrowRight, Gift, Percent, GraduationCap, Home } from 'lucide-react';
+import { useAuth } from '@/lib/auth/AuthContext';
+import {
+  ArrowRight,
+  Gift,
+  GraduationCap,
+  Home,
+  Clock,
+  CheckCircle,
+  XCircle,
+  X,
+  Building2,
+  ShieldCheck,
+  Check,
+  Copy,
+} from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/currency';
+
+interface IVoucherStatus {
+  _id: string;
+  status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
+  voucherAmount: number;
+  institution: string;
+}
+
+interface ICommunityProgramVoucher {
+  _id: string;
+  title: string;
+  supportedBy: string;
+  communityType: string;
+  voucherCode: string;
+  voucherAmount: number;
+  status: 'ON' | 'OFF';
+  noticeMessage?: string;
+}
 
 export default function PromoBanners() {
   const { language } = useTranslation();
   const isTa = language === 'ta';
   const isSi = language === 'si';
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const [voucher, setVoucher] = useState<IVoucherStatus | null>(null);
+  const [communityVouchers, setCommunityVouchers] = useState<ICommunityProgramVoucher[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [institution, setInstitution] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const fetchUserVoucher = async () => {
+    if (!user) return;
+    try {
+      const res = await fetch('/api/vouchers/student/claim');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.voucher) {
+          setVoucher(data.voucher);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch voucher status:', err);
+    }
+  };
+
+  const fetchCommunityVouchers = async () => {
+    try {
+      const res = await fetch('/api/vouchers/community');
+      if (res.ok) {
+        const data = await res.json();
+        setCommunityVouchers(data.vouchers || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch community vouchers:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserVoucher();
+    fetchCommunityVouchers();
+  }, [user]);
+
+  const handleUseVoucherClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      router.push('/login?callbackUrl=/vouchers#student');
+      return;
+    }
+
+    if (voucher) {
+      router.push('/dashboard/vouchers');
+    } else {
+      setModalOpen(true);
+    }
+  };
+
+  const handleSubmitClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!institution.trim()) return;
+
+    setSubmitting(true);
+    setMsg(null);
+    try {
+      const res = await fetch('/api/vouchers/student/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          institution: institution.trim(),
+          studentIdNumber: studentId.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setVoucher(data.voucher);
+        setModalOpen(false);
+        alert(
+          isTa
+            ? 'மாணவர் வவுச்சர் விண்ணப்பம் சமர்ப்பிக்கப்பட்டது! நிலுவையில் (Pending) உள்ளது.'
+            : 'Student Voucher Application submitted! Status is currently Pending verification.'
+        );
+      } else {
+        setMsg(data.error || 'Failed to submit application.');
+      }
+    } catch (err) {
+      setMsg('Network error. Failed to submit.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2500);
+  };
+
+  // Get active family support / community voucher if configured
+  const familyVoucher = communityVouchers.find((cv) => cv.communityType === 'FAMILY_SUPPORT') || communityVouchers[0];
+
+  const isFamilyOn = familyVoucher?.status === 'ON';
 
   return (
     <section className="py-6 sm:py-8 bg-white font-sans">
@@ -61,7 +198,7 @@ export default function PromoBanners() {
             {/* Right Column: 2 Voucher Interactive Cards */}
             <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               
-              {/* 1. Student Gift Voucher Card (Status: ON) */}
+              {/* 1. Student Gift Voucher Card */}
               <div className="bg-white rounded-2xl p-4 sm:p-5 text-gray-900 shadow-lg border border-gray-100 flex flex-col justify-between space-y-3">
                 
                 <div className="flex items-start gap-3">
@@ -79,60 +216,121 @@ export default function PromoBanners() {
                   </div>
                 </div>
 
-                {/* Status Toggle Display: ON */}
+                {/* Dynamic Status Toggle Display */}
                 <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
                   <span className="text-gray-600 font-bold text-[11px]">Status:</span>
-                  <div className="inline-flex items-center gap-1.5 bg-[#00A859] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
-                    <span>ON</span>
-                    <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-                  </div>
+                  
+                  {!voucher && (
+                    <div className="inline-flex items-center gap-1.5 bg-[#00A859] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                      <span>ON</span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+                    </div>
+                  )}
+
+                  {voucher?.status === 'PENDING' && (
+                    <div className="inline-flex items-center gap-1.5 bg-amber-500 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                      <Clock className="w-3 h-3" />
+                      <span>PENDING</span>
+                    </div>
+                  )}
+
+                  {voucher?.status === 'VERIFIED' && (
+                    <div className="inline-flex items-center gap-1.5 bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                      <ShieldCheck className="w-3 h-3" />
+                      <span>VERIFIED & ACTIVE</span>
+                    </div>
+                  )}
+
+                  {voucher?.status === 'REJECTED' && (
+                    <div className="inline-flex items-center gap-1.5 bg-red-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                      <XCircle className="w-3 h-3" />
+                      <span>REJECTED</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* CTA Action Button */}
-                <Link
-                  href="/vouchers#student"
-                  className="w-full py-2 px-3 bg-[#0066E6] hover:bg-[#0052B8] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center"
+                <button
+                  onClick={handleUseVoucherClick}
+                  className="w-full py-2 px-3 bg-[#0066E6] hover:bg-[#0052B8] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
                 >
-                  <span>{isTa ? 'மாணவர் வவுச்சரைப் பயன்படுத்துக' : isSi ? 'ශිෂ්‍ය වවුචරය භාවිතා කරන්න' : 'Use Student Voucher'}</span>
+                  <span>
+                    {voucher?.status === 'PENDING'
+                      ? (isTa ? 'நிலுவையில் உள்ளது (View Status)' : 'Pending Verification')
+                      : voucher?.status === 'VERIFIED'
+                      ? (isTa ? 'அங்கீகரிக்கப்பட்டது (View Voucher)' : 'Verified (Use Voucher)')
+                      : (isTa ? 'மாணவர் வவுச்சரைப் பயன்படுத்துக' : 'Use Student Voucher')}
+                  </span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                </button>
               </div>
 
-              {/* 2. Family Support Voucher Card (Status: OFF) */}
+              {/* 2. Family Support / Community Voucher Card (DYNAMIC ON/OFF STATUS) */}
               <div className="bg-white rounded-2xl p-4 sm:p-5 text-gray-900 shadow-lg border border-gray-100 flex flex-col justify-between space-y-3">
                 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#E8F8EE] text-[#0E703C] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs mt-0.5 ${
+                      isFamilyOn ? 'bg-[#E8F8EE] text-[#0E703C]' : 'bg-gray-100 text-gray-500'
+                    }`}
+                  >
                     <Home className="w-6 h-6 stroke-[2.2]" />
                   </div>
                   <div className="space-y-0.5 min-w-0">
                     <h4 className="text-xs sm:text-sm font-black text-[#0E703C] leading-tight truncate">
-                      {isTa ? 'குடும்ப ஆதரவு வவுச்சர்' : isSi ? 'පවුලේ සහන වවුචරය' : 'Family Support Voucher'}
+                      {familyVoucher?.title || (isTa ? 'குடும்ப ஆதரவு வவுச்சர்' : 'Family Support Voucher')}
                     </h4>
                     <p className="text-[10px] text-gray-500 font-semibold">Supported by</p>
                     <span className="inline-block bg-[#E8F8EE] text-[#0E703C] text-[9px] font-extrabold px-2 py-0.5 rounded-md truncate max-w-full">
-                      TMSAP Project of V2CC
+                      {familyVoucher?.supportedBy || 'TMSAP Project of V2CC'}
                     </span>
                   </div>
                 </div>
 
-                {/* Status Toggle Display: OFF */}
+                {/* Status Toggle Display: ON or OFF */}
                 <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
                   <span className="text-gray-600 font-bold text-[11px]">Status:</span>
-                  <div className="inline-flex items-center gap-1.5 bg-gray-200 text-gray-600 px-2.5 py-0.5 rounded-full text-[10px] font-black">
-                    <div className="w-2.5 h-2.5 rounded-full bg-gray-400" />
-                    <span>OFF</span>
-                  </div>
+                  
+                  {isFamilyOn ? (
+                    <div className="inline-flex items-center gap-1.5 bg-[#00A859] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                      <span>ON</span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-1.5 bg-gray-200 text-gray-600 px-2.5 py-0.5 rounded-full text-[10px] font-black">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gray-400" />
+                      <span>OFF</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* CTA Action Button */}
-                <Link
-                  href="/vouchers#family"
-                  className="w-full py-2 px-3 bg-white hover:bg-gray-50 text-[#0066E6] border border-[#0066E6]/30 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-2xs hover:shadow-xs transition-all text-center"
-                >
-                  <span>{isTa ? 'விபரங்களைப் பார்க்க' : isSi ? 'විස්තර බලන්න' : 'View Details'}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                {/* Dynamic Action Button */}
+                {isFamilyOn ? (
+                  <button
+                    onClick={() => handleCopyCode(familyVoucher?.voucherCode || 'FAMILY-V2CC')}
+                    className="w-full py-2 px-3 bg-[#0E703C] hover:bg-[#0a522c] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
+                  >
+                    {copiedCode === (familyVoucher?.voucherCode || 'FAMILY-V2CC') ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Code Copied ({familyVoucher?.voucherCode})!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Use Code ({familyVoucher?.voucherCode})</span>
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <Link
+                    href="/vouchers#family"
+                    className="w-full py-2 px-3 bg-white hover:bg-gray-50 text-[#0066E6] border border-[#0066E6]/30 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-2xs hover:shadow-xs transition-all text-center"
+                  >
+                    <span>{isTa ? 'விபரங்களைப் பார்க்க' : isSi ? 'විස්තර බලන්න' : 'View Details'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
               </div>
 
             </div>
@@ -141,6 +339,90 @@ export default function PromoBanners() {
         </div>
 
       </div>
+
+      {/* Student Voucher Application Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gray-200 text-gray-900 animate-fade-in-up">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2 text-[#003B7A]">
+                <GraduationCap className="w-6 h-6" />
+                <h3 className="font-black text-base uppercase tracking-tight">
+                  {isTa ? 'மாணவர் வவுச்சர் விண்ணப்பம்' : 'Claim Student Gift Voucher'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="p-1 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-600 font-medium">
+              {isTa
+                ? 'உங்கள் பள்ளி / கல்லூரி விபரங்களை உள்ளிட்டு விண்ணப்பிக்கவும். நிர்வாகி சரிபார்த்த பின் (Admin Verification) வவுச்சர் உங்கள் கணக்கில் சேர்க்கப்படும்.'
+                : 'Enter your school/university details to apply. Once verified by admin, your LKR 2,500 voucher will be activated.'}
+            </p>
+
+            {msg && (
+              <div className="p-3 bg-red-50 text-red-700 rounded-xl text-xs font-bold border border-red-100">
+                ⚠️ {msg}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmitClaim} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-700 block">
+                  {isTa ? 'பள்ளி / கல்லூரி / பல்கலைக்கழகம் பெயர் *' : 'School / University Name *'}
+                </label>
+                <div className="relative flex items-center">
+                  <Building2 className="w-4 h-4 absolute left-3 text-gray-400" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Royal College Colombo / University of Jaffna"
+                    value={institution}
+                    onChange={(e) => setInstitution(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-[#0066E6] text-xs font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-gray-700 block">
+                  {isTa ? 'மாணவர் அடையாள எண் (Optional)' : 'Student ID Number (Optional)'}
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. STU-2024-8841"
+                  value={studentId}
+                  onChange={(e) => setStudentId(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-[#0066E6] text-xs font-bold"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-5 py-2 bg-[#0066E6] hover:bg-[#0052B8] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer disabled:bg-gray-400"
+                >
+                  {submitting ? 'Submitting...' : 'Submit Claim Request'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </section>
   );
 }

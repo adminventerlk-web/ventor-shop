@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -21,17 +21,47 @@ import {
   HelpCircle,
 } from 'lucide-react';
 
+interface ICommunityProgramVoucher {
+  _id: string;
+  title: string;
+  supportedBy: string;
+  communityType: string;
+  voucherCode: string;
+  voucherAmount: number;
+  status: 'ON' | 'OFF';
+  noticeMessage?: string;
+}
+
 export default function VouchersClient() {
   const { language } = useTranslation();
   const isTa = language === 'ta';
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [communityVouchers, setCommunityVouchers] = useState<ICommunityProgramVoucher[]>([]);
+
+  useEffect(() => {
+    async function loadCommunityVouchers() {
+      try {
+        const res = await fetch('/api/vouchers/community');
+        if (res.ok) {
+          const data = await res.json();
+          setCommunityVouchers(data.vouchers || []);
+        }
+      } catch (err) {
+        console.error('Failed to load community vouchers:', err);
+      }
+    }
+    loadCommunityVouchers();
+  }, []);
 
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
     setTimeout(() => setCopiedCode(null), 2500);
   };
+
+  const familyVoucher = communityVouchers.find((cv) => cv.communityType === 'FAMILY_SUPPORT') || communityVouchers[0];
+  const isFamilyOn = familyVoucher?.status === 'ON';
 
   const studentFeatures = isTa
     ? [
@@ -71,8 +101,8 @@ export default function VouchersClient() {
     {
       q: isTa ? 'குடும்ப ஆதரவு வவுச்சர் எப்போது செயல்படும்?' : 'When will the Family Support Voucher be activated?',
       a: isTa
-        ? 'TMSAP திட்டத்தின் கீழ் குடும்பங்களுக்கான சரிபார்ப்புப் பணிகள் நடைபெற்று வருகின்றன. விரைவில் இது நேரலையில் செயல்படுத்தப்பட்டு பயனர்களுக்கு அறிவிக்கப்படும்.'
-        : 'The TMSAP Project of V2CC is currently in its community onboarding and verification stage. The voucher will be toggled ON shortly upon program rollout.',
+        ? 'TMSAP திட்டத்தின் கீழ் குடும்பங்களுக்கான சரிபார்ப்புப் பணிகள் நடைபெற்று வருகின்றன. Admin செயல்படுத்தியவுடன் இது நேரலையில் ON நிலைக்கு மாறும்.'
+        : 'The TMSAP Project of V2CC is managed by admin. Once activated by admin, status turns ON dynamically for eligible member families.',
     },
     {
       q: isTa ? 'வவுச்சரை செக்-அவுட் பக்கத்தில் எவ்வாறு பயன்படுத்துவது?' : 'How do I redeem my voucher code at checkout?',
@@ -232,42 +262,79 @@ export default function VouchersClient() {
 
           </div>
 
-          {/* 🏠 CARD 2: Family Support Voucher (UPCOMING / OFF) */}
-          <div id="family" className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-md flex flex-col justify-between space-y-6 relative overflow-hidden scroll-mt-24">
+          {/* 🏠 CARD 2: Family Support Voucher (DYNAMIC ON / OFF STATUS) */}
+          <div id="family" className={`bg-white rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between space-y-6 relative overflow-hidden scroll-mt-24 border-2 ${isFamilyOn ? 'border-emerald-500/50' : 'border-gray-200'}`}>
             
-            {/* Status Indicator */}
-            <div className="absolute top-0 right-0 bg-gray-400 text-white text-[10px] font-black px-4 py-1 rounded-bl-2xl uppercase tracking-wider shadow-xs flex items-center gap-1.5">
-              <Clock className="w-3 h-3" />
-              <span>{isTa ? 'விரைவில் தொடங்குகிறது (OFF)' : 'LAUNCHING SOON (OFF)'}</span>
-            </div>
+            {/* Status Indicator Badge */}
+            {isFamilyOn ? (
+              <div className="absolute top-0 right-0 bg-[#00A859] text-white text-[10px] font-black px-4 py-1 rounded-bl-2xl uppercase tracking-wider shadow-xs flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span>{isTa ? 'தற்போது செயலில் உள்ளது (ON)' : 'ACTIVE NOW (ON)'}</span>
+              </div>
+            ) : (
+              <div className="absolute top-0 right-0 bg-gray-400 text-white text-[10px] font-black px-4 py-1 rounded-bl-2xl uppercase tracking-wider shadow-xs flex items-center gap-1.5">
+                <Clock className="w-3 h-3" />
+                <span>{isTa ? 'விரைவில் தொடங்குகிறது (OFF)' : 'LAUNCHING SOON (OFF)'}</span>
+              </div>
+            )}
 
             <div className="space-y-4">
               {/* Header Icon + Title */}
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#E8F8EE] text-[#0E703C] flex items-center justify-center shrink-0 shadow-md">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-md ${isFamilyOn ? 'bg-[#E8F8EE] text-[#0E703C]' : 'bg-gray-100 text-gray-500'}`}>
                   <Home className="w-8 h-8 stroke-[2.2]" />
                 </div>
                 <div className="space-y-1 pr-16">
                   <h2 className="text-lg sm:text-2xl font-black text-[#0E703C] leading-tight">
-                    {isTa ? 'குடும்ப ஆதரவு வவுச்சர்' : 'Family Support Voucher'}
+                    {familyVoucher?.title || (isTa ? 'குடும்ப ஆதரவு வவுச்சர்' : 'Family Support Voucher')}
                   </h2>
                   <p className="text-xs text-gray-500 font-semibold">
-                    Supported by <strong className="text-[#0E703C]">TMSAP Project of V2CC</strong>
+                    Supported by <strong className="text-[#0E703C]">{familyVoucher?.supportedBy || 'TMSAP Project of V2CC'}</strong>
                   </p>
                 </div>
               </div>
 
-              {/* Status Note Box */}
-              <div className="bg-[#F6FBF7] border border-[#C8E6D3] rounded-2xl p-4 space-y-1">
-                <span className="text-[10px] font-extrabold text-[#0E703C] uppercase tracking-wider block">
-                  {isTa ? 'திட்ட நிலை விபரம்' : 'Program Status Notice'}
-                </span>
-                <p className="text-xs text-gray-700 font-medium leading-relaxed">
-                  {isTa
-                    ? 'குடும்பங்களுக்கான பதிவு மற்றும் சரிபார்ப்புப் பணிகள் முடிவடைந்ததும், இந்த வவுச்சர் ஆன்லைனில் செயல்படுத்தப்படும்.'
-                    : 'Community household onboarding and verification are in progress. This voucher program will be activated for enrolled member families shortly.'}
-                </p>
-              </div>
+              {/* Dynamic Code Box when ON */}
+              {isFamilyOn ? (
+                <div className="bg-[#E8F8EE] border border-[#C8E6D3] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-extrabold text-[#0E703C] uppercase tracking-wider block">
+                      {isTa ? 'குடும்ப வவுச்சர் குறியீடு' : 'Family Voucher Code'}
+                    </span>
+                    <p className="text-lg font-mono font-black text-gray-900 tracking-wider">
+                      {familyVoucher?.voucherCode || 'FAMILY-V2CC'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(familyVoucher?.voucherCode || 'FAMILY-V2CC')}
+                    className="px-4 py-2 bg-white hover:bg-[#0E703C] text-[#0E703C] hover:text-white border border-[#0E703C]/30 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                  >
+                    {copiedCode === (familyVoucher?.voucherCode || 'FAMILY-V2CC') ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{isTa ? 'நகலெடுக்கப்பட்டது!' : 'Copied!'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>{isTa ? 'குறியீட்டை காப்பி செய்' : 'Copy Code'}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                /* Status Note Box when OFF */
+                <div className="bg-[#F6FBF7] border border-[#C8E6D3] rounded-2xl p-4 space-y-1">
+                  <span className="text-[10px] font-extrabold text-[#0E703C] uppercase tracking-wider block">
+                    {isTa ? 'திட்ட நிலை விபரம்' : 'Program Status Notice'}
+                  </span>
+                  <p className="text-xs text-gray-700 font-medium leading-relaxed">
+                    {familyVoucher?.noticeMessage || (isTa
+                      ? 'குடும்பங்களுக்கான பதிவு மற்றும் சரிபார்ப்புப் பணிகள் முடிவடைந்ததும், இந்த வவுச்சர் ஆன்லைனில் செயல்படுத்தப்படும்.'
+                      : 'Community household onboarding and verification are in progress. This voucher program will be activated for enrolled member families shortly.')}
+                  </p>
+                </div>
+              )}
 
               {/* Scope Checklist */}
               <div className="space-y-2 pt-2">
@@ -277,7 +344,7 @@ export default function VouchersClient() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {familyFeatures.map((feat, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-xs text-gray-700 font-medium">
-                      <CheckCircle2 className="w-4 h-4 text-gray-400 shrink-0" />
+                      <CheckCircle2 className={`w-4 h-4 shrink-0 ${isFamilyOn ? 'text-emerald-600' : 'text-gray-400'}`} />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -289,7 +356,7 @@ export default function VouchersClient() {
             <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
               <Link
                 href="/dashboard/community"
-                className="flex-1 py-3 px-5 bg-gray-100 hover:bg-[#0E703C] hover:text-white text-gray-800 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-5 bg-gray-100 hover:bg-[#0E703C] hover:text-white text-gray-800 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 text-center"
               >
                 <Users className="w-4 h-4" />
                 <span>{isTa ? 'சமூகத்தில் இணைய விண்ணப்பிக்க' : 'Join Community Program'}</span>

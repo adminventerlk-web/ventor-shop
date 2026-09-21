@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import { useCart } from '@/lib/cart/CartContext';
-import { ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
 interface ProductItem {
@@ -86,12 +86,78 @@ const DEFAULT_FEATURED: ProductItem[] = [
     reviewsCount: 76,
     image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=400&q=80',
   },
+  {
+    _id: 'ceylon-black-tea-500g',
+    name: 'Ceylon Black Tea 500g',
+    slug: 'ceylon-black-tea-500g',
+    badge: { label: 'Best Seller', type: 'best_seller' },
+    description: 'Pure Ceylon single origin tea',
+    price: 8.90,
+    rating: 5,
+    reviewsCount: 210,
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    _id: 'organic-virgin-coconut-oil-500ml',
+    name: 'Virgin Coconut Oil 500ml',
+    slug: 'organic-virgin-coconut-oil-500ml',
+    badge: { label: 'Popular', type: 'popular' },
+    description: 'Cold pressed organic coconut oil',
+    price: 7.20,
+    rating: 5,
+    reviewsCount: 165,
+    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    _id: 'ceylon-cinnamon-sticks-250g',
+    name: 'Ceylon Cinnamon Sticks',
+    slug: 'ceylon-cinnamon-sticks-250g',
+    badge: { label: 'Popular', type: 'popular' },
+    description: 'Authentic Alba grade cinnamon',
+    price: 9.80,
+    rating: 5,
+    reviewsCount: 112,
+    image: 'https://images.unsplash.com/photo-1509358271058-acd05cc93219?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    _id: 'whole-spices-pack-1kg',
+    name: 'Organic Whole Spices Pack',
+    slug: 'whole-spices-pack-1kg',
+    badge: { label: 'Best Seller', type: 'best_seller' },
+    description: 'Assorted premium aromatic spices',
+    price: 15.40,
+    rating: 5,
+    reviewsCount: 88,
+    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    _id: 'stainless-kitchen-set',
+    name: 'Stainless Cookware Set',
+    slug: 'stainless-kitchen-set',
+    badge: { label: 'New Arrival', type: 'new' },
+    description: 'Durable multi-piece kitchenware',
+    price: 45.00,
+    rating: 5,
+    reviewsCount: 43,
+    image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    _id: 'traditional-handloom-bedsheet',
+    name: 'Ceylon Handloom Bedsheet',
+    slug: 'traditional-handloom-bedsheet',
+    badge: { label: 'Best Seller', type: 'best_seller' },
+    description: '100% pure cotton handcrafted',
+    price: 22.00,
+    rating: 5,
+    reviewsCount: 99,
+    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=400&q=80',
+  },
 ];
 
 export default function FeaturedProducts() {
   const { language } = useTranslation();
   const { addToCart } = useCart();
-  const [products, setProducts] = useState<ProductItem[]>(DEFAULT_FEATURED);
+  const [products] = useState<ProductItem[]>(DEFAULT_FEATURED);
 
   const handleAddToCart = (e: React.MouseEvent, prod: ProductItem) => {
     e.preventDefault();
@@ -112,7 +178,7 @@ export default function FeaturedProducts() {
           <div className="h-[1px] bg-gray-300 w-16 sm:w-28" />
         </div>
 
-        {/* 6 Products Grid */}
+        {/* 12 Products Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
           {products.map((prod) => {
             const isRedBadge = prod.badge.type === 'popular';
@@ -162,23 +228,11 @@ export default function FeaturedProducts() {
                     </p>
                   </div>
 
-                  {/* Price & Rating */}
-                  <div className="space-y-1">
+                  {/* Price */}
+                  <div>
                     <p className="text-sm sm:text-base font-black text-[#801414]">
                       {formatCurrency(prod.price)}
                     </p>
-
-                    {/* Star Rating */}
-                    <div className="flex items-center gap-1">
-                      <div className="flex text-amber-400">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 fill-current" />
-                        ))}
-                      </div>
-                      <span className="text-[10px] text-gray-400 font-medium">
-                        ({prod.reviewsCount})
-                      </span>
-                    </div>
                   </div>
 
                   {/* Add to Cart Outlined Button */}

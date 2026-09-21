@@ -1,749 +1,740 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Ticket, Plus, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import {
+  GraduationCap,
+  Search,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ShieldCheck,
+  Building2,
+  Mail,
+  User,
+  RefreshCw,
+  Award,
+  ToggleLeft,
+  ToggleRight,
+  Plus,
+  Home,
+  Users,
+  X,
+  Edit2,
+} from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
-interface ICategory {
+interface IStudentVoucherData {
   _id: string;
-  name: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  institution: string;
+  studentIdNumber?: string;
+  status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
+  voucherAmount: number;
+  discountCode: string;
+  appliedAt: string;
+  verifiedAt?: string;
+  rejectedAt?: string;
+  adminNotes?: string;
 }
 
-interface IProduct {
+interface ICommunityProgramVoucherData {
   _id: string;
-  name: string;
-}
-
-interface ICommunity {
-  _id: string;
-  name: string;
-}
-
-interface IVoucherCampaign {
-  _id: string;
-  code: string;
-  description: string;
-  discountType: 'PERCENTAGE' | 'FIXED';
-  discountValue: number;
-  minimumOrderValue: number;
-  startDate: string;
-  endDate: string;
-  usageLimit?: number;
-  perCustomerLimit: number;
-  customerTypes: string[];
-  categoryIds: ICategory[];
-  productIds: IProduct[];
-  communityIds: ICommunity[];
-  isActive: boolean;
-}
-
-interface IOfferCampaign {
-  _id: string;
-  name: string;
-  description: string;
-  discountType: 'PERCENTAGE' | 'FIXED';
-  discountValue: number;
-  startDate: string;
-  endDate: string;
-  customerTypes: string[];
-  categoryIds: ICategory[];
-  productIds: IProduct[];
-  communityIds: ICommunity[];
-  isActive: boolean;
+  title: string;
+  supportedBy: string;
+  communityType: 'FAMILY_SUPPORT' | 'V2CC_PMS' | 'WHOLESALE' | 'GENERAL';
+  voucherCode: string;
+  voucherAmount: number;
+  status: 'ON' | 'OFF';
+  noticeMessage?: string;
 }
 
 export default function AdminVouchersPage() {
-  const [vouchers, setVouchers] = useState<IVoucherCampaign[]>([]);
-  const [offers, setOffers] = useState<IOfferCampaign[]>([]);
-  
-  // Scopes Lists
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  const [products, setProducts] = useState<IProduct[]>([]);
-  const [communities, setCommunities] = useState<ICommunity[]>([]);
+  const [activeTab, setActiveTab] = useState<'student' | 'community'>('student');
+
+  // Student Vouchers State
+  const [vouchers, setVouchers] = useState<IStudentVoucherData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
-  // Tabs: 'vouchers' | 'offers'
-  const [activeTab, setActiveTab] = useState<'vouchers' | 'offers'>('vouchers');
+  // Community Program Vouchers State
+  const [communityVouchers, setCommunityVouchers] = useState<ICommunityProgramVoucherData[]>([]);
+  const [commLoading, setCommLoading] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
-  // Form State
-  const [formOpen, setFormOpen] = useState(false);
+  // Edit/Create Modal State
+  const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [formValues, setFormValues] = useState({
-    code: '', // voucher only
-    name: '', // offer only
-    description: '',
-    discountType: 'PERCENTAGE' as 'PERCENTAGE' | 'FIXED',
-    discountValue: '',
-    minimumOrderValue: '0', // voucher only
-    startDate: '',
-    endDate: '',
-    usageLimit: '', // voucher only
-    perCustomerLimit: '1', // voucher only
-    isActive: true,
+  const [formData, setFormData] = useState({
+    title: 'Family Support Voucher',
+    supportedBy: 'TMSAP Project of V2CC',
+    communityType: 'FAMILY_SUPPORT',
+    voucherCode: 'FAMILY-V2CC',
+    voucherAmount: 3000,
+    status: 'OFF',
+    noticeMessage:
+      'Community household onboarding and verification are in progress. This voucher program will be activated for enrolled member families shortly.',
   });
 
-  // Audience Targeting checklist states
-  const [targetCustomerTypes, setTargetCustomerTypes] = useState<string[]>(['NORMAL', 'COMMUNITY', 'WHOLESALE']);
-  const [targetCategories, setTargetCategories] = useState<string[]>([]);
-  const [targetProducts, setTargetProducts] = useState<string[]>([]);
-  const [targetCommunities, setTargetCommunities] = useState<string[]>([]);
-
-  const [formError, setFormError] = useState<string | null>(null);
-  const [formSubmitting, setFormSubmitting] = useState(false);
-
-  const loadData = async () => {
+  const fetchVouchers = async () => {
+    setLoading(true);
     try {
-      const campRes = await fetch('/api/admin/vouchers');
-      const catRes = await fetch('/api/categories');
-      const prodRes = await fetch('/api/admin/products');
-      const custRes = await fetch('/api/admin/customers');
-
-      if (campRes.ok && catRes.ok && prodRes.ok && custRes.ok) {
-        const campData = await campRes.json();
-        const catData = await catRes.json();
-        const prodData = await prodRes.json();
-        const custData = await custRes.json();
-
-        setVouchers(campData.vouchers || []);
-        setOffers(campData.offers || []);
-        setCategories(catData.categories || []);
-        setProducts(prodData.products || []);
-        setCommunities(custData.communities || []);
+      const res = await fetch('/api/admin/vouchers');
+      if (res.ok) {
+        const data = await res.json();
+        setVouchers(data.vouchers || []);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error('Failed to fetch student vouchers:', err);
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchCommunityVouchers = async () => {
+    setCommLoading(true);
+    try {
+      const res = await fetch('/api/vouchers/community');
+      if (res.ok) {
+        const data = await res.json();
+        setCommunityVouchers(data.vouchers || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch community vouchers:', err);
+    } finally {
+      setCommLoading(false);
+    }
+  };
+
   useEffect(() => {
-    loadData();
+    fetchVouchers();
+    fetchCommunityVouchers();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-    setFormValues((prev) => ({ ...prev, [name]: val }));
-  };
-
-  // Checkbox checklists toggles
-  const handleToggleCustomerType = (type: string) => {
-    if (targetCustomerTypes.includes(type)) {
-      setTargetCustomerTypes(targetCustomerTypes.filter((t) => t !== type));
-    } else {
-      setTargetCustomerTypes([...targetCustomerTypes, type]);
-    }
-  };
-
-  const handleToggleCategory = (catId: string) => {
-    if (targetCategories.includes(catId)) {
-      setTargetCategories(targetCategories.filter((id) => id !== catId));
-    } else {
-      setTargetCategories([...targetCategories, catId]);
-    }
-  };
-
-  const handleToggleCommunity = (commId: string) => {
-    if (targetCommunities.includes(commId)) {
-      setTargetCommunities(targetCommunities.filter((id) => id !== commId));
-    } else {
-      setTargetCommunities([...targetCommunities, commId]);
-    }
-  };
-
-  // Submit Handler
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormSubmitting(true);
-    setFormError(null);
-
-    const payload = {
-      type: activeTab === 'vouchers' ? 'VOUCHER' : 'OFFER',
-      campaignId: editingId,
-      ...formValues,
-      customerTypes: targetCustomerTypes,
-      categoryIds: targetCategories,
-      productIds: targetProducts,
-      communityIds: targetCommunities,
-    };
-
+  const handleUpdateStatus = async (
+    voucherId: string,
+    action: 'APPROVE' | 'REJECT' | 'MARK_USED',
+    amount: number = 2500
+  ) => {
+    setProcessingId(voucherId);
     try {
-      const method = editingId ? 'PUT' : 'POST';
       const res = await fetch('/api/admin/vouchers', {
-        method,
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ voucherId, action, voucherAmount: amount }),
       });
 
       if (res.ok) {
-        setFormOpen(false);
-        resetForm();
-        loadData();
+        await fetchVouchers();
       } else {
-        const data = await res.json();
-        setFormError(data.error || 'Failed to save campaign');
+        const errData = await res.json();
+        alert(errData.error || 'Failed to update status');
       }
     } catch (err) {
-      setFormError('Network error. Failed to save campaign details.');
+      alert('Network error while updating status');
     } finally {
-      setFormSubmitting(false);
+      setProcessingId(null);
     }
   };
 
-  // Delete Campaign
-  const handleDeleteCampaign = async (id: string, type: 'VOUCHER' | 'OFFER') => {
-    if (!confirm('Are you sure you want to delete this campaign?')) return;
+  // Toggle Community Program Voucher Status ON / OFF
+  const handleToggleCommunityStatus = async (voucherId: string, currentStatus: 'ON' | 'OFF') => {
+    const newStatus = currentStatus === 'ON' ? 'OFF' : 'ON';
+    setTogglingId(voucherId);
     try {
-      const res = await fetch(`/api/admin/vouchers?id=${id}&type=${type}`, { method: 'DELETE' });
+      const res = await fetch('/api/vouchers/community', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voucherId, status: newStatus }),
+      });
+
       if (res.ok) {
-        loadData();
+        await fetchCommunityVouchers();
       } else {
-        alert('Failed to delete campaign');
+        alert('Failed to toggle status');
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      alert('Network error while toggling status');
+    } finally {
+      setTogglingId(null);
     }
   };
 
-  const handleOpenEditVoucher = (v: IVoucherCampaign) => {
-    setEditingId(v._id);
-    setFormValues({
-      code: v.code,
-      name: '',
-      description: v.description,
-      discountType: v.discountType,
-      discountValue: v.discountValue.toString(),
-      minimumOrderValue: v.minimumOrderValue.toString(),
-      startDate: v.startDate.split('T')[0],
-      endDate: v.endDate.split('T')[0],
-      usageLimit: v.usageLimit ? v.usageLimit.toString() : '',
-      perCustomerLimit: v.perCustomerLimit.toString(),
-      isActive: v.isActive,
-    });
-    setTargetCustomerTypes(v.customerTypes || []);
-    setTargetCategories(v.categoryIds.map((c) => c._id) || []);
-    setTargetProducts(v.productIds.map((p) => p._id) || []);
-    setTargetCommunities(v.communityIds.map((c) => c._id) || []);
-    setFormOpen(true);
+  const handleSaveCommunityVoucher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/vouchers/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingId,
+          ...formData,
+        }),
+      });
+
+      if (res.ok) {
+        setModalOpen(false);
+        setEditingId(null);
+        await fetchCommunityVouchers();
+      } else {
+        alert('Failed to save community voucher');
+      }
+    } catch (err) {
+      alert('Network error');
+    }
   };
 
-  const handleOpenEditOffer = (o: IOfferCampaign) => {
-    setEditingId(o._id);
-    setFormValues({
-      code: '',
-      name: o.name,
-      description: o.description,
-      discountType: o.discountType,
-      discountValue: o.discountValue.toString(),
-      minimumOrderValue: '0',
-      startDate: o.startDate.split('T')[0],
-      endDate: o.endDate.split('T')[0],
-      usageLimit: '',
-      perCustomerLimit: '1',
-      isActive: o.isActive,
-    });
-    setTargetCustomerTypes(o.customerTypes || []);
-    setTargetCategories(o.categoryIds.map((c) => c._id) || []);
-    setTargetProducts(o.productIds.map((p) => p._id) || []);
-    setTargetCommunities(o.communityIds.map((c) => c._id) || []);
-    setFormOpen(true);
-  };
+  const filteredVouchers = vouchers.filter((v) => {
+    const matchesSearch =
+      v.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      v.userEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      v.institution.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (v.studentIdNumber && v.studentIdNumber.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const resetForm = () => {
-    setEditingId(null);
-    setFormValues({
-      code: '',
-      name: '',
-      description: '',
-      discountType: 'PERCENTAGE',
-      discountValue: '',
-      minimumOrderValue: '0',
-      startDate: '',
-      endDate: '',
-      usageLimit: '',
-      perCustomerLimit: '1',
-      isActive: true,
-    });
-    setTargetCustomerTypes(['NORMAL', 'COMMUNITY', 'WHOLESALE']);
-    setTargetCategories([]);
-    setTargetProducts([]);
-    setTargetCommunities([]);
-    setFormError(null);
-  };
+    if (statusFilter === 'ALL') return matchesSearch;
+    return matchesSearch && v.status === statusFilter;
+  });
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-CA', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-8 bg-gray-200 animate-pulse rounded-md w-1/4" />
-        <div className="h-48 bg-white rounded-xl border border-gray-150 animate-pulse" />
-      </div>
-    );
-  }
+  const pendingCount = vouchers.filter((v) => v.status === 'PENDING').length;
+  const verifiedCount = vouchers.filter((v) => v.status === 'VERIFIED').length;
+  const rejectedCount = vouchers.filter((v) => v.status === 'REJECTED').length;
 
   return (
-    <div className="space-y-6 animate-fade-in text-xs font-semibold">
+    <div className="p-6 max-w-7xl mx-auto space-y-6 text-xs font-semibold">
+      
       {/* Header */}
-      <div className="flex justify-between items-center border-b border-gray-150 pb-4">
-        <h1 className="text-xl font-black text-[#101A2D] tracking-tight uppercase flex items-center gap-2">
-          <Ticket className="w-5 h-5 text-[#E53935]" />
-          Discounts, Offers & Vouchers Wizard
-        </h1>
-        
-        {!formOpen && (
-          <button
-            onClick={() => {
-              resetForm();
-              setFormOpen(true);
-            }}
-            className="flex items-center gap-1.5 py-1.5 px-4 bg-[#1A2A4A] hover:bg-[#101A2D] text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{activeTab === 'vouchers' ? 'Add Voucher' : 'Add Offer'}</span>
-          </button>
-        )}
-      </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-red-50 text-[#801414] flex items-center justify-center">
+            <GraduationCap className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-black text-gray-900 uppercase tracking-tight">
+              Vouchers & Community Program Management
+            </h1>
+            <p className="text-xs text-gray-500 font-medium">
+              Manage Student Gift Voucher approvals and toggle Community Supporter Program Cards (ON/OFF).
+            </p>
+          </div>
+        </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-gray-150 bg-gray-50/50 rounded-lg p-1 gap-1 max-w-sm">
         <button
           onClick={() => {
-            setActiveTab('vouchers');
-            resetForm();
-            setFormOpen(false);
+            fetchVouchers();
+            fetchCommunityVouchers();
           }}
-          className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${
-            activeTab === 'vouchers'
-              ? 'bg-[#1A2A4A] text-white shadow-xs'
-              : 'text-gray-500 hover:text-black'
-          }`}
+          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl flex items-center gap-2 font-bold cursor-pointer transition-colors"
         >
-          Coupon Vouchers
-        </button>
-        <button
-          onClick={() => {
-            setActiveTab('offers');
-            resetForm();
-            setFormOpen(false);
-          }}
-          className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${
-            activeTab === 'offers'
-              ? 'bg-[#1A2A4A] text-white shadow-xs'
-              : 'text-gray-500 hover:text-black'
-          }`}
-        >
-          Storefront Offers
+          <RefreshCw className={`w-4 h-4 ${loading || commLoading ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
         </button>
       </div>
 
-      {/* FORM WIZARD OVERLAY */}
-      {formOpen && (
-        <div className="bg-white p-6 rounded-xl border border-gray-150 shadow-xs space-y-6">
-          <h3 className="font-extrabold text-sm text-[#101A2D] uppercase border-b border-gray-100 pb-2">
-            {editingId ? 'Edit Campaign Details' : `Create New ${activeTab === 'vouchers' ? 'Voucher Coupon' : 'Storefront Offer'}`}
-          </h3>
+      {/* Tabs Selector */}
+      <div className="flex border-b border-gray-200 bg-white px-4 rounded-2xl border">
+        <button
+          onClick={() => setActiveTab('student')}
+          className={`py-3 px-6 font-extrabold text-xs uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            activeTab === 'student'
+              ? 'border-[#801414] text-[#801414]'
+              : 'border-transparent text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          🎓 Student Vouchers ({pendingCount} Pending)
+        </button>
+        <button
+          onClick={() => setActiveTab('community')}
+          className={`py-3 px-6 font-extrabold text-xs uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            activeTab === 'community'
+              ? 'border-[#801414] text-[#801414]'
+              : 'border-transparent text-gray-500 hover:text-gray-800'
+          }`}
+        >
+          🤝 Community Supporter Vouchers (ON/OFF Control)
+        </button>
+      </div>
 
-          {formError && (
-            <div className="bg-red-50 text-red-700 p-3 rounded-lg border border-red-100 text-xs font-bold">
-              ⚠️ {formError}
+      {/* TAB 1: STUDENT VOUCHERS VERIFICATION */}
+      {activeTab === 'student' && (
+        <div className="space-y-6">
+          
+          {/* Summary KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-2xs space-y-1">
+              <p className="text-gray-500 font-bold uppercase text-[10px]">Total Applications</p>
+              <p className="text-2xl font-black text-gray-900">{vouchers.length}</p>
             </div>
-          )}
+            <div className="bg-amber-50/70 p-5 rounded-2xl border border-amber-200/80 shadow-2xs space-y-1">
+              <div className="flex items-center justify-between text-amber-700">
+                <p className="font-bold uppercase text-[10px]">Pending Verification</p>
+                <Clock className="w-4 h-4" />
+              </div>
+              <p className="text-2xl font-black text-amber-800">{pendingCount}</p>
+            </div>
+            <div className="bg-emerald-50/70 p-5 rounded-2xl border border-emerald-200/80 shadow-2xs space-y-1">
+              <div className="flex items-center justify-between text-emerald-700">
+                <p className="font-bold uppercase text-[10px]">Verified & Approved</p>
+                <CheckCircle className="w-4 h-4" />
+              </div>
+              <p className="text-2xl font-black text-emerald-800">{verifiedCount}</p>
+            </div>
+            <div className="bg-red-50/70 p-5 rounded-2xl border border-red-200/80 shadow-2xs space-y-1">
+              <div className="flex items-center justify-between text-red-700">
+                <p className="font-bold uppercase text-[10px]">Rejected</p>
+                <XCircle className="w-4 h-4" />
+              </div>
+              <p className="text-2xl font-black text-red-800">{rejectedCount}</p>
+            </div>
+          </div>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {/* Left: Campaign details */}
-            <div className="space-y-4 sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-              {/* Voucher Code / Offer Name */}
-              {activeTab === 'vouchers' ? (
-                <div className="space-y-1.5 sm:col-span-2">
-                  <label className="text-[#101A2D] font-bold block mb-1">Coupon Code *</label>
-                  <input
-                    type="text"
-                    name="code"
-                    required
-                    placeholder="e.g. GROCERY10"
-                    value={formValues.code}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-250 rounded-lg outline-none uppercase font-mono text-gray-900 font-bold"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-1.5 sm:col-span-2">
-                  <label className="text-[#101A2D] font-bold block mb-1">Offer Name *</label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    placeholder="e.g. Eid Festival Sale"
-                    value={formValues.name}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-250 rounded-lg outline-none text-gray-900 font-bold"
-                  />
-                </div>
-              )}
+          {/* Filter and Search Bar */}
+          <div className="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="relative w-full sm:w-80">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by student name, email, school..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-[#801414] text-xs font-semibold"
+              />
+            </div>
 
-              {/* Description */}
-              <div className="space-y-1.5 sm:col-span-2">
-                <label className="text-[#101A2D] font-bold block mb-1">Campaign Terms / Description *</label>
+            <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+              {['ALL', 'PENDING', 'VERIFIED', 'REJECTED'].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setStatusFilter(st)}
+                  className={`px-3 py-1.5 rounded-xl font-extrabold text-[11px] transition-colors cursor-pointer shrink-0 ${
+                    statusFilter === st
+                      ? 'bg-[#801414] text-white shadow-2xs'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {st} {st === 'PENDING' && pendingCount > 0 ? `(${pendingCount})` : ''}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Table List */}
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            {loading ? (
+              <div className="text-center py-16 text-gray-500">
+                <div className="inline-block w-7 h-7 border-3 border-[#801414] border-t-transparent rounded-full animate-spin mb-2" />
+                <p>Loading student voucher applications...</p>
+              </div>
+            ) : filteredVouchers.length === 0 ? (
+              <div className="text-center py-16 text-gray-400 space-y-2">
+                <Award className="w-10 h-10 mx-auto opacity-40 text-gray-400" />
+                <p className="font-bold text-sm">No student voucher applications found.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4 font-extrabold">Student Info</th>
+                      <th className="py-3 px-4 font-extrabold">Institution / School</th>
+                      <th className="py-3 px-4 font-extrabold">Voucher Details</th>
+                      <th className="py-3 px-4 font-extrabold">Status</th>
+                      <th className="py-3 px-4 font-extrabold">Applied Date</th>
+                      <th className="py-3 px-4 font-extrabold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 text-xs">
+                    {filteredVouchers.map((item) => {
+                      const isPending = item.status === 'PENDING';
+                      const isVerified = item.status === 'VERIFIED';
+                      const isRejected = item.status === 'REJECTED';
+
+                      return (
+                        <tr key={item._id} className="hover:bg-gray-50/80 transition-colors">
+                          <td className="py-4 px-4 space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <User className="w-3.5 h-3.5 text-gray-400" />
+                              <span className="font-black text-gray-900">{item.userName}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-500 text-[11px]">
+                              <Mail className="w-3 h-3 text-gray-400" />
+                              <span>{item.userEmail}</span>
+                            </div>
+                          </td>
+
+                          <td className="py-4 px-4">
+                            <div className="flex items-start gap-2">
+                              <Building2 className="w-3.5 h-3.5 text-[#0055D4] shrink-0 mt-0.5" />
+                              <div>
+                                <p className="font-extrabold text-gray-900">{item.institution}</p>
+                                {item.studentIdNumber && (
+                                  <p className="text-[10px] text-gray-500 font-medium">
+                                    ID: {item.studentIdNumber}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="py-4 px-4">
+                            <p className="font-black text-[#801414] text-sm">
+                              {formatCurrency(item.voucherAmount)}
+                            </p>
+                            <span className="inline-block bg-blue-50 text-blue-700 font-mono text-[10px] px-2 py-0.5 rounded font-extrabold">
+                              {item.discountCode}
+                            </span>
+                          </td>
+
+                          <td className="py-4 px-4">
+                            {isPending && (
+                              <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-amber-200">
+                                <Clock className="w-3 h-3" />
+                                <span>PENDING VERIFICATION</span>
+                              </span>
+                            )}
+                            {isVerified && (
+                              <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-emerald-200">
+                                <CheckCircle className="w-3 h-3 text-emerald-600" />
+                                <span>VERIFIED & APPROVED</span>
+                              </span>
+                            )}
+                            {isRejected && (
+                              <span className="inline-flex items-center gap-1.5 bg-red-100 text-red-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-red-200">
+                                <XCircle className="w-3 h-3 text-red-600" />
+                                <span>REJECTED</span>
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-4 px-4 text-gray-500 text-[11px] font-medium">
+                            {new Date(item.appliedAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </td>
+
+                          <td className="py-4 px-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {isPending && (
+                                <>
+                                  <button
+                                    onClick={() => handleUpdateStatus(item._id, 'APPROVE', 2500)}
+                                    disabled={processingId === item._id}
+                                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    <ShieldCheck className="w-3.5 h-3.5 inline mr-1" />
+                                    <span>Verify & Approve</span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleUpdateStatus(item._id, 'REJECT')}
+                                    disabled={processingId === item._id}
+                                    className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    <XCircle className="w-3.5 h-3.5 inline mr-1" />
+                                    <span>Reject</span>
+                                  </button>
+                                </>
+                              )}
+
+                              {isVerified && (
+                                <button
+                                  onClick={() => handleUpdateStatus(item._id, 'REJECT')}
+                                  disabled={processingId === item._id}
+                                  className="px-2.5 py-1 text-red-600 hover:underline font-bold text-[11px] cursor-pointer"
+                                >
+                                  Revoke Approval
+                                </button>
+                              )}
+
+                              {isRejected && (
+                                <button
+                                  onClick={() => handleUpdateStatus(item._id, 'APPROVE', 2500)}
+                                  disabled={processingId === item._id}
+                                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] shadow-2xs transition-colors cursor-pointer"
+                                >
+                                  <ShieldCheck className="w-3.5 h-3.5 inline mr-1" />
+                                  <span>Re-Approve</span>
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: COMMUNITY PROGRAM VOUCHERS ON/OFF CONTROLS */}
+      {activeTab === 'community' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-200">
+            <div>
+              <h2 className="text-base font-black text-gray-900 uppercase">
+                Community Supporter Voucher Program Cards
+              </h2>
+              <p className="text-xs text-gray-500 font-medium">
+                Toggle status (ON/OFF) to activate community vouchers dynamically on Homepage & Vouchers Page.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setEditingId(null);
+                setFormData({
+                  title: 'Family Support Voucher',
+                  supportedBy: 'TMSAP Project of V2CC',
+                  communityType: 'FAMILY_SUPPORT',
+                  voucherCode: 'FAMILY-V2CC',
+                  voucherAmount: 3000,
+                  status: 'OFF',
+                  noticeMessage:
+                    'Community household onboarding and verification are in progress. This voucher program will be activated for enrolled member families shortly.',
+                });
+                setModalOpen(true);
+              }}
+              className="px-4 py-2 bg-[#801414] hover:bg-[#600e0e] text-white rounded-xl font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Community Program Voucher</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {communityVouchers.map((cv) => {
+              const isOn = cv.status === 'ON';
+              return (
+                <div
+                  key={cv._id}
+                  className={`bg-white rounded-3xl p-6 border-2 transition-all space-y-4 shadow-md ${
+                    isOn ? 'border-emerald-500/80 shadow-emerald-500/5' : 'border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold ${
+                          isOn ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'
+                        }`}
+                      >
+                        <Home className="w-6 h-6 stroke-[2.2]" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-black text-gray-900">{cv.title}</h3>
+                        <p className="text-xs text-gray-500 font-semibold">
+                          Supported by <strong className="text-emerald-700">{cv.supportedBy}</strong>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* ON / OFF Toggle Switch */}
+                    <button
+                      onClick={() => handleToggleCommunityStatus(cv._id, cv.status)}
+                      disabled={togglingId === cv._id}
+                      className={`px-4 py-2 rounded-full font-black text-xs flex items-center gap-2 transition-all cursor-pointer shadow-2xs ${
+                        isOn
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      }`}
+                    >
+                      {isOn ? (
+                        <>
+                          <ToggleRight className="w-5 h-5 text-white" />
+                          <span>STATUS: ON</span>
+                        </>
+                      ) : (
+                        <>
+                          <ToggleLeft className="w-5 h-5 text-gray-500" />
+                          <span>STATUS: OFF</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-2 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500 font-bold uppercase text-[10px]">Voucher Code:</span>
+                      <span className="font-mono font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+                        {cv.voucherCode}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500 font-bold uppercase text-[10px]">Voucher Value:</span>
+                      <span className="font-black text-[#801414] text-sm">
+                        {formatCurrency(cv.voucherAmount)}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500 font-bold uppercase text-[10px]">Community Target:</span>
+                      <span className="font-bold text-gray-800 bg-gray-200 px-2 py-0.5 rounded text-[10px]">
+                        {cv.communityType}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      onClick={() => {
+                        setEditingId(cv._id);
+                        setFormData({
+                          title: cv.title,
+                          supportedBy: cv.supportedBy,
+                          communityType: cv.communityType,
+                          voucherCode: cv.voucherCode,
+                          voucherAmount: cv.voucherAmount,
+                          status: cv.status,
+                          noticeMessage: cv.noticeMessage || '',
+                        });
+                        setModalOpen(true);
+                      }}
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Edit Program Details</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Edit / Create Community Voucher Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-gray-200 text-gray-900 animate-fade-in-up">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 className="font-black text-base uppercase tracking-tight">
+                {editingId ? 'Edit Community Program Voucher' : 'Add New Community Program Voucher'}
+              </h3>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="p-1 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCommunityVoucher} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Program Title *</label>
                 <input
                   type="text"
-                  name="description"
                   required
-                  placeholder="e.g. Save 10% on groceries with minimum order value of $30.00"
-                  value={formValues.description}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-250 rounded-lg outline-none text-gray-900 font-bold"
+                  placeholder="e.g. Family Support Voucher"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
                 />
               </div>
 
-              {/* Discount Type */}
-              <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">Discount Type *</label>
-                <select
-                  name="discountType"
-                  required
-                  value={formValues.discountType}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none cursor-pointer text-gray-900 font-bold"
-                >
-                  <option value="PERCENTAGE">Percentage (%)</option>
-                  <option value="FIXED">Fixed Amount (LKR)</option>
-                </select>
-              </div>
-
-              {/* Discount Value */}
-              <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">Discount Value *</label>
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Supported By (Project / Supporter Name) *</label>
                 <input
-                  type="number"
-                  name="discountValue"
+                  type="text"
                   required
-                  value={formValues.discountValue}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none text-gray-900 font-bold"
+                  placeholder="e.g. TMSAP Project of V2CC"
+                  value={formData.supportedBy}
+                  onChange={(e) => setFormData({ ...formData, supportedBy: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
                 />
               </div>
 
-              {/* Expirations dates */}
-              <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">Start Date *</label>
-                <input
-                  type="date"
-                  name="startDate"
-                  required
-                  value={formValues.startDate}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none text-gray-900 font-bold"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">End Date *</label>
-                <input
-                  type="date"
-                  name="endDate"
-                  required
-                  value={formValues.endDate}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none text-gray-900 font-bold"
-                />
-              </div>
-
-              {/* Vouchers special parameters */}
-              {activeTab === 'vouchers' && (
-                <>
-                  <div className="space-y-1.5">
-                    <label className="text-[#101A2D] font-bold block mb-1">Minimum Order Threshold (LKR)</label>
-                    <input
-                      type="number"
-                      name="minimumOrderValue"
-                      value={formValues.minimumOrderValue}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none text-gray-900 font-bold"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[#101A2D] font-bold block mb-1">Global Usage Cap (Optional)</label>
-                    <input
-                      type="number"
-                      name="usageLimit"
-                      placeholder="Unlimited if empty"
-                      value={formValues.usageLimit}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none text-gray-900 font-bold"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[#101A2D] font-bold block mb-1">Per Customer Usage Limit *</label>
-                    <input
-                      type="number"
-                      name="perCustomerLimit"
-                      required
-                      value={formValues.perCustomerLimit}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-255 rounded-lg outline-none text-gray-900 font-bold"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Right: Target Audience parameters checkboxes */}
-            <div className="space-y-4 p-4 border border-gray-150 rounded-xl bg-gray-50/20 max-h-[450px] overflow-y-auto">
-              <h4 className="font-extrabold text-[#1A2A4A] border-b border-gray-150 pb-1 uppercase tracking-wider">Targeting Rules</h4>
-              
-              {/* Customer tier targets */}
-              <div className="space-y-1.5">
-                <label className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Customer Pricing Tiers</label>
-                <div className="space-y-1">
-                  {['NORMAL', 'COMMUNITY', 'WHOLESALE'].map((tier) => (
-                    <label key={tier} className="flex items-center gap-2 cursor-pointer font-semibold text-gray-700">
-                      <input
-                        type="checkbox"
-                        checked={targetCustomerTypes.includes(tier)}
-                        onChange={() => handleToggleCustomerType(tier)}
-                        className="w-4 h-4 accent-[#1A2A4A]"
-                      />
-                      <span>{tier}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Community scope targets */}
-              {communities.length > 0 && (
-                <div className="space-y-1.5 border-t border-gray-150 pt-3">
-                  <label className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Target Community Groups</label>
-                  <div className="space-y-1 max-h-36 overflow-y-auto">
-                    {communities.map((c) => (
-                      <label key={c._id} className="flex items-center gap-2 cursor-pointer font-semibold text-gray-700">
-                        <input
-                          type="checkbox"
-                          checked={targetCommunities.includes(c._id)}
-                          onChange={() => handleToggleCommunity(c._id)}
-                          className="w-4 h-4 accent-[#1A2A4A]"
-                        />
-                        <span>{c.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <span className="text-[9px] text-gray-400 font-semibold block pt-0.5 leading-normal">Leaving all communities unchecked targets everyone outside B2C loops.</span>
-                </div>
-              )}
-
-              {/* Category targets */}
-              {categories.length > 0 && (
-                <div className="space-y-1.5 border-t border-gray-150 pt-3">
-                  <label className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Eligible Catalog Categories</label>
-                  <div className="space-y-1 max-h-36 overflow-y-auto">
-                    {categories.map((cat) => (
-                      <label key={cat._id} className="flex items-center gap-2 cursor-pointer font-semibold text-gray-700">
-                        <input
-                          type="checkbox"
-                          checked={targetCategories.includes(cat._id)}
-                          onChange={() => handleToggleCategory(cat._id)}
-                          className="w-4 h-4 accent-[#1A2A4A]"
-                        />
-                        <span>{cat.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <span className="text-[9px] text-gray-400 font-semibold block pt-0.5 leading-normal">If unchecked, applies to all storefront categories.</span>
-                </div>
-              )}
-
-              {/* Active flag status */}
-              <div className="pt-3 border-t border-gray-150">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Voucher Code *</label>
                   <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={formValues.isActive}
-                    onChange={handleInputChange}
-                    className="w-4 h-4 accent-[#1A2A4A]"
+                    type="text"
+                    required
+                    placeholder="e.g. FAMILY-V2CC"
+                    value={formData.voucherCode}
+                    onChange={(e) => setFormData({ ...formData, voucherCode: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold uppercase"
                   />
-                  <span>Active Campaign Listing</span>
-                </label>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Voucher Amount (LKR) *</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="3000"
+                    value={formData.voucherAmount}
+                    onChange={(e) => setFormData({ ...formData, voucherAmount: Number(e.target.value) })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Bottom buttons */}
-            <div className="sm:col-span-3 border-t border-gray-100 pt-5 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setFormOpen(false);
-                  resetForm();
-                }}
-                className="py-2.5 px-6 border border-gray-200 hover:bg-gray-50 rounded-lg font-bold text-gray-600"
-                disabled={formSubmitting}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="py-2.5 px-6 bg-[#1A2A4A] hover:bg-[#101A2D] text-white rounded-lg font-bold shadow-xs transition-colors"
-                disabled={formSubmitting}
-              >
-                {formSubmitting ? 'Saving details...' : 'Save Campaign details'}
-              </button>
-            </div>
-          </form>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Target Community Type</label>
+                  <select
+                    value={formData.communityType}
+                    onChange={(e) => setFormData({ ...formData, communityType: e.target.value as any })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                  >
+                    <option value="FAMILY_SUPPORT">Family Support</option>
+                    <option value="V2CC_PMS">V2CC-PMS Member</option>
+                    <option value="WHOLESALE">Wholesale Buyer</option>
+                    <option value="GENERAL">General Community</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-gray-700 block mb-1">Status (ON / OFF)</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                  >
+                    <option value="OFF">OFF (Launching Soon)</option>
+                    <option value="ON">ON (Active Now)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Program Status Notice Message</label>
+                <textarea
+                  rows={2}
+                  value={formData.noticeMessage}
+                  onChange={(e) => setFormData({ ...formData, noticeMessage: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#801414] hover:bg-[#600e0e] text-white rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                >
+                  Save Community Voucher
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
-      {/* 2. CAMPAIGNS LIST TABLES */}
-      {!formOpen && activeTab === 'vouchers' && (
-        <div className="bg-white rounded-xl border border-gray-150 shadow-2xs overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr className="bg-gray-100 text-gray-500 uppercase font-bold border-b border-gray-150">
-                <th className="p-4">Coupon Code</th>
-                <th className="p-4">Discount Value</th>
-                <th className="p-4">Min Spend</th>
-                <th className="p-4">Customer Scope</th>
-                <th className="p-4">Expiring On</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
-              {vouchers.map((v) => (
-                <tr key={v._id} className="hover:bg-gray-50">
-                  <td className="p-4">
-                    <p className="font-extrabold text-[#1A2A4A] font-mono">{v.code}</p>
-                    <span className="text-[10px] text-gray-400 font-semibold line-clamp-1 truncate max-w-[200px] block">{v.description}</span>
-                  </td>
-                  <td className="p-4 text-[#101A2D]">
-                    {v.discountType === 'PERCENTAGE' ? `${v.discountValue}% Off` : `LKR ${v.discountValue} Off`}
-                  </td>
-                  <td className="p-4 text-gray-500">{formatCurrency(v.minimumOrderValue)}</td>
-                  
-                  <td className="p-4 text-gray-500 font-semibold truncate max-w-[120px]">
-                    {v.customerTypes.join(', ')}
-                  </td>
-
-                  <td className="p-4 text-gray-450">{formatDate(v.endDate)}</td>
-
-                  <td className="p-4">
-                    {v.isActive ? (
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-sm font-extrabold flex items-center gap-1 w-fit">
-                        <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                        Active
-                      </span>
-                    ) : (
-                      <span className="bg-gray-50 text-gray-500 border border-gray-200 px-2 py-0.5 rounded-sm font-extrabold flex items-center gap-1 w-fit">
-                        <XCircle className="w-3.5 h-3.5" />
-                        Inactive
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="p-4 text-right space-x-2">
-                    <button
-                      onClick={() => handleOpenEditVoucher(v)}
-                      className="p-1.5 text-gray-400 hover:text-black rounded-md hover:bg-gray-100 transition-colors inline-flex items-center"
-                      title="Edit Voucher"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCampaign(v._id, 'VOUCHER')}
-                      className="p-1.5 text-gray-400 hover:text-red-650 rounded-md hover:bg-red-50 transition-colors inline-flex items-center"
-                      title="Delete Voucher"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {!formOpen && activeTab === 'offers' && (
-        <div className="bg-white rounded-xl border border-gray-150 shadow-2xs overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr className="bg-gray-100 text-gray-500 uppercase font-bold border-b border-gray-150">
-                <th className="p-4">Offer Name</th>
-                <th className="p-4">Discount Value</th>
-                <th className="p-4">Target Scope</th>
-                <th className="p-4">Customer Scope</th>
-                <th className="p-4">Expiring On</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
-              {offers.map((o) => (
-                <tr key={o._id} className="hover:bg-gray-50">
-                  <td className="p-4">
-                    <p className="font-bold text-[#101A2D]">{o.name}</p>
-                    <span className="text-[10px] text-gray-400 font-semibold line-clamp-1 truncate max-w-[200px] block">{o.description}</span>
-                  </td>
-                  <td className="p-4 text-[#101A2D]">
-                    {o.discountType === 'PERCENTAGE' ? `${o.discountValue}% Off` : `LKR ${o.discountValue} Off`}
-                  </td>
-                  
-                  <td className="p-4 text-gray-500 truncate max-w-[120px]">
-                    {o.categoryIds.length > 0
-                      ? `Categories: ${o.categoryIds.map((c) => c.name).join(', ')}`
-                      : 'All categories'}
-                  </td>
-
-                  <td className="p-4 text-gray-500 font-semibold truncate max-w-[120px]">
-                    {o.customerTypes.join(', ')}
-                  </td>
-
-                  <td className="p-4 text-gray-455">{formatDate(o.endDate)}</td>
-
-                  <td className="p-4">
-                    {o.isActive ? (
-                      <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-sm font-extrabold flex items-center gap-1 w-fit">
-                        <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                        Active
-                      </span>
-                    ) : (
-                      <span className="bg-gray-50 text-gray-500 border border-gray-205 px-2 py-0.5 rounded-sm font-extrabold flex items-center gap-1 w-fit">
-                        <XCircle className="w-3.5 h-3.5" />
-                        Inactive
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="p-4 text-right space-x-2">
-                    <button
-                      onClick={() => handleOpenEditOffer(o)}
-                      className="p-1.5 text-gray-400 hover:text-black rounded-md hover:bg-gray-100 transition-colors inline-flex items-center"
-                      title="Edit Offer"
-                    >
-                      <Edit className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCampaign(o._id, 'OFFER')}
-                      className="p-1.5 text-gray-400 hover:text-red-650 rounded-md hover:bg-red-50 transition-colors inline-flex items-center"
-                      title="Delete Offer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   );
 }

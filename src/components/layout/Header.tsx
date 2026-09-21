@@ -70,7 +70,6 @@ export default function Header() {
     { label: language === 'ta' ? 'ஷாப்' : 'SHOP', href: '/shop' },
     { label: language === 'ta' ? 'வர்ச்சுவல் கடைகள்' : 'VIRTUAL SHOPS', href: '/virtual-shops' },
     { label: language === 'ta' ? 'ஏற்றுமதி' : 'EXPORT', href: '/export' },
-    { label: language === 'ta' ? 'எங்களைப் பற்றி' : 'ABOUT US', href: '/about' },
     { label: language === 'ta' ? 'தொடர்பு' : 'CONTACT', href: '/contact' },
   ];
 
