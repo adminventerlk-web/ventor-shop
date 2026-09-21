@@ -38,9 +38,7 @@ async function findCategorySafely(catId: any) {
     if (cat) return cat;
   } catch {}
 
-  // 6. Absolute fallback to first active category if database has categories
-  cat = await Category.findOne({ isActive: true }).sort({ displayOrder: 1 });
-  return cat;
+  return null;
 }
 
 // 1. GET: Fetch all products for admin grid
@@ -73,7 +71,15 @@ export async function GET() {
       if (!p.categoryId || typeof p.categoryId === 'string') {
         const catIdStr = String(p.categoryId || '');
         const matchedCat = catMap.get(catIdStr) || catMap.get(catIdStr.replace(/^cat_/, '').replace(/_\d+$/, ''));
-        p.categoryId = matchedCat ? { _id: matchedCat._id, name: matchedCat.name, slug: matchedCat.slug } : { name: 'General' };
+        p.categoryId = matchedCat
+          ? { _id: String(matchedCat._id), name: matchedCat.name, slug: matchedCat.slug }
+          : { _id: catIdStr, name: 'General', slug: 'general' };
+      } else if (p.categoryId && typeof p.categoryId === 'object') {
+        p.categoryId = {
+          _id: String(p.categoryId._id || p.categoryId.id || ''),
+          name: p.categoryId.name,
+          slug: p.categoryId.slug,
+        };
       }
       return p;
     });

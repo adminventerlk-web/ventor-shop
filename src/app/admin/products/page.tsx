@@ -100,13 +100,6 @@ export default function AdminProductsPage() {
       setProducts(prodData.products || []);
       const loadedCats = catData.categories || [];
       setCategories(loadedCats);
-
-      if (loadedCats.length > 0) {
-        setFormValues((prev) => ({
-          ...prev,
-          categoryId: prev.categoryId || loadedCats[0]._id,
-        }));
-      }
     } catch (e: any) {
       console.error('Failed to load products:', e);
       setFetchError('Network error while fetching products from server.');
@@ -142,9 +135,9 @@ export default function AdminProductsPage() {
     setFormSubmitting(true);
     setFormError(null);
 
-    const effectiveCategoryId = formValues.categoryId || categories[0]?._id || '';
+    const effectiveCategoryId = formValues.categoryId || (editingId ? '' : categories[0]?._id || '');
     if (!effectiveCategoryId) {
-      setFormError('Please select or create a Category before adding a product.');
+      setFormError('Please select a Category before saving.');
       setFormSubmitting(false);
       return;
     }
@@ -215,7 +208,7 @@ export default function AdminProductsPage() {
       stock: prod.stock.toString(),
       lowStockThreshold: prod.lowStockThreshold.toString(),
       wholesaleMinQty: (prod.wholesaleMinQty ?? 1).toString(),
-      categoryId: typeof prod.categoryId === 'object' && prod.categoryId ? (prod.categoryId._id || '') : (prod.categoryId || ''),
+      categoryId: typeof prod.categoryId === 'object' && prod.categoryId ? String(prod.categoryId._id || '') : String(prod.categoryId || ''),
       isActive: prod.isActive,
       isFeatured: prod.isFeatured,
       isBestSeller: prod.isBestSeller,
