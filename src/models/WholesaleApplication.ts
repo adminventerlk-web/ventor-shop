@@ -27,7 +27,7 @@ const WholesaleApplicationSchema = new Schema<IWholesaleApplication>(
     phone: { type: String, required: true, trim: true },
     businessAddress: { type: String, required: true },
     city: { type: String, required: true },
-    province: { type: String, required: true },
+    province: { type: String, default: '' },
     postalCode: { type: String, required: true },
     expectedOrderVolume: { type: String, required: true },
     wholesaleCategory: { type: String },

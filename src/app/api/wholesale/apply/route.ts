@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       additionalNotes,
     } = await request.json();
 
-    if (!businessName || !contactPerson || !email || !phone || !businessAddress || !city || !province || !postalCode || !expectedOrderVolume) {
+    if (!businessName || !contactPerson || !email || !phone || !businessAddress || !city || !postalCode || !expectedOrderVolume) {
       return NextResponse.json({ error: 'Please fill in all required fields.' }, { status: 400 });
     }
 

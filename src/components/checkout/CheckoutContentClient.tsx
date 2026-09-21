@@ -64,7 +64,7 @@ export default function CheckoutContentClient() {
     addressLine1: '',
     addressLine2: '',
     city: '',
-    province: 'Ontario',
+    province: '',
     postalCode: '',
     phone: '',
   });
@@ -86,7 +86,7 @@ export default function CheckoutContentClient() {
         addressLine1: defaultAddr.addressLine1 || '',
         addressLine2: defaultAddr.addressLine2 || '',
         city: defaultAddr.city || '',
-        province: defaultAddr.province || 'Ontario',
+        province: defaultAddr.province || '',
         postalCode: defaultAddr.postalCode || '',
         phone: defaultAddr.phone || '',
       });
@@ -145,7 +145,7 @@ export default function CheckoutContentClient() {
         addressLine1: selected.addressLine1,
         addressLine2: selected.addressLine2 || '',
         city: selected.city,
-        province: selected.province,
+        province: selected.province || '',
         postalCode: selected.postalCode,
         phone: selected.phone,
       });
@@ -154,7 +154,7 @@ export default function CheckoutContentClient() {
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addressForm.fullName || !addressForm.email || !addressForm.addressLine1 || !addressForm.city || !addressForm.province || !addressForm.postalCode || !addressForm.phone) {
+    if (!addressForm.fullName || !addressForm.email || !addressForm.addressLine1 || !addressForm.city || !addressForm.postalCode || !addressForm.phone) {
       setErrorMsg('Please complete all required fields.');
       return;
     }
@@ -395,28 +395,6 @@ export default function CheckoutContentClient() {
                   />
                 </div>
 
-                {/* Province */}
-                <div className="space-y-1.5">
-                  <label className="text-gray-700 font-bold">Province *</label>
-                  <select
-                    name="province"
-                    value={addressForm.province}
-                    onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
-                  >
-                    <option value="Ontario">Ontario</option>
-                    <option value="Quebec">Quebec</option>
-                    <option value="British Columbia">British Columbia</option>
-                    <option value="Alberta">Alberta</option>
-                    <option value="Manitoba">Manitoba</option>
-                    <option value="Saskatchewan">Saskatchewan</option>
-                    <option value="Nova Scotia">Nova Scotia</option>
-                    <option value="New Brunswick">New Brunswick</option>
-                    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                    <option value="Prince Edward Island">Prince Edward Island</option>
-                  </select>
-                </div>
-
                 {/* Postal Code */}
                 <div className="space-y-1.5">
                   <label className="text-gray-700 font-bold">Postal Code *</label>
@@ -472,7 +450,7 @@ export default function CheckoutContentClient() {
                 <p className="font-bold text-gray-900">Shipping to:</p>
                 <p className="font-semibold text-gray-700">{addressForm.fullName} ({addressForm.phone})</p>
                 <p className="text-gray-600">{addressForm.addressLine1} {addressForm.addressLine2}</p>
-                <p className="text-gray-600">{addressForm.city}, {addressForm.province} {addressForm.postalCode}</p>
+                <p className="text-gray-600">{addressForm.city} {addressForm.postalCode}</p>
                 <p className="text-gray-600">Confirmation email: <strong className="text-gray-900">{addressForm.email}</strong></p>
               </div>
 

@@ -37,7 +37,7 @@ const AddressSchema = new Schema<IAddress>({
   addressLine1: { type: String, required: true },
   addressLine2: { type: String },
   city: { type: String, required: true },
-  province: { type: String, required: true },
+  province: { type: String, default: '' },
   postalCode: { type: String, required: true },
   country: { type: String, default: 'Sri Lanka' },
   phone: { type: String, required: true },

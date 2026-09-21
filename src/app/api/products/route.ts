@@ -39,11 +39,18 @@ export async function GET(request: Request) {
 
       // Filter by Category Slug
       if (categorySlug && categorySlug !== 'all') {
-        const categoryDoc = await Category.findOne({ slug: categorySlug, isActive: true });
+        const categoryDoc = await Category.findOne({ slug: categorySlug });
         if (categoryDoc) {
-          queryFilter.categoryId = categoryDoc._id;
+          const catIdStr = String(categoryDoc._id);
+          queryFilter.$or = [
+            { categoryId: categoryDoc._id },
+            { categoryId: catIdStr },
+            { categoryId: categorySlug },
+          ];
         } else {
-          return NextResponse.json({ products: [] });
+          queryFilter.$or = [
+            { categoryId: categorySlug },
+          ];
         }
       }
 

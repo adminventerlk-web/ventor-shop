@@ -73,7 +73,7 @@ export default function DashboardAddressesPage() {
     setFormSubmitting(true);
     setFormError(null);
 
-    if (!formValues.fullName || !formValues.addressLine1 || !formValues.city || !formValues.province || !formValues.postalCode || !formValues.phone) {
+    if (!formValues.fullName || !formValues.addressLine1 || !formValues.city || !formValues.postalCode || !formValues.phone) {
       setFormError('Please complete all required fields.');
       setFormSubmitting(false);
       return;
@@ -280,33 +280,6 @@ export default function DashboardAddressesPage() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#1A2A4A] outline-none text-gray-900 font-bold"
               />
-            </div>
-
-            {/* Province */}
-            <div className="space-y-1.5">
-              <label className="text-[#101A2D] font-bold block mb-1">{t('checkoutProvince')} *</label>
-              <select
-                name="province"
-                required
-                value={formValues.province}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#1A2A4A] outline-none cursor-pointer text-gray-900 font-bold"
-              >
-                <option value="">Select Province</option>
-                <option value="Alberta">Alberta</option>
-                <option value="British Columbia">British Columbia</option>
-                <option value="Manitoba">Manitoba</option>
-                <option value="New Brunswick">New Brunswick</option>
-                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                <option value="Nova Scotia">Nova Scotia</option>
-                <option value="Ontario">Ontario</option>
-                <option value="Prince Edward Island">Prince Edward Island</option>
-                <option value="Quebec">Quebec</option>
-                <option value="Saskatchewan">Saskatchewan</option>
-                <option value="Northwest Territories">Northwest Territories</option>
-                <option value="Nunavut">Nunavut</option>
-                <option value="Yukon">Yukon</option>
-              </select>
             </div>
 
             {/* Postal Code */}

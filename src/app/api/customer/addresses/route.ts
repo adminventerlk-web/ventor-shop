@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
     const { fullName, addressLine1, addressLine2, city, province, postalCode, country, phone, addressType, isDefault } = await request.json();
 
-    if (!fullName || !addressLine1 || !city || !province || !postalCode || !phone) {
+    if (!fullName || !addressLine1 || !city || !postalCode || !phone) {
       return NextResponse.json({ error: 'Please provide all required fields' }, { status: 400 });
     }
 

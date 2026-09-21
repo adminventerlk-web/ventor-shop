@@ -25,7 +25,6 @@ export async function POST(request: Request) {
       !deliveryAddress.fullName ||
       !deliveryAddress.addressLine1 ||
       !deliveryAddress.city ||
-      !deliveryAddress.province ||
       !deliveryAddress.postalCode ||
       !deliveryAddress.phone
     ) {

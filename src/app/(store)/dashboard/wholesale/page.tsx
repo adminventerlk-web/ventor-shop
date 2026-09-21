@@ -104,7 +104,6 @@ export default function DashboardWholesalePage() {
       !formValues.phone ||
       !formValues.businessAddress ||
       !formValues.city ||
-      !formValues.province ||
       !formValues.postalCode ||
       !formValues.expectedOrderVolume
     ) {
@@ -371,25 +370,6 @@ export default function DashboardWholesalePage() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
                 />
-              </div>
-
-              {/* Province */}
-              <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">Province *</label>
-                <select
-                  name="province"
-                  required
-                  value={formValues.province}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] cursor-pointer text-gray-900 font-bold"
-                >
-                  <option value="">Select Province</option>
-                  <option value="Alberta">Alberta</option>
-                  <option value="British Columbia">British Columbia</option>
-                  <option value="Ontario">Ontario</option>
-                  <option value="Quebec">Quebec</option>
-                  {/* ... */}
-                </select>
               </div>
 
               {/* Postal Code */}
