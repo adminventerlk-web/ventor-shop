@@ -159,6 +159,49 @@ export default function CartContentClient() {
     setVoucherErrorMsg(null);
   };
 
+  // Instant Optimistic Quantity Adjuster (0ms response)
+  const handleQuantityChange = (productId: string, newQty: number) => {
+    if (newQty <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    // 1. INSTANT OPTIMISTIC UI UPDATE
+    setCalcResult((prev) => {
+      if (!prev) return prev;
+      const updatedItems = prev.items.map((i) => {
+        if (i.productId === productId) {
+          const updatedSubtotal = Math.round(i.finalPrice * newQty * 100) / 100;
+          return {
+            ...i,
+            quantity: newQty,
+            subtotal: updatedSubtotal,
+            total: updatedSubtotal,
+          };
+        }
+        return i;
+      });
+
+      const newSubtotal = Math.round(
+        updatedItems.reduce((acc, curr) => acc + curr.total, 0) * 100
+      ) / 100;
+      const newCartTotalAfterDiscount = Math.max(0, newSubtotal - prev.itemDiscounts - prev.voucherDiscount);
+      const newDeliveryFee = newCartTotalAfterDiscount >= prev.freeDeliveryThreshold ? 0 : (prev.deliveryFee || 12.5);
+      const newTotal = Math.round((newCartTotalAfterDiscount + newDeliveryFee) * 100) / 100;
+
+      return {
+        ...prev,
+        items: updatedItems,
+        subtotal: newSubtotal,
+        deliveryFee: newDeliveryFee,
+        total: newTotal,
+      };
+    });
+
+    // 2. Sync React Context & Local Storage
+    updateQuantity(productId, newQty);
+  };
+
   // 3. Render Empty Cart State
   if (!loading && (!calcResult || calcResult.items.length === 0)) {
     return (
@@ -263,8 +306,8 @@ export default function CartContentClient() {
                 {/* Quantity adjustments */}
                 <div className="flex items-center border border-gray-300 rounded-lg bg-gray-50 h-9 w-28 select-none shrink-0">
                   <button
-                    onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                    className="w-8 h-full flex items-center justify-center text-gray-600 hover:text-black transition-colors"
+                    onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
+                    className="w-8 h-full flex items-center justify-center text-gray-600 hover:text-black transition-colors cursor-pointer"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-3 h-3" />
@@ -273,8 +316,8 @@ export default function CartContentClient() {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                    className="w-8 h-full flex items-center justify-center text-gray-600 hover:text-black transition-colors"
+                    onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+                    className="w-8 h-full flex items-center justify-center text-gray-600 hover:text-black transition-colors cursor-pointer"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-3 h-3" />
