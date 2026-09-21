@@ -6,7 +6,15 @@ import { fallbackCategories } from '@/lib/data/fallbackData';
 export async function GET() {
   try {
     await connectToDatabase();
-    const categories = await Category.find({ isActive: true }).sort({ displayOrder: 1 });
+    let categories = await Category.find({ isActive: true }).sort({ displayOrder: 1 });
+    if (!categories || categories.length === 0) {
+      try {
+        await Category.insertMany(fallbackCategories);
+        categories = await Category.find({ isActive: true }).sort({ displayOrder: 1 });
+      } catch (seedErr) {
+        console.warn('Failed to seed categories:', seedErr);
+      }
+    }
     if (categories && categories.length > 0) {
       return NextResponse.json({ categories });
     }

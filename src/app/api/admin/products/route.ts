@@ -7,35 +7,42 @@ import Category from '@/models/Category';
 
 async function findCategorySafely(catId: any) {
   if (!catId) return null;
-  const idStr = typeof catId === 'object' ? (catId._id || catId.slug || String(catId)) : String(catId);
+  const idStr = typeof catId === 'object' ? (catId._id || catId.slug || String(catId)) : String(catId).trim();
   
-  // 1. If valid 24-character ObjectId
   if (mongoose.Types.ObjectId.isValid(idStr)) {
     const cat = await Category.findOne({ $or: [{ _id: idStr }, { slug: idStr }] } as any);
     if (cat) return cat;
   }
   
-  // 2. Direct slug lookup
-  let cat = await Category.findOne({ slug: idStr.trim().toLowerCase() });
+  let cat = await Category.findOne({ slug: idStr.toLowerCase() });
   if (cat) return cat;
 
-  // 3. Fallback ID pattern resolution (e.g. 'cat_groceries_01' -> 'groceries')
   const cleanedSlug = idStr.replace(/^cat_/, '').replace(/_\d+$/, '').toLowerCase();
   if (cleanedSlug && cleanedSlug !== idStr.toLowerCase()) {
     cat = await Category.findOne({ slug: cleanedSlug });
     if (cat) return cat;
   }
 
-  // 4. Native Mongo collection string _id fallback
   try {
     cat = (await Category.collection.findOne({ _id: idStr as any })) as any;
     if (cat) return cat;
   } catch {}
 
-  // 5. Name match
+  try {
+    cat = (await Category.collection.findOne({ slug: idStr.toLowerCase() })) as any;
+    if (cat) return cat;
+  } catch {}
+
   try {
     cat = await Category.findOne({ name: new RegExp('^' + idStr + '$', 'i') });
     if (cat) return cat;
+  } catch {}
+
+  // Fallback: search by matching string representation of _id or slug
+  try {
+    const all = await Category.find({}).lean();
+    const matched = all.find((c: any) => String(c._id) === idStr || String(c.slug).toLowerCase() === idStr.toLowerCase());
+    if (matched) return matched;
   } catch {}
 
   return null;
