@@ -215,7 +215,7 @@ export default function AdminProductsPage() {
       stock: prod.stock.toString(),
       lowStockThreshold: prod.lowStockThreshold.toString(),
       wholesaleMinQty: (prod.wholesaleMinQty ?? 1).toString(),
-      categoryId: prod.categoryId._id,
+      categoryId: typeof prod.categoryId === 'object' && prod.categoryId ? (prod.categoryId._id || '') : (prod.categoryId || ''),
       isActive: prod.isActive,
       isFeatured: prod.isFeatured,
       isBestSeller: prod.isBestSeller,
@@ -361,7 +361,7 @@ export default function AdminProductsPage() {
                 >
                   <option value="" disabled>Select Category</option>
                   {categories.map((cat) => (
-                    <option key={cat._id} value={cat._id}>{cat.name}</option>
+                    <option key={String(cat._id)} value={String(cat._id)}>{cat.name}</option>
                   ))}
                 </select>
               </div>
