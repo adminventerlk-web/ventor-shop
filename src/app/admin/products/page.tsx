@@ -554,7 +554,7 @@ export default function AdminProductsPage() {
 
               {/* Flags checks */}
               <div className="pt-2 space-y-2 border-t border-gray-150">
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     name="isActive"
@@ -562,9 +562,9 @@ export default function AdminProductsPage() {
                     onChange={handleInputChange}
                     className="w-4 h-4 accent-[#1A2A4A]"
                   />
-                  <span>Active Catalog Listing</span>
+                  <span className="font-bold text-gray-800">Active Catalog Listing</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     name="isFeatured"
@@ -572,7 +572,27 @@ export default function AdminProductsPage() {
                     onChange={handleInputChange}
                     className="w-4 h-4 accent-[#1A2A4A]"
                   />
-                  <span>Featured Product Banner</span>
+                  <span className="font-bold text-amber-800">⭐ Featured Product Banner</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="isBestSeller"
+                    checked={formValues.isBestSeller}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 accent-[#1A2A4A]"
+                  />
+                  <span className="font-bold text-indigo-700">🔥 Best Seller Product</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="isNewArrival"
+                    checked={formValues.isNewArrival}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 accent-[#1A2A4A]"
+                  />
+                  <span className="font-bold text-blue-700">✨ New Arrival Product</span>
                 </label>
               </div>
             </div>
