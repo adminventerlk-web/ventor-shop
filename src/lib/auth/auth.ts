@@ -107,10 +107,8 @@ export async function getCurrentUser() {
 
 export async function getCurrentCustomer() {
   try {
-    const session = await getUserSessionPayload();
+    const session = await getSessionPayload();
     if (!session) return null;
-
-    if (session.role === 'ADMIN' || session.role === 'SUPER_ADMIN') return null;
 
     let user: any = null;
     try {

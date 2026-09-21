@@ -12,8 +12,13 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const orders = await Order.find({ userId: customer.id })
-      .sort({ createdAt: -1 });
+    const orders = await Order.find({
+      $or: [
+        { userId: customer.id },
+        { 'deliveryAddress.email': customer.email },
+        { 'user.email': customer.email },
+      ],
+    }).sort({ createdAt: -1 });
 
     return NextResponse.json({ orders });
   } catch (error) {
