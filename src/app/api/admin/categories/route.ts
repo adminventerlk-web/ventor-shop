@@ -29,8 +29,15 @@ async function findCategorySafely(catId: any) {
   } catch {}
 
   try {
-    cat = await Category.findOne({ name: new RegExp('^' + idStr + '$', 'i') });
+    cat = await Category.findOne({ name: new RegExp('^' + idStr.trim() + '$', 'i') });
     if (cat) return cat;
+  } catch {}
+
+  // Fallback: search by partial _id string match
+  try {
+    const all = await Category.find({}).lean();
+    const matched = all.find((c: any) => String(c._id) === idStr || String(c._id) === idStr.trim());
+    if (matched) return matched;
   } catch {}
 
   return null;
@@ -99,27 +106,30 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
+    const updateData: any = {};
+    if (name) updateData.name = name.trim();
+    if (icon) updateData.icon = icon;
+    if (image !== undefined) updateData.image = image;
+    if (displayOrder !== undefined) updateData.displayOrder = parseInt(displayOrder) || 0;
+    if (isActive !== undefined) updateData.isActive = isActive;
+
     // Check slug uniqueness if it changed
     if (slug && slug.trim().toLowerCase() !== category.slug) {
       let finalSlug = slug.trim().toLowerCase();
       const slugExists = await Category.findOne({ slug: finalSlug });
-      if (slugExists && slugExists._id.toString() !== category._id.toString()) {
+      if (slugExists && String(slugExists._id) !== String(category._id)) {
         finalSlug = `${finalSlug}-${Date.now().toString().slice(-4)}`;
       }
-      category.slug = finalSlug;
+      updateData.slug = finalSlug;
     }
 
-    if (name) category.name = name.trim();
-    if (icon) category.icon = icon;
-    if (image !== undefined) category.image = image;
-    if (displayOrder !== undefined) category.displayOrder = parseInt(displayOrder) || 0;
-    if (isActive !== undefined) category.isActive = isActive;
+    await Category.collection.updateOne({ _id: category._id }, { $set: updateData });
 
-    await category.save();
+    const updatedCategory = await Category.findOne({ _id: category._id }).lean();
 
     return NextResponse.json({
       message: 'Category updated successfully',
-      category,
+      category: updatedCategory || category,
     });
   } catch (error: any) {
     console.error('Error updating category:', error);

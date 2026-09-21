@@ -119,7 +119,7 @@ export default function AdminCategoriesPage() {
   };
 
   const handleOpenEdit = (cat: ICategory) => {
-    setEditingId(cat._id);
+    setEditingId(String(cat._id));
     setFormValues({
       name: cat.name,
       slug: cat.slug,
