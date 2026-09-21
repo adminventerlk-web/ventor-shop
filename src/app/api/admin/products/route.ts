@@ -244,37 +244,40 @@ export async function PUT(request: Request) {
       product.sku = finalSku;
     }
 
+    const updateData: any = {};
     if (categoryId) {
       const categoryExists = await findCategorySafely(categoryId);
       if (!categoryExists) {
         return NextResponse.json({ error: 'Category does not exist' }, { status: 400 });
       }
-      product.categoryId = categoryExists._id;
+      updateData.categoryId = categoryExists._id;
     }
 
-    if (name) product.name = name.trim();
-    if (sku) product.sku = sku.trim().toUpperCase();
-    if (description) product.description = description.trim();
-    if (shortDescription !== undefined) product.shortDescription = shortDescription.trim();
-    if (images) product.images = images;
-    if (retailPrice !== undefined) product.retailPrice = parseFloat(retailPrice);
-    if (communityPrice !== undefined) product.communityPrice = parseFloat(communityPrice);
-    if (wholesalePrice !== undefined) product.wholesalePrice = parseFloat(wholesalePrice);
-    if (stock !== undefined) product.stock = parseInt(stock) || 0;
-    if (lowStockThreshold !== undefined) product.lowStockThreshold = parseInt(lowStockThreshold) || 5;
-    if (wholesaleMinQty !== undefined) product.wholesaleMinQty = parseInt(wholesaleMinQty) || 1;
-    if (isActive !== undefined) product.isActive = isActive;
-    if (isFeatured !== undefined) product.isFeatured = isFeatured;
-    if (isBestSeller !== undefined) product.isBestSeller = isBestSeller;
-    if (isNewArrival !== undefined) product.isNewArrival = isNewArrival;
-    if (bulkPricing) product.bulkPricing = bulkPricing;
-    if (eligibleCustomerTypes) product.eligibleCustomerTypes = eligibleCustomerTypes;
+    if (name) updateData.name = name.trim();
+    if (sku) updateData.sku = sku.trim().toUpperCase();
+    if (description) updateData.description = description.trim();
+    if (shortDescription !== undefined) updateData.shortDescription = shortDescription.trim();
+    if (images) updateData.images = images;
+    if (retailPrice !== undefined) updateData.retailPrice = parseFloat(retailPrice);
+    if (communityPrice !== undefined) updateData.communityPrice = parseFloat(communityPrice);
+    if (wholesalePrice !== undefined) updateData.wholesalePrice = parseFloat(wholesalePrice);
+    if (stock !== undefined) updateData.stock = parseInt(stock) || 0;
+    if (lowStockThreshold !== undefined) updateData.lowStockThreshold = parseInt(lowStockThreshold) || 5;
+    if (wholesaleMinQty !== undefined) updateData.wholesaleMinQty = parseInt(wholesaleMinQty) || 1;
+    if (isActive !== undefined) updateData.isActive = isActive;
+    if (isFeatured !== undefined) updateData.isFeatured = isFeatured;
+    if (isBestSeller !== undefined) updateData.isBestSeller = isBestSeller;
+    if (isNewArrival !== undefined) updateData.isNewArrival = isNewArrival;
+    if (bulkPricing) updateData.bulkPricing = bulkPricing;
+    if (eligibleCustomerTypes) updateData.eligibleCustomerTypes = eligibleCustomerTypes;
 
-    await product.save();
+    await Product.collection.updateOne({ _id: product._id }, { $set: updateData });
+
+    const updatedProduct = await Product.findOne({ _id: product._id }).populate('categoryId', 'name slug').lean();
 
     return NextResponse.json({
       message: 'Product updated successfully',
-      product,
+      product: updatedProduct || product,
     });
   } catch (error: any) {
     console.error('Error updating product:', error);
