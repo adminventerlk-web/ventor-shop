@@ -24,3 +24,14 @@ body {
   width: 100%;
   max-width: 100vw;
 }
+
+/* Prevent white line/gap artifacts between sections */
+img {
+  display: block;
+}
+
+section + section,
+section + div,
+div + section {
+  margin-top: 0;
+}

@@ -43,7 +43,7 @@ export default function HomePage() {
       </Suspense>
 
       {/* 2. Hero Banner Section + Location Strip */}
-      <Suspense fallback={<div className="h-[450px] bg-[#021838] animate-pulse" />}>
+      <Suspense fallback={<div className="bg-[#021430] animate-pulse" style={{ minHeight: '480px', margin: 0, padding: 0, lineHeight: 0 }} />}>
         <Hero />
       </Suspense>
 
