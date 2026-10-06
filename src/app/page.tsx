@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen w-full overflow-x-hidden bg-white font-sans antialiased text-xs font-semibold">
+    <div className="flex flex-col min-h-screen w-full overflow-x-hidden bg-[#F8FAFC] font-sans antialiased text-xs font-semibold" style={{ gap: 0 }}>
       {/* 1. Navigation Header */}
       <Suspense fallback={<div className="h-24 bg-white border-b border-gray-100" />}>
         <Header />
