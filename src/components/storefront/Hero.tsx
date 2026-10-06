@@ -91,8 +91,8 @@ export default function Hero() {
   return (
     <section className="w-full relative overflow-hidden select-none" style={{ margin: 0, marginBottom: '-1px', padding: 0, lineHeight: 0, fontSize: 0, background: '#021430' }}>
       
-      {/* Slideshow Area - No gaps, no borders, no margins */}
-      <div className="relative overflow-hidden" style={{ minHeight: '480px', lineHeight: 'normal', fontSize: '14px' }}>
+      {/* Slideshow Area - Fixed height, no size changes between slides */}
+      <div className="relative overflow-hidden" style={{ height: 'clamp(440px, 65vh, 580px)', lineHeight: 'normal', fontSize: '14px' }}>
         
         {/* Background Images Layer - Ken Burns animated zoom effect */}
         {slides.map((slide, index) => {
