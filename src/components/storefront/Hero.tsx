@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Globe2,
   Truck,
-  Star,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Store,
@@ -20,72 +20,72 @@ export default function Hero() {
   const isTa = language === 'ta';
   const isSi = language === 'si';
 
-  // 4 Rotating animated hero background slides - matching Sithisha Masala style
+  // 4 Rotating animated hero background slides - tailored specifically for VENTERSHOP
   const slides = [
     {
       id: 1,
       image: '/images/sri_lankan_exports.jpg',
-      tagEn: '🔥 #1 CEYLON EXPORT & SPICES PORTAL',
-      tagTa: '🔥 #1 இலங்கை நறுமணப் பொருட்கள் & ஏற்றுமதி',
-      tagSi: '🔥 #1 ලංකා කුළුබඩු සහ අපනයන සේවාව',
-      titleLine1En: 'AUTHENTIC CEYLON SPICES,',
-      titleLine1Ta: 'அசல் இலங்கை நறுமணம்,',
-      titleLine1Si: 'සැබෑ ලංකා කුළුබඩු,',
-      titleLine2En: 'DIRECT EXPORT WORLDWIDE.',
-      titleLine2Ta: 'உலகளாவிய நேரடி விநியோகம்.',
-      titleLine2Si: 'ලොව පුරා සෘජු අපනයනය.',
+      tagEn: '🇱🇰 DIRECT CEYLON EXPORTS & SPICES',
+      tagTa: '🇱🇰 இலங்கை ஏற்றுமதி & தூய நறுமணப் பொருட்கள்',
+      tagSi: '🇱🇰 සැබෑ ලංකා කුළුබඩු සහ අපනයන සේවාව',
+      titleLine1En: 'AUTHENTIC CEYLON EXPORTS,',
+      titleLine1Ta: 'அசல் இலங்கை ஏற்றுமதி பொருட்கள்,',
+      titleLine1Si: 'සැබෑ ලංකා අපනයන නිෂ්පාදන,',
+      titleLine2En: 'SHIPPED DIRECTLY WORLDWIDE.',
+      titleLine2Ta: 'உலகெங்கிலும் நேரடி விநியோகம்.',
+      titleLine2Si: 'ලොව පුරා සෘජුවම බෙදාහැරීම.',
       subtitleEn:
-        'Pure Ceylon cinnamon, single-origin black tea, whole cloves, and verified local goods shipped globally to your doorstep.',
+        'Direct source Ceylon cinnamon, premium single-origin black tea, cloves, and authentic local goods shipped securely from Sri Lanka to international buyers.',
       subtitleTa:
-        'அசல் இலங்கை கருவாபட்டை, தேயிலை மற்றும் தூய நறுமணப் பொருட்கள் உலகெங்கிலும் உங்கள் இருப்பிடத்திற்கே அனுப்பப்படும்.',
+        'அசல் இலங்கை கருவாபட்டை, தூய தேயிலை மற்றும் நறுமணப் பொருட்கள் இலங்கையிலிருந்து உலகெங்கிலும் பாதுகாப்பாக அனுப்பி வைக்கப்படுகிறது.',
       subtitleSi:
-        'සැබෑ ලංකා කුරුඳු, උසස් තේ සහ කුළුබඩු ලොව පුරා ආරක්ෂිතව ඔබේ නිවසටම ගෙන්වා ගන්න.',
-      ctaTextEn: 'Explore Export Collection',
-      ctaTextTa: 'ஏற்றுமதி பொருட்களைப் பார்க்க',
-      ctaTextSi: 'අපනයන එකතුව ගවේෂණය',
-      ctaLink: '/shop?category=export-spices',
+        'සැබෑ ලංකා කුරුඳු, උසස් කළු තේ සහ කුළුබඩු ශ්‍රී ලංකාවෙන් ලොව පුරා ගැනුම්කරුවන් වෙත සුරක්ෂිතව යවනු ලැබේ.',
+      ctaTextEn: 'Explore Export Catalog',
+      ctaTextTa: 'ஏற்றுமதி தயாரிப்புகளைப் பார்க்க',
+      ctaTextSi: 'අපනයන නාමාවලිය',
+      ctaLink: '/export',
     },
     {
       id: 2,
       image: '/images/groceries_basket.jpg',
-      tagEn: '🛒 DAILY SUPERMARKET ESSENTIALS',
-      tagTa: '🛒 புதிய தினசரி மளிகைப் பொருட்கள்',
-      tagSi: '🛒 එදිනෙදා අත්‍යවශ්‍ය ද්‍රව්‍ය',
-      titleLine1En: 'FRESH DAILY GROCERIES,',
-      titleLine1Ta: 'புதிய மளிகைப் பொருட்கள்,',
-      titleLine1Si: 'නැවුම් එදිනෙදා ආහාර,',
-      titleLine2En: 'DELIVERED TO YOUR DOOR.',
-      titleLine2Ta: 'வீட்டிற்கே விரைவான டெலிவரி.',
-      titleLine2Si: 'නිවසටම වේගවත් බෙදාහැරීම.',
+      tagEn: '🛒 DAILY ESSENTIALS & SUPERMARKET',
+      tagTa: '🛒 தினசரி மளிகை & அத்தியாவசிய தேவைகள்',
+      tagSi: '🛒 එදිනෙදා අත්‍යවශ්‍ය ආහාර ද්‍රව්‍ය',
+      titleLine1En: 'FRESH DAILY PROVISIONS,',
+      titleLine1Ta: 'புதிய தினசரி மளிகைப் பொருட்கள்,',
+      titleLine1Si: 'නැවුම් එදිනෙදා ආහාර ද්‍රව්‍ය,',
+      titleLine2En: 'DELIVERED TO YOUR DOORSTEP.',
+      titleLine2Ta: 'உங்கள் இல்லங்களுக்கே அதிவிரைவாக.',
+      titleLine2Si: 'ඔබේ නිවසටම ගෙනැවිත් දෙනු ලැබේ.',
       subtitleEn:
-        'Farm-fresh produce, staple grains, household essentials, and pantry favorites delivered across Sri Lanka.',
+        'Top-quality rice, pantry staples, cooking essentials, and household goods delivered safely across all 25 districts in Sri Lanka.',
       subtitleTa:
-        'பண்ணை புதிய காய்கறிகள், அரிசி, தானியங்கள் மற்றும் அத்தியாவசிய பொருட்கள் அதிவிரைவாக வீட்டிற்கே வழங்கப்படும்.',
+        'உயர்தர அரிசி, சமையல் பொருட்கள், மற்றும் வீட்டு அத்தியாவசிய தேவைகள் இலங்கை முழுவதும் உள்ள அனைத்து மாவட்டங்களுக்கும் விரைவாக விநியோகிக்கப்படுகிறது.',
       subtitleSi:
-        'නැවුම් එළවළු, සහල්, ධාන්‍ය සහ ගෘහස්ථ ද්‍රව්‍ය දිවයින පුරා ඔබේ නිවසටම ලබාදේ.',
+        'උසස් තත්ත්වයේ සහල්, එදිනෙදා ආහාර සහ ගෘහස්ථ අවශ්‍යතා දිවයින පුරා සියලු දිස්ත්‍රික්ක වෙත විශ්වාසයෙන් බෙදාහැරේ.',
       ctaTextEn: 'Shop Daily Groceries',
       ctaTextTa: 'மளிகை வாங்குக',
-      ctaTextSi: 'ද්‍රව්‍ය මිලදී ගන්න',
+      ctaTextSi: 'ආහාර ද්‍රව්‍ය මිලදී ගන්න',
       ctaLink: '/shop?category=groceries',
     },
     {
       id: 3,
       image: '/images/rani_animal_feed.jpg',
-      tagEn: '🌾 OFFICIAL RANI LIVESTOCK DISTRIBUTOR',
-      tagTa: '🌾 அங்கீகரிக்கப்பட்ட ராணி தீவன விநியோகம்',
-      tagSi: '🌾 නිල රාණි සත්ව ආහාර බෙදාහැරීම',
-      titleLine1En: 'RANI ANIMAL FEED,',
-      titleLine1Ta: 'ராணி விலங்கு தீவனம்,',
-      titleLine1Si: 'රාණි සත්ව ආහාර,',
-      titleLine2En: 'NUTRITION FOR MAXIMUM YIELD.',
-      titleLine2Ta: 'அதிக உற்பத்திக்கான ஊட்டச்சத்து.',
-      titleLine2Si: 'උපරිම ඵලදායිතාව සඳහා පෝෂණය.',
+      tagEn: '🌾 OFFICIAL RANI LIVESTOCK FEEDS',
+      tagTa: '🌾 அதிகாரப்பூர்வ ராணி விலங்கு தீவனங்கள்',
+      tagSi: '🌾 නිල රාණි සත්ව ආහාර විසඳුම්',
+      titleLine1En: 'RANI ANIMAL FEED SOLUTIONS,',
+      titleLine1Ta: 'ராணி கால்நடை தீவனங்கள்,',
+      titleLine1Si: 'රාණි සත්ව ආහාර විසඳුම්,',
+      titleLine2En: 'FOR HEALTHY FARMS & MAXIMUM YIELD.',
+      titleLine2Ta: 'சிறந்த வளர்ச்சிக்கும் அதிக உற்பத்திக்கும்.',
+      titleLine2Si: 'උපරිම ඵලදායිතාව සහ ගොවිපල වර්ධනයට.',
       subtitleEn:
-        'Scientifically formulated broiler, layer, dairy cattle, and livestock feeds engineered for optimum farm health and growth.',
+        'Scientifically balanced poultry, broiler, layer, and dairy cattle feeds. Order in bulk for farms and retail stores across Sri Lanka.',
       subtitleTa:
-        'கோழி, மாடு மற்றும் கால்நடை வளர்ப்புக்கான அறிவியல் பூர்வமாக தயாரிக்கப்பட்ட உயர்தர ஊட்டச்சத்து தீவனங்கள்.',
+        'கோழி வளர்ப்பு, முட்டை உற்பத்தி மற்றும் கறவை மாடுகளுக்கான உயர்தர அறிவியல் ஊட்டச்சத்து தீவனங்கள். இலங்கை முழுவதும் பண்ணைகளுக்கே நேரடியாக டெலிவரி.',
       subtitleSi:
-        'කුකුළු, ගව සහ පශු සම්පත් සඳහා විද්‍යාත්මකව සකස් කරන ලද උසස් තත්ත්වයේ ආහාර විසඳුම්.',
+        'කුකුළු, බිත්තර සහ කිරි ගවයන් සඳහා විද්‍යාත්මකව සකස් කළ උසස් පෝෂණ ආහාර. දිවයින පුරා ගොවිපල වෙත තොග වශයෙන් බෙදාහැරේ.',
       ctaTextEn: 'Order Animal Feed',
       ctaTextTa: 'தீவனங்களை ஆர்டர் செய்க',
       ctaTextSi: 'සත්ව ආහාර ඇණවුම් කරන්න',
@@ -94,24 +94,24 @@ export default function Hero() {
     {
       id: 4,
       image: '/images/storefront_3d.jpg',
-      tagEn: '🌟 100% VERIFIED MERCHANT ECOSYSTEM',
-      tagTa: '🌟 100% சரிபார்க்கப்பட்ட வணிகர் சந்தை',
-      tagSi: '🌟 100% තහවුරු කළ වෙළඳ ප්‍රජාව',
-      titleLine1En: 'VENTERSHOP DIGITAL,',
-      titleLine1Ta: 'வென்டர்ஷாப் டிஜிட்டல்,',
-      titleLine1Si: 'වෙන්ටර්ෂොප් ඩිජිටල්,',
-      titleLine2En: 'CONNECTING BUYERS & SELLERS.',
-      titleLine2Ta: 'வணிகர்களையும் வாங்குபவரையும் இணைக்கிறது.',
-      titleLine2Si: 'ගැණුම්කරුවන් සහ වෙළඳුන් එක් කරයි.',
+      tagEn: '🏪 SRI LANKAN MERCHANT MARKETPLACE',
+      tagTa: '🏪 இலங்கை விற்பனையாளர்களின் டிஜிட்டல் சந்தை',
+      tagSi: '🏪 දේශීය ව්‍යවසායක ඩිජිටල් වෙළඳපල',
+      titleLine1En: 'SUPPORT LOCAL MERCHANTS,',
+      titleLine1Ta: 'உள்ளூர் வணிகர்களை ஆதரிப்போம்,',
+      titleLine1Si: 'දේශීය ව්‍යවසායකයින් ශක්තිමත් කරමු,',
+      titleLine2En: 'SHOP DIRECT WITH COMMUNITY SAVINGS.',
+      titleLine2Ta: 'சிறப்பு வவுச்சர்களுடன் வாங்குங்கள்.',
+      titleLine2Si: 'විශේෂ වවුචර් සමඟ මිලදී ගන්න.',
       subtitleEn:
-        'Discover authentic Sri Lankan merchants, virtual storefronts, wholesale discounts, and community savings in one portal.',
+        'Connect with verified local producers, access V2CC community discounts, student vouchers, and wholesale pricing on authentic Sri Lankan products.',
       subtitleTa:
-        'இலங்கை உற்பத்தியாளர்களின் கடைகள், மொத்த விற்பனை சலுகைகள் மற்றும் சிறப்பு வவுச்சர்களை ஒரே தளத்தில் பெறுங்கள்.',
+        'சரிபார்க்கப்பட்ட இலங்கை விற்பனையாளர்களிடம் இருந்து நேரடியாகப் பொருட்கள் வாங்கவும், V2CC சமூக வவுச்சர்கள் மற்றும் தள்ளுபடிகளைப் பெறவும் வென்டர்ஷாப்பில் இணையுங்கள்.',
       subtitleSi:
-        'දේශීය නිෂ්පාදකයින්ගේ සාප්පු, තොග වට්ටම් සහ වවුචර් දීමනා එකම වේදිකාවකින් සොයා ගන්න.',
-      ctaTextEn: 'Browse Virtual Shops',
+        'තහවුරු කළ දේශීය නිෂ්පාදකයින්ගෙන් සෘජුවම මිලදී ගෙන, V2CC ප්‍රජා වවුචර් සහ තොග වට්ටම් දීමනා ලබාගන්න.',
+      ctaTextEn: 'Explore Virtual Shops',
       ctaTextTa: 'கடைகளை ஆராய்க',
-      ctaTextSi: 'සාප්පු ගවේෂණය',
+      ctaTextSi: 'සාප්පු ගවේෂණය කරන්න',
       ctaLink: '/virtual-shops',
     },
   ];
@@ -149,7 +149,7 @@ export default function Hero() {
 
   return (
     <>
-      {/* Hero Section - Matching Sithisha Masala & Snacks structure with flex-center and plenty of vertical room */}
+      {/* Hero Section - Matching Sithisha Masala & Snacks structure with flex-center and generous vertical padding */}
       <section className="relative overflow-hidden bg-[#021430] text-white min-h-[520px] sm:min-h-[600px] lg:min-h-[650px] flex items-center select-none">
         {/* Background Images Layer with smooth Ken Burns animated zoom */}
         {slides.map((slide, index) => {
@@ -177,7 +177,7 @@ export default function Hero() {
                 />
               </div>
 
-              {/* Seamless Dark Overlay - exactly like Sithisha */}
+              {/* Seamless Dark Overlays */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#021430]/95 via-[#021430]/80 to-[#021430]/50" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#021430] via-transparent to-[#021430]/60" />
             </div>
@@ -188,7 +188,7 @@ export default function Hero() {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none z-[1]" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#FFB800]/10 rounded-full blur-3xl pointer-events-none z-[1]" />
 
-        {/* Content Container - with generous py so buttons never get cut off */}
+        {/* Content Container - generous padding so buttons and text are 100% visible */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 sm:py-20 lg:py-24 w-full">
           <div className="max-w-3xl space-y-6 text-left">
             {/* 1. Tag Highlight Badge */}
@@ -203,7 +203,7 @@ export default function Hero() {
               </span>
             </div>
 
-            {/* 2. Main Title with gradient highlight */}
+            {/* 2. Main Title with gradient accent */}
             <h1
               key={`title-${currentSlide}`}
               className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none text-white uppercase font-sans"
@@ -271,41 +271,47 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* 5. Trust Features Row - Border top line like Sithisha */}
+            {/* 5. Real Trust Features Row - NO FAKE RATINGS, only real platform values */}
             <div className="pt-6 border-t border-white/15 flex flex-wrap gap-6 text-xs font-semibold text-blue-100">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#FFB800] shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-[#FFB800] shrink-0" />
                 <span>
                   {isTa
-                    ? '100% அசல் தரம்'
+                    ? 'சரிபார்க்கப்பட்ட இலங்கை வணிகர்கள்'
                     : isSi
-                    ? '100% විශ්වාසනීය'
-                    : '100% Authentic Quality'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Globe2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                <span>
-                  {isTa
-                    ? 'சர்வதேச ஏற்றுமதி'
-                    : isSi
-                    ? 'ගෝලීය අපනයනය'
-                    : 'Direct Global Shipping'}
+                    ? 'තහවුරු කළ දේශීය වෙළඳුන්'
+                    : 'Verified Ceylon Merchants'}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Truck className="w-5 h-5 text-[#FFB800] shrink-0" />
                 <span>
                   {isTa
-                    ? 'வேகமான விநியோகம்'
+                    ? '25 மாவட்டங்களுக்கும் டெலிவரி'
                     : isSi
-                    ? 'වේගවත් බෙදාහැරීම'
-                    : 'Fast Islandwide Delivery'}
+                    ? 'සියලු දිස්ත්‍රික්ක වෙත බෙදාහැරීම'
+                    : 'Islandwide Delivery (All 25 Districts)'}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-[#FFB800] fill-[#FFB800] shrink-0" />
-                <span>4.9 / 5 Rating</span>
+                <Globe2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <span>
+                  {isTa
+                    ? 'சர்வதேச நேரடி ஏற்றுமதி'
+                    : isSi
+                    ? 'ගෝලීය අපනයන සේවාව'
+                    : 'Direct Worldwide Export'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[#FFB800] shrink-0" />
+                <span>
+                  {isTa
+                    ? 'சமூக வவுச்சர்கள் & மொத்த விலை'
+                    : isSi
+                    ? 'ප්‍රජා වවුචර් සහ තොග මිල'
+                    : 'Community Vouchers & Wholesale'}
+                </span>
               </div>
             </div>
           </div>
@@ -327,7 +333,7 @@ export default function Hero() {
           <ChevronRight className="w-5 h-5 text-[#FFB800]" />
         </button>
 
-        {/* Slide Indicators on Bottom Right - exactly like Sithisha */}
+        {/* Slide Indicators on Bottom Right - Sithisha style */}
         <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 flex items-center gap-2 z-20">
           {slides.map((_, idx) => (
             <button
@@ -344,41 +350,41 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* Sithisha-Style Running Marquee Ticker Bar */}
+      {/* Sithisha-Style Running Marquee Ticker Bar with Ventershop Real Value Props */}
       <div className="w-full bg-[#011638] text-[#FFB800] py-3.5 overflow-hidden border-y border-blue-900/60 shadow-inner">
         <div className="flex whitespace-nowrap animate-marquee">
           {[1, 2].map((group) => (
             <React.Fragment key={group}>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>CEYLON SPICES & TEA</span>
+                <span>CEYLON SPICES & TEA EXPORTS</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>FRESH GROCERIES</span>
+                <span>FRESH DAILY GROCERIES</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>RANI ANIMAL FEED</span>
+                <span>OFFICIAL RANI ANIMAL FEED</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>VIRTUAL MERCHANT SHOPS</span>
+                <span>VERIFIED MERCHANT STORES</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>DIRECT GLOBAL EXPORT</span>
+                <span>ISLANDWIDE DELIVERY (ALL 25 DISTRICTS)</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>ISLANDWIDE FAST DELIVERY</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>100% GENUINE PRODUCTS</span>
+                <span>DIRECT GLOBAL EXPORT SHIPPING</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
               <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
                 <span>V2CC COMMUNITY VOUCHERS</span>
+                <span className="text-[#FFB800]/50 text-base">•</span>
+              </div>
+              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
+                <span>WHOLESALE & BULK ORDERS</span>
                 <span className="text-[#FFB800]/50 text-base">•</span>
               </div>
             </React.Fragment>
