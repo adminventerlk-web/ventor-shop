@@ -18,7 +18,9 @@ import {
   Clock,
   Menu,
   X,
+  Sparkles,
 } from 'lucide-react';
+import BrandLogo from '@/components/common/BrandLogo';
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -40,24 +42,24 @@ export default function AdminSidebar() {
   return (
     <>
       {/* ── MOBILE HEADER BAR (< lg) ── */}
-      <header className="lg:hidden w-full bg-[#101A2D] text-white p-4 flex items-center justify-between border-b border-[#1A2A4A] sticky top-0 z-40">
+      <header className="lg:hidden w-full bg-[#021838] text-white p-4 flex items-center justify-between border-b border-[#0052CC]/30 sticky top-0 z-40 shadow-md">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileDrawerOpen(true)}
-            className="p-2 bg-[#1A2A4A] hover:bg-[#24375d] rounded-xl text-white transition-colors"
+            className="p-2 bg-[#0052CC] hover:bg-[#003893] rounded-xl text-white transition-colors"
             aria-label="Open admin menu"
           >
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-[#E53935]" />
-            <span className="font-black text-xs tracking-wider uppercase font-mono">VENTERSHOP ADMIN</span>
+            <ShieldCheck className="w-5 h-5 text-[#FFB800]" />
+            <span className="font-black text-xs tracking-wider uppercase font-mono text-white">VENTERSHOP ADMIN</span>
           </div>
         </div>
 
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider bg-[#1A2A4A] hover:bg-[#E53935] py-1.5 px-3 rounded-lg transition-colors text-white"
+          className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider bg-[#0052CC] hover:bg-[#FFB800] hover:text-[#021838] py-1.5 px-3 rounded-lg transition-colors text-white shadow-xs"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Store</span>
@@ -68,23 +70,23 @@ export default function AdminSidebar() {
       {mobileDrawerOpen && (
         <>
           <div
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity lg:hidden"
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs transition-opacity lg:hidden"
             onClick={() => setMobileDrawerOpen(false)}
           />
-          <div className="fixed top-0 left-0 bottom-0 z-50 w-72 bg-[#1A2A4A] text-white flex flex-col justify-between shadow-2xl animate-slide-in-left lg:hidden">
+          <div className="fixed top-0 left-0 bottom-0 z-50 w-72 bg-[#021838] text-white flex flex-col justify-between shadow-2xl border-r border-[#0052CC]/30 lg:hidden">
             <div>
-              {/* Drawer Top */}
-              <div className="p-4 border-b border-[#101A2D] bg-[#101A2D] flex items-center justify-between">
+              {/* Drawer Top Header */}
+              <div className="p-4 border-b border-[#0052CC]/30 bg-[#010e24] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-[#E53935]" />
+                  <ShieldCheck className="w-5 h-5 text-[#FFB800]" />
                   <div>
-                    <h2 className="font-black text-xs tracking-widest uppercase">VENTERSHOP</h2>
-                    <span className="text-[9px] text-gray-400 font-extrabold uppercase">CONTROL PANEL</span>
+                    <h2 className="font-black text-xs tracking-widest uppercase text-white">VENTERSHOP</h2>
+                    <span className="text-[9px] text-[#FFB800] font-extrabold uppercase">CONTROL PANEL</span>
                   </div>
                 </div>
                 <button
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1.5 hover:bg-[#1A2A4A] rounded-full text-gray-400 hover:text-white"
+                  className="p-1.5 hover:bg-white/10 rounded-full text-gray-400 hover:text-white"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -93,13 +95,13 @@ export default function AdminSidebar() {
 
               {/* User Profile Card */}
               {user && (
-                <div className="p-4 border-b border-[#101A2D] bg-[#1A2A4A]/50 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-white text-[#1A2A4A] flex items-center justify-center font-black text-sm">
+                <div className="p-4 border-b border-[#0052CC]/30 bg-[#0052CC]/10 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#FFB800] text-[#021838] flex items-center justify-center font-black text-sm shadow-sm">
                     {user.firstName[0]}
                   </div>
                   <div className="min-w-0">
                     <p className="font-bold text-xs truncate leading-normal text-white">{user.firstName} {user.lastName}</p>
-                    <span className="bg-red-500/20 text-[#FF8A80] text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider inline-block mt-0.5">
+                    <span className="bg-[#FFB800]/20 text-[#FFB800] text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider inline-block mt-0.5">
                       {user.role}
                     </span>
                   </div>
@@ -117,11 +119,11 @@ export default function AdminSidebar() {
                       onClick={() => setMobileDrawerOpen(false)}
                       className={`flex items-center gap-3 py-2.5 px-3.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
                         isActive
-                          ? 'bg-[#E53935] text-white shadow-xs'
-                          : 'text-gray-300 hover:text-white hover:bg-[#101A2D]/40'
+                          ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
+                          : 'text-gray-300 hover:text-white hover:bg-white/5'
                       }`}
                     >
-                      {link.icon}
+                      <span className={isActive ? 'text-[#FFB800]' : 'text-gray-400'}>{link.icon}</span>
                       <span>{link.label}</span>
                     </Link>
                   );
@@ -130,18 +132,18 @@ export default function AdminSidebar() {
             </div>
 
             {/* Footer actions */}
-            <div className="p-4 border-t border-[#101A2D] space-y-2 bg-[#101A2D]">
+            <div className="p-4 border-t border-[#0052CC]/30 space-y-2 bg-[#010e24]">
               <Link
                 href="/"
                 onClick={() => setMobileDrawerOpen(false)}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-gray-300 hover:text-white bg-[#1A2A4A] transition-colors"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-gray-200 hover:text-white bg-[#0052CC] transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Exit to Store</span>
               </Link>
               <button
                 onClick={() => { setMobileDrawerOpen(false); logoutUser(); }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-[#FF8A80] hover:bg-red-500/20 transition-colors border border-red-500/30"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/30 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Log Out</span>
@@ -152,26 +154,30 @@ export default function AdminSidebar() {
       )}
 
       {/* ── DESKTOP SIDEBAR (lg+) ── */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-[#1A2A4A] text-white flex-col justify-between border-r border-[#101A2D] min-h-screen sticky top-0">
+      <aside className="hidden lg:flex w-64 shrink-0 bg-[#021838] text-white flex-col justify-between border-r border-[#0052CC]/30 min-h-screen sticky top-0 shadow-2xl">
         <div>
           {/* Brand Header */}
-          <div className="p-6 border-b border-[#101A2D] bg-[#101A2D] flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-[#E53935]" />
+          <div className="p-5 border-b border-[#0052CC]/30 bg-[#010e24] flex items-center gap-3">
+            <div className="p-1.5 bg-[#0052CC] rounded-xl text-[#FFB800] shadow-sm">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
             <div>
-              <h1 className="font-black text-sm tracking-widest uppercase">VENTERSHOP</h1>
-              <span className="text-[9px] text-gray-400 font-extrabold uppercase tracking-widest">CONTROL PANEL</span>
+              <h1 className="font-black text-sm tracking-widest uppercase text-white font-sans">VENTERSHOP</h1>
+              <span className="text-[9px] text-[#FFB800] font-black uppercase tracking-widest flex items-center gap-1">
+                <Sparkles className="w-2.5 h-2.5" /> Admin Panel
+              </span>
             </div>
           </div>
 
           {/* User Card */}
           {user && (
-            <div className="p-4 border-b border-[#101A2D] bg-[#1A2A4A]/50 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-white text-[#1A2A4A] flex items-center justify-center font-black text-sm">
+            <div className="p-4 border-b border-[#0052CC]/30 bg-[#0052CC]/10 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#FFB800] text-[#021838] flex items-center justify-center font-black text-sm shadow-sm">
                 {user.firstName[0]}
               </div>
               <div className="min-w-0">
-                <p className="font-bold text-xs truncate leading-normal">{user.firstName} {user.lastName}</p>
-                <span className="bg-red-500/20 text-[#FF8A80] text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider block mt-0.5">
+                <p className="font-bold text-xs truncate leading-normal text-white">{user.firstName} {user.lastName}</p>
+                <span className="bg-[#FFB800]/20 text-[#FFB800] text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider inline-block mt-0.5 border border-[#FFB800]/30">
                   {user.role}
                 </span>
               </div>
@@ -179,20 +185,20 @@ export default function AdminSidebar() {
           )}
 
           {/* Menu Navigation */}
-          <nav className="p-4 space-y-1">
+          <nav className="p-3 space-y-1">
             {links.map((link, idx) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={idx}
                   href={link.href}
-                  className={`flex items-center gap-3 py-2.5 px-4 rounded-lg text-xs font-bold transition-all uppercase tracking-wider ${
+                  className={`flex items-center gap-3 py-2.5 px-3.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
                     isActive
-                      ? 'bg-[#E53935] text-white shadow-xs'
-                      : 'text-gray-300 hover:text-white hover:bg-[#101A2D]/40'
+                      ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {link.icon}
+                  <span className={isActive ? 'text-[#FFB800]' : 'text-gray-400'}>{link.icon}</span>
                   <span>{link.label}</span>
                 </Link>
               );
@@ -201,17 +207,17 @@ export default function AdminSidebar() {
         </div>
 
         {/* Footer controls */}
-        <div className="p-4 border-t border-[#101A2D] space-y-1 bg-[#101A2D]/20">
+        <div className="p-4 border-t border-[#0052CC]/30 space-y-1.5 bg-[#010e24]">
           <Link
             href="/"
-            className="flex items-center gap-3 py-2 px-4 rounded-lg text-xs font-bold uppercase tracking-wider text-gray-300 hover:text-white hover:bg-[#101A2D]/40 transition-colors"
+            className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-[#0052CC] hover:bg-[#003893] transition-colors shadow-sm"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 text-[#FFB800]" />
             <span>Exit to Store</span>
           </Link>
           <button
             onClick={logoutUser}
-            className="w-full flex items-center gap-3 py-2 px-4 text-left rounded-lg text-xs font-bold uppercase tracking-wider text-[#FF8A80] hover:bg-red-500/10 transition-colors"
+            className="w-full flex items-center gap-3 py-2 px-4 text-left rounded-xl text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Log Out</span>

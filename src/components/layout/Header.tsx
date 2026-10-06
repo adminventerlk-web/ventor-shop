@@ -76,10 +76,11 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm text-xs font-semibold">
       
-      {/* 1. TOP MAROON NOTIFICATION BAR */}
-      <div className="w-full bg-[#801414] py-2 px-4 sm:px-8 text-white">
+      {/* 1. TOP ROYAL BLUE & GOLD NOTIFICATION BAR */}
+      <div className="w-full bg-[#022B69] py-2 px-4 sm:px-8 text-white">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs gap-1">
           <div className="flex items-center gap-2 text-white/95 font-medium">
+            <span className="text-amber-300 font-bold">✨</span>
             <span>
               {language === 'ta'
                 ? 'தொழில்முனைவோரை வலுப்படுத்துதல் • சந்தைகளை இணைத்தல் • ஒன்றாக வளர்வது'
@@ -106,18 +107,18 @@ export default function Header() {
               </>
             )}
             <Link href="/contact" className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
-              <Headphones className="w-3.5 h-3.5" />
+              <Headphones className="w-3.5 h-3.5 text-amber-300" />
               <span>Help & Support</span>
             </Link>
             <span className="text-white/40">|</span>
             {user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') ? (
               <Link href="/admin/orders" className="hover:text-amber-200 transition-colors flex items-center gap-1.5 font-bold">
-                <Package className="w-3.5 h-3.5" />
+                <Package className="w-3.5 h-3.5 text-amber-300" />
                 <span>Store Orders</span>
               </Link>
             ) : (
               <Link href="/dashboard/orders" className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5" />
+                <Package className="w-3.5 h-3.5 text-amber-300" />
                 <span>Track Order</span>
               </Link>
             )}
@@ -126,21 +127,21 @@ export default function Header() {
               <Globe className="w-3.5 h-3.5 text-amber-400" />
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'en' ? 'bg-amber-400 text-[#801414] font-black' : 'hover:text-white'}`}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'en' ? 'bg-amber-400 text-[#022B69] font-black' : 'hover:text-white'}`}
               >
                 EN
               </button>
               <span className="text-white/30">|</span>
               <button
                 onClick={() => setLanguage('ta')}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'ta' ? 'bg-amber-400 text-[#801414] font-black' : 'hover:text-white'}`}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'ta' ? 'bg-amber-400 text-[#022B69] font-black' : 'hover:text-white'}`}
               >
                 தமிழ்
               </button>
               <span className="text-white/30">|</span>
               <button
                 onClick={() => setLanguage('si')}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'si' ? 'bg-amber-400 text-[#801414] font-black' : 'hover:text-white'}`}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'si' ? 'bg-amber-400 text-[#022B69] font-black' : 'hover:text-white'}`}
               >
                 සිංහල
               </button>
@@ -186,11 +187,11 @@ export default function Header() {
                   href={item.href}
                   className={`flex items-center gap-1.5 py-0.5 tracking-wider transition-colors ${
                     isActive
-                      ? 'text-[#801414] font-black border-b-2 border-[#801414]'
-                      : 'text-gray-700 hover:text-[#801414]'
+                      ? 'text-[#0052CC] font-black border-b-2 border-[#0052CC]'
+                      : 'text-gray-700 hover:text-[#0052CC]'
                   }`}
                 >
-                  {item.isHome && <Home className={`w-3.5 h-3.5 ${isActive ? 'text-[#801414]' : 'text-gray-500'}`} />}
+                  {item.isHome && <Home className={`w-3.5 h-3.5 ${isActive ? 'text-[#0052CC]' : 'text-gray-500'}`} />}
                   <span>{item.label}</span>
                 </Link>
               );
@@ -209,11 +210,11 @@ export default function Header() {
                 placeholder="Search for products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#F5F5F5] text-gray-800 text-xs pl-3 pr-8 py-2 rounded-full border border-gray-250 focus:border-[#801414] focus:bg-white outline-none transition-all font-semibold"
+                className="w-full bg-[#F5F8FF] text-gray-800 text-xs pl-3 pr-8 py-2 rounded-full border border-blue-200 focus:border-[#0052CC] focus:bg-white outline-none transition-all font-semibold"
               />
               <button
                 type="submit"
-                className="absolute right-2.5 text-gray-400 hover:text-[#801414] cursor-pointer"
+                className="absolute right-2.5 text-gray-400 hover:text-[#0052CC] cursor-pointer"
                 aria-label="Search"
               >
                 <Search className="w-3.5 h-3.5" />
@@ -226,7 +227,7 @@ export default function Header() {
                 <div>
                   <button
                     onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                    className="flex flex-col items-center text-gray-700 hover:text-[#801414] transition-colors px-1 cursor-pointer"
+                    className="flex flex-col items-center text-gray-700 hover:text-[#0052CC] transition-colors px-1 cursor-pointer"
                   >
                     <User className="w-5 h-5 text-gray-700" />
                     <span className="text-[10px] font-bold truncate max-w-[60px]">
@@ -241,7 +242,7 @@ export default function Header() {
                           {user.firstName} {user.lastName}
                         </p>
                         <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-[9px] bg-red-50 text-[#801414] rounded-full font-bold">
+                        <span className="inline-block mt-1 px-2 py-0.5 text-[9px] bg-blue-50 text-[#0052CC] rounded-full font-bold">
                           {user.customerType || 'CUSTOMER'}
                         </span>
                       </div>
@@ -250,9 +251,9 @@ export default function Header() {
                           <Link
                             href="/admin"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-red-700 hover:bg-red-50 font-bold"
+                            className="flex items-center gap-2 px-4 py-2 text-blue-700 hover:bg-blue-50 font-bold"
                           >
-                            <ShieldCheck className="w-4 h-4 text-red-600" />
+                            <ShieldCheck className="w-4 h-4 text-[#0052CC]" />
                             <span>Admin Control Panel</span>
                           </Link>
                           <Link
@@ -305,7 +306,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex flex-col items-center text-gray-700 hover:text-[#801414] transition-colors px-1"
+                  className="flex flex-col items-center text-gray-700 hover:text-[#0052CC] transition-colors px-1"
                 >
                   <User className="w-5 h-5 text-gray-700" />
                   <span className="text-[10px] font-bold">Account</span>
@@ -316,11 +317,11 @@ export default function Header() {
             {/* Cart Button */}
             <Link
               href="/cart"
-              className="flex items-center gap-1.5 text-gray-700 hover:text-[#801414] transition-colors px-1"
+              className="flex items-center gap-1.5 text-gray-700 hover:text-[#0052CC] transition-colors px-1"
             >
               <div className="relative">
                 <ShoppingCart className="w-5 h-5 text-gray-700" />
-                <span className="absolute -top-1.5 -right-2 bg-[#801414] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 bg-[#0052CC] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               </div>

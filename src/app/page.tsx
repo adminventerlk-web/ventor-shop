@@ -43,37 +43,37 @@ export default function HomePage() {
       </Suspense>
 
       {/* 2. Hero Banner Section + Location Strip */}
-      <Suspense fallback={<div className="h-[450px] bg-[#FCFAF7] animate-pulse" />}>
+      <Suspense fallback={<div className="h-[450px] bg-[#021838] animate-pulse" />}>
         <Hero />
       </Suspense>
 
-      {/* 3. Dual Category Showcase (Groceries & Rani Animal Feed) */}
-      <Suspense fallback={<div className="h-72 bg-white animate-pulse" />}>
-        <DualFeatureCards />
-      </Suspense>
-
-      {/* 4. Virtual Shops / Shop Categories & Foreign Buyers Banner */}
-      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse" />}>
-        <VirtualShops />
-      </Suspense>
-
-      {/* 5. Shop By Category (8 Categories Grid) */}
-      <Suspense fallback={<div className="h-48 bg-white animate-pulse" />}>
-        <ShopByCategory />
-      </Suspense>
-
-      {/* 6. Secondary Promotional Banners */}
-      <Suspense fallback={<div className="h-44 bg-white animate-pulse" />}>
-        <PromoBanners />
-      </Suspense>
-
-      {/* 7. Featured Products (6 Items with badges & prices) */}
+      {/* 3. Featured Products Showcase (Moved right under Hero as requested) */}
       <Suspense fallback={<div className="h-96 bg-white animate-pulse" />}>
         <FeaturedProducts />
       </Suspense>
 
+      {/* 4. Dual Category Showcase (Groceries & Rani Animal Feed) */}
+      <Suspense fallback={<div className="h-72 bg-white animate-pulse" />}>
+        <DualFeatureCards />
+      </Suspense>
+
+      {/* 5. Virtual Shops / Shop Categories & Foreign Buyers Banner */}
+      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse" />}>
+        <VirtualShops />
+      </Suspense>
+
+      {/* 6. Shop By Category (8 Categories Grid) */}
+      <Suspense fallback={<div className="h-48 bg-white animate-pulse" />}>
+        <ShopByCategory />
+      </Suspense>
+
+      {/* 7. Secondary Promotional Banners */}
+      <Suspense fallback={<div className="h-44 bg-white animate-pulse" />}>
+        <PromoBanners />
+      </Suspense>
+
       {/* 8. Why Shop With VenterShop? Banner */}
-      <Suspense fallback={<div className="h-40 bg-[#FFF8F0] animate-pulse" />}>
+      <Suspense fallback={<div className="h-40 bg-blue-50 animate-pulse" />}>
         <WhyShopBanner />
       </Suspense>
 
