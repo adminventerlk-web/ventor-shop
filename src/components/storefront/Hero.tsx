@@ -355,8 +355,8 @@ export default function Hero() {
           <ChevronRight className="w-5 h-5 text-[#FFB800]" />
         </button>
 
-        {/* Slide Indicators on Bottom Right - Sithisha style */}
-        <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 flex items-center gap-2 z-20">
+        {/* Slide Indicators Centered at Bottom */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20 bg-black/30 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
           {slides.map((_, idx) => (
             <button
               key={idx}
