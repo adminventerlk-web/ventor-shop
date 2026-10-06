@@ -35,7 +35,7 @@ export default function Hero() {
       badgeSi: 'සුපිරි වෙළඳසැලෙන්ම සෘජුව',
       titleEn: 'FRESH DAILY GROCERIES & FOOD',
       titleTa: 'புதிய தினசரி மளிகைப் பொருட்கள்',
-      titleSi: 'නැවුම් එදිනෙදා ද්‍රව්‍ය සහ ආහාර',
+      titleSi: 'னக புதிய உணவுப் பொருட்கள்',
       subtitleEn: 'Farm fresh essentials, household items & staple grains delivered straight to your home.',
       subtitleTa: 'புதிய உணவுப் பொருட்கள் மற்றும் வீட்டுத் தேவைகள் உங்கள் வீட்டிற்கே விரைவாக விநியோகம்.',
       subtitleSi: 'නැවුම් අත්‍යවශ්‍ය ද්‍රව්‍ය නිවසටම ගෙනැවිත් දෙනු ලැබේ.',
@@ -95,36 +95,37 @@ export default function Hero() {
   };
 
   return (
-    <div className="w-full bg-[#021430] relative overflow-hidden select-none m-0 p-0 leading-none">
+    <div className="w-full bg-[#021430] relative overflow-hidden select-none">
       
-      {/* Main Slideshow Container with tight bounds */}
+      {/* Slideshow Area */}
       <div
-        className="relative min-h-[460px] sm:min-h-[500px] lg:min-h-[540px] flex items-center justify-center p-0 m-0"
+        className="relative min-h-[440px] sm:min-h-[480px] lg:min-h-[500px] flex items-center justify-center overflow-hidden"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Background Images Layer */}
+        {/* Background Images Layer with Full Dark Contrast Overlay */}
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-105 pointer-events-none'
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
             <img
               src={slide.image}
               alt={slide.titleEn}
-              className="w-full h-full object-cover object-center filter brightness-90 transform transition-transform duration-7000 ease-linear scale-105"
+              className="w-full h-full object-cover object-center filter brightness-90"
             />
 
-            {/* Premium Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#021430]/95 via-[#021838]/85 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#021430] via-transparent to-[#021430]/60" />
+            {/* Consistent dark overlay across entire slide height - NO raw image gaps */}
+            <div className="absolute inset-0 bg-[#021430]/80" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#021430] via-[#021430]/90 to-[#021430]/75" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#021430]/90 via-transparent to-[#021430]" />
           </div>
         ))}
 
         {/* Slide Counter Top Right */}
-        <div className="absolute top-5 right-6 z-30 hidden sm:flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
+        <div className="absolute top-4 right-6 z-30 hidden sm:flex items-center gap-3 bg-black/50 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
           <div className="w-2 h-2 rounded-full bg-[#FFB800] animate-ping" />
           <span className="text-[11px] font-black text-amber-300 tracking-wider">
             SLIDE 0{currentSlide + 1} / 0{slides.length}
@@ -135,13 +136,13 @@ export default function Hero() {
             className="text-white/80 hover:text-white transition-colors"
             title={isPaused ? "Resume Auto-slide" : "Pause Auto-slide"}
           >
-            {isPaused ? <Play className="w-3.5 h-3.5 text-amber-300" /> : <Pause className="w-3.5 h-3.5" />}
+            {isPaused ? <Play className="w-3.5 h-3.5 text-amber-300" /> : <Pause className="w-3.5 h-3.5 text-white" />}
           </button>
         </div>
 
-        {/* Full-width Content Container (Clean, centered left layout) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full">
-          <div className="max-w-3xl space-y-5 text-left text-white leading-normal">
+        {/* Hero Content Box */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
+          <div className="max-w-3xl space-y-4 text-left text-white">
             
             {/* Category Navigation Pills */}
             <div className="flex flex-wrap items-center gap-2">
@@ -161,7 +162,7 @@ export default function Hero() {
             </div>
 
             {/* Tag Highlight Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0052CC] text-white font-black text-xs uppercase tracking-wider shadow-lg border border-blue-400/40">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0052CC] text-white font-black text-xs uppercase tracking-wider shadow-lg border border-blue-400/40">
               <Sparkles className="w-3.5 h-3.5 text-[#FFB800]" />
               <span>{slides[currentSlide].tag}</span>
             </div>
@@ -185,7 +186,7 @@ export default function Hero() {
             </div>
 
             {/* Feature Checklist */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs font-semibold text-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-gray-200 pt-1">
               <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/15 shadow-sm">
                 <CheckCircle2 className="w-4 h-4 text-[#FFB800] shrink-0" />
                 <span>{isTa ? '100% அசல் தர உத்தரவாதம்' : isSi ? '100% විශ්වාසනීය නිෂ්පාදන' : '100% Genuine Quality Goods'}</span>
@@ -205,21 +206,21 @@ export default function Hero() {
             </div>
 
             {/* Dual Action CTAs */}
-            <div className="flex flex-wrap items-center gap-3 pt-3">
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href="#featured-products"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-xs sm:text-sm font-black text-[#021430] bg-[#FFB800] hover:bg-[#FFA500] transition-all shadow-xl transform hover:-translate-y-1 active:scale-95 cursor-pointer uppercase tracking-wider"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-xs sm:text-sm font-black text-[#021430] bg-[#FFB800] hover:bg-[#FFA500] transition-all shadow-xl transform hover:-translate-y-1 active:scale-95 cursor-pointer uppercase tracking-wider"
               >
-                <ShoppingCart className="w-4.5 h-4.5 text-[#021430]" />
+                <ShoppingCart className="w-4 h-4 text-[#021430]" />
                 <span>{isTa ? 'தயாரிப்புகளைப் பார்க்க' : isSi ? 'නිෂ්පාදන බලන්න' : 'Shop Featured Products'}</span>
                 <ArrowRight className="w-4 h-4 text-[#021430]" />
               </Link>
 
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0052CC] hover:bg-[#003893] transition-all shadow-lg border border-blue-400/40 transform hover:-translate-y-1 active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0052CC] hover:bg-[#003893] transition-all shadow-lg border border-blue-400/40 transform hover:-translate-y-1 active:scale-95 cursor-pointer"
               >
-                <Store className="w-4.5 h-4.5 text-amber-300" />
+                <Store className="w-4 h-4 text-amber-300" />
                 <span>{isTa ? 'கடைகளை ஆராய்க' : isSi ? 'සාප්පු ගවේෂණය කරන්න' : 'Browse All Shops'}</span>
               </Link>
             </div>
@@ -229,29 +230,29 @@ export default function Hero() {
         {/* Carousel Arrow Controls */}
         <button
           onClick={handlePrev}
-          className="absolute left-3 sm:left-6 z-30 p-3 rounded-full bg-black/50 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
+          className="absolute left-3 sm:left-6 z-30 p-2.5 rounded-full bg-black/50 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
           aria-label="Previous Slide"
         >
           <ChevronLeft className="w-5 h-5 text-[#FFB800]" />
         </button>
         <button
           onClick={handleNext}
-          className="absolute right-3 sm:right-6 z-30 p-3 rounded-full bg-black/50 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
+          className="absolute right-3 sm:right-6 z-30 p-2.5 rounded-full bg-black/50 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
           aria-label="Next Slide"
         >
           <ChevronRight className="w-5 h-5 text-[#FFB800]" />
         </button>
 
         {/* Slide Indicator Dots */}
-        <div className="absolute bottom-4 left-0 right-0 z-30 flex justify-center items-center gap-2.5">
+        <div className="absolute bottom-3 left-0 right-0 z-30 flex justify-center items-center gap-2">
           {slides.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
-              className={`h-2.5 rounded-full transition-all cursor-pointer ${
+              className={`h-2 rounded-full transition-all cursor-pointer ${
                 idx === currentSlide
-                  ? 'w-10 bg-[#FFB800] shadow-lg border border-amber-200'
-                  : 'w-2.5 bg-white/40 hover:bg-white/80'
+                  ? 'w-8 bg-[#FFB800] shadow-lg border border-amber-200'
+                  : 'w-2 bg-white/40 hover:bg-white/80'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -259,8 +260,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Zero Gap Location Strip directly attached to Hero */}
-      <div className="w-full bg-[#0052CC] text-white py-3 px-4 text-center border-t border-blue-400/30 m-0 leading-normal">
+      {/* Seamless Location Strip */}
+      <div className="w-full bg-[#0052CC] text-white py-2.5 px-4 text-center border-t border-blue-400/40">
         <p className="text-xs sm:text-sm font-bold flex items-center justify-center gap-2 tracking-wide">
           <MapPin className="w-4 h-4 text-[#FFB800] shrink-0" />
           <span>{isTa ? 'இலங்கை முழுவதும் இல்லங்களுக்கு விரைவான விநியோகம் & சர்வதேச ஏற்றுமதி.' : isSi ? 'ශ්‍රී ලංකාව පුරාම නිවසටම බෙදාහැරීම සහ ගෝලීය අපනයන.' : 'Fast Delivery Across All 25 Districts in Sri Lanka & Direct Global Export.'}</span>
