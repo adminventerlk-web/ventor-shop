@@ -89,7 +89,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="w-full relative overflow-hidden select-none" style={{ margin: 0, padding: 0, lineHeight: 0, fontSize: 0, background: '#021430' }}>
+    <section className="w-full relative overflow-hidden select-none" style={{ margin: 0, marginBottom: '-1px', padding: 0, lineHeight: 0, fontSize: 0, background: '#021430' }}>
       
       {/* Slideshow Area - No gaps, no borders, no margins */}
       <div className="relative overflow-hidden" style={{ minHeight: '480px', lineHeight: 'normal', fontSize: '14px' }}>
