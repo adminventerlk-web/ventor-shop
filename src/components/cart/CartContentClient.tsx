@@ -206,7 +206,7 @@ export default function CartContentClient() {
   if (!loading && (!calcResult || calcResult.items.length === 0)) {
     return (
       <div className="max-w-4xl mx-auto py-20 px-4 text-center space-y-6">
-        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center border border-red-100 mx-auto text-[#801414]">
+        <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 mx-auto text-[#0052CC]">
           <ShoppingBag className="w-10 h-10" />
         </div>
         <div className="space-y-2">
@@ -221,7 +221,7 @@ export default function CartContentClient() {
         </div>
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#801414] hover:bg-[#630f0f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-md transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#0052CC] hover:bg-[#003D99] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-md hover:shadow-lg transition-all"
         >
           <span>{language === 'ta' ? 'ஷாப்பிங் தொடரவும்' : 'Continue Shopping'}</span>
           <ArrowRight className="w-4 h-4" />
@@ -234,7 +234,7 @@ export default function CartContentClient() {
   if (loading || !calcResult) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="inline-block w-8 h-8 border-4 border-[#801414] border-t-transparent rounded-full animate-spin mb-3" />
+        <div className="inline-block w-8 h-8 border-4 border-[#0052CC] border-t-transparent rounded-full animate-spin mb-3" />
         <p className="text-xs text-gray-500 font-bold">Calculating cart totals...</p>
       </div>
     );
@@ -257,7 +257,7 @@ export default function CartContentClient() {
         </div>
         <Link
           href="/shop"
-          className="text-xs text-[#801414] hover:underline font-bold flex items-center gap-1"
+          className="text-xs text-[#0052CC] hover:underline font-bold flex items-center gap-1"
         >
           <span>← Continue Shopping</span>
         </Link>
@@ -285,7 +285,7 @@ export default function CartContentClient() {
                       {item.name}
                     </h3>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-sm font-black text-[#801414]">
+                      <span className="text-sm font-black text-[#0052CC]">
                         {formatCurrency(item.finalPrice)}
                       </span>
                       {hasDiscount && (
@@ -411,7 +411,7 @@ export default function CartContentClient() {
               {/* Total Row */}
               <div className="flex justify-between items-baseline pt-4 border-t border-gray-100">
                 <span className="text-sm font-black text-gray-900">{t('cartTotal')}</span>
-                <span className="text-2xl font-serif font-black text-[#801414]">
+                <span className="text-2xl font-serif font-black text-[#0052CC]">
                   {formatCurrency(calcResult.total)}
                 </span>
               </div>
@@ -448,12 +448,12 @@ export default function CartContentClient() {
                       setVoucherInput(e.target.value.toUpperCase());
                       setVoucherErrorMsg(null);
                     }}
-                    className="flex-grow px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-bold uppercase tracking-wider"
+                    className="flex-grow px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-bold uppercase tracking-wider"
                     disabled={applyingVoucher}
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#801414] hover:bg-[#630f0f] text-white text-xs font-bold rounded-lg transition-colors disabled:bg-gray-400"
+                    className="px-4 py-2 bg-[#0052CC] hover:bg-[#003D99] text-white text-xs font-bold rounded-lg transition-colors disabled:bg-gray-400 cursor-pointer"
                     disabled={applyingVoucher || !voucherInput.trim()}
                   >
                     {applyingVoucher ? 'Applying...' : 'Apply'}

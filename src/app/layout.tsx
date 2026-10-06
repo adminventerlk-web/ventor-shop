@@ -88,7 +88,6 @@ export const metadata: Metadata = {
     icon: [
       { url: "/icon.png", sizes: "512x512", type: "image/png" },
       { url: "/favicon.ico", sizes: "32x32" },
-      { url: "/images/logo.svg", type: "image/svg+xml" },
     ],
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
@@ -101,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     '@type': 'Organization',
     name: 'VENTERSHOP',
     url: baseUrl,
-    logo: `${baseUrl}/images/logo.svg`,
+    logo: `${baseUrl}/images/logo.png`,
     description: 'Premier multi-category e-commerce and international export platform.',
     contactPoint: {
       '@type': 'ContactPoint',

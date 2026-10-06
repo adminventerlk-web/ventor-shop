@@ -79,7 +79,7 @@ export default function ProductCard({ product }: { product: IProductData }) {
   const formattedCrossedPrice = crossedOutPrice ? formatCurrency(crossedOutPrice) : null;
 
   return (
-    <div className="group bg-white rounded-2xl border border-gray-200 hover:border-[#801414]/40 hover:shadow-lg overflow-hidden flex flex-col justify-between h-full relative transition-all duration-300 p-3.5">
+    <div className="group bg-white rounded-2xl border border-gray-200 hover:border-[#0052CC]/40 hover:shadow-lg overflow-hidden flex flex-col justify-between h-full relative transition-all duration-300 p-3.5">
       
       {/* Top Feature Badges */}
       <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
@@ -94,7 +94,7 @@ export default function ProductCard({ product }: { product: IProductData }) {
           </span>
         )}
         {product.isFeatured && !product.isBestSeller && !product.isNewArrival && (
-          <span className="bg-[#801414] text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs">
+          <span className="bg-[#0052CC] text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs">
             Popular
           </span>
         )}
@@ -121,7 +121,7 @@ export default function ProductCard({ product }: { product: IProductData }) {
             SKU: {product.sku}
           </span>
           <Link href={`/product/${product.slug}`} className="block">
-            <h3 className="font-bold text-gray-900 hover:text-[#801414] text-xs sm:text-sm leading-snug line-clamp-2 transition-colors">
+            <h3 className="font-bold text-gray-900 hover:text-[#0052CC] text-xs sm:text-sm leading-snug line-clamp-2 transition-colors">
               {product.name}
             </h3>
           </Link>
@@ -135,7 +135,7 @@ export default function ProductCard({ product }: { product: IProductData }) {
         {/* Pricing & Add to cart button */}
         <div className="pt-2 space-y-2.5">
           <div className="flex flex-wrap items-baseline gap-1.5">
-            <span className="text-base sm:text-lg font-black text-[#801414]">
+            <span className="text-base sm:text-lg font-black text-[#0052CC]">
               {formattedPrice}
             </span>
             {formattedCrossedPrice && (
@@ -144,7 +144,7 @@ export default function ProductCard({ product }: { product: IProductData }) {
               </span>
             )}
             {priceBadge && (
-              <span className="inline-flex items-center gap-0.5 bg-red-50 text-[#801414] text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-red-100">
+              <span className="inline-flex items-center gap-0.5 bg-amber-50 text-[#D97706] text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-amber-200">
                 <Sparkles className="w-2.5 h-2.5" />
                 {priceBadge}
               </span>
@@ -158,8 +158,8 @@ export default function ProductCard({ product }: { product: IProductData }) {
               isOutOfStock
                 ? 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
                 : added
-                ? 'bg-[#1B5E20] text-white'
-                : 'border border-[#801414] text-[#801414] hover:bg-[#801414] hover:text-white'
+                ? 'bg-[#1B5E20] text-white shadow-sm'
+                : 'border border-[#0052CC] text-[#0052CC] hover:bg-[#0052CC] hover:text-white shadow-xs hover:shadow-md'
             }`}
           >
             {added ? (

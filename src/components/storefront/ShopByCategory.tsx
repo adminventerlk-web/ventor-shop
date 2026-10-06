@@ -78,7 +78,7 @@ function CategoryItem({ cat }: { cat: ICategoryItem }) {
       </div>
 
       {/* Category Label */}
-      <span className="text-[11px] font-bold text-gray-800 group-hover:text-[#801414] transition-colors whitespace-pre-line leading-tight mt-2 line-clamp-2">
+      <span className="text-[11px] font-bold text-gray-800 group-hover:text-[#0052CC] transition-colors whitespace-pre-line leading-tight mt-2 line-clamp-2">
         {cat.title}
       </span>
     </Link>
@@ -104,7 +104,7 @@ export default function ShopByCategory() {
         {/* Section Header with Navigation arrows and View All link */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#801414] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0052CC] animate-pulse" />
             <h2 className="text-base sm:text-lg font-black text-gray-900 uppercase tracking-widest font-sans">
               SHOP BY CATEGORY
             </h2>
@@ -113,7 +113,7 @@ export default function ShopByCategory() {
           <div className="flex items-center gap-3">
             <Link
               href="/shop"
-              className="text-xs font-bold text-[#801414] hover:underline flex items-center gap-1 hidden sm:flex"
+              className="text-xs font-bold text-[#0052CC] hover:underline flex items-center gap-1 hidden sm:flex"
             >
               <span>View All Categories</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -122,14 +122,14 @@ export default function ShopByCategory() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => handleScroll('left')}
-                className="w-8 h-8 rounded-full bg-white border border-gray-200 hover:border-[#801414] hover:text-[#801414] text-gray-600 flex items-center justify-center shadow-xs transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 hover:border-[#0052CC] hover:text-[#0052CC] text-gray-600 flex items-center justify-center shadow-xs transition-colors cursor-pointer"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleScroll('right')}
-                className="w-8 h-8 rounded-full bg-white border border-gray-200 hover:border-[#801414] hover:text-[#801414] text-gray-600 flex items-center justify-center shadow-xs transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 hover:border-[#0052CC] hover:text-[#0052CC] text-gray-600 flex items-center justify-center shadow-xs transition-colors cursor-pointer"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="w-4 h-4" />

@@ -51,30 +51,38 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#101A2D] text-white flex flex-col justify-center items-center p-4 font-sans antialiased text-xs font-semibold select-none">
+    <div className="min-h-screen bg-[#0B132B] text-white flex flex-col justify-center items-center p-4 font-sans antialiased text-xs font-semibold select-none relative overflow-hidden">
       
+      {/* Background Decorative Gradients */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#0052CC]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* Container Box */}
-      <div className="w-full max-w-md bg-[#1A2A4A] border border-white/10 p-8 rounded-3xl shadow-2xl space-y-6 relative overflow-hidden">
+      <div className="w-full max-w-md bg-[#1C2A4A]/90 backdrop-blur-md border border-white/10 p-8 sm:p-10 rounded-3xl shadow-2xl space-y-6 relative z-10">
         
         {/* Glow ambient accent */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#E53935]/20 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-44 h-44 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Header */}
-        <div className="text-center space-y-2 relative z-10">
-          <div className="w-14 h-14 bg-[#E53935]/15 border border-[#E53935]/30 rounded-2xl flex items-center justify-center mx-auto shadow-md">
-            <ShieldCheck className="w-8 h-8 text-[#E53935]" />
+        {/* Brand Logo & Header */}
+        <div className="text-center space-y-3 relative z-10 flex flex-col items-center">
+          <Link href="/" className="inline-block transition-transform hover:scale-105 mb-1">
+            <img
+              src="/images/logo.png"
+              alt="VENTERSHOP Logo"
+              className="h-16 w-auto object-contain drop-shadow-md"
+            />
+          </Link>
+          <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 text-amber-300 px-3 py-1 rounded-full shadow-xs">
+            <ShieldCheck className="w-4 h-4 text-amber-400" />
+            <span className="text-[10px] font-black uppercase tracking-widest">
+              ADMIN CONTROL PANEL PORTAL
+            </span>
           </div>
-          <h1 className="text-xl font-black tracking-widest uppercase text-white">
-            VENTERSHOP ADMIN
-          </h1>
-          <span className="text-[10px] text-gray-400 font-extrabold uppercase tracking-widest block">
-            CONTROL PANEL ACCESS PORTAL
-          </span>
         </div>
 
         {/* Error Alert */}
         {errorMsg && (
-          <div className="bg-red-500/10 border border-red-500/30 text-[#FF8A80] p-3.5 rounded-xl text-xs font-extrabold flex items-start gap-2">
+          <div className="bg-red-500/10 border border-red-500/30 text-red-300 p-3.5 rounded-xl text-xs font-extrabold flex items-start gap-2">
             <span>⚠️</span>
             <span>{errorMsg}</span>
           </div>
@@ -94,7 +102,7 @@ export default function AdminLoginPage() {
                 placeholder="Enter admin email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-[#101A2D] border border-white/10 rounded-xl outline-none focus:border-[#E53935] text-white font-bold text-xs"
+                className="w-full pl-10 pr-4 py-3 bg-[#0D182E] border border-white/10 rounded-xl outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 text-white font-bold text-xs transition-all"
               />
             </div>
           </div>
@@ -105,7 +113,7 @@ export default function AdminLoginPage() {
               <label className="text-gray-300 font-bold block">Password</label>
               <Link
                 href="/login"
-                className="text-[11px] font-bold text-red-400 hover:text-red-300 hover:underline"
+                className="text-[11px] font-bold text-amber-400 hover:text-amber-300 hover:underline"
               >
                 Reset via OTP?
               </Link>
@@ -118,7 +126,7 @@ export default function AdminLoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-10 py-3 bg-[#101A2D] border border-white/10 rounded-xl outline-none focus:border-[#E53935] text-white font-bold text-xs"
+                className="w-full pl-10 pr-10 py-3 bg-[#0D182E] border border-white/10 rounded-xl outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 text-white font-bold text-xs transition-all"
               />
               <button
                 type="button"
@@ -137,7 +145,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-[#E53935] hover:bg-[#c62828] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mt-2 disabled:bg-gray-600 cursor-pointer"
+            className="w-full py-3.5 bg-gradient-to-r from-[#F5A623] via-[#E69500] to-[#D97706] hover:brightness-110 active:scale-[0.99] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-50 cursor-pointer"
           >
             <span>{loading ? 'Authenticating...' : 'Login to Admin Console'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -149,7 +157,7 @@ export default function AdminLoginPage() {
       {/* Footer Return Link */}
       <Link
         href="/"
-        className="mt-6 text-gray-400 hover:text-white text-xs font-bold uppercase tracking-wider transition-colors"
+        className="mt-6 text-gray-400 hover:text-amber-400 text-xs font-bold uppercase tracking-wider transition-colors"
       >
         ← Return to Storefront
       </Link>

@@ -202,7 +202,7 @@ export default function CheckoutContentClient() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="inline-block w-8 h-8 border-4 border-[#801414] border-t-transparent rounded-full animate-spin mb-2" />
+        <div className="inline-block w-8 h-8 border-4 border-[#0052CC] border-t-transparent rounded-full animate-spin mb-2" />
         <p className="text-xs text-gray-500 font-bold">Preparing checkout session...</p>
       </div>
     );
@@ -229,7 +229,7 @@ export default function CheckoutContentClient() {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm max-w-md mx-auto text-left space-y-3">
           <div className="flex justify-between border-b border-gray-100 pb-3">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('checkoutOrderNumber')}</span>
-            <span className="text-sm font-black text-[#801414]">{placedOrderNumber}</span>
+            <span className="text-sm font-black text-[#0052CC]">{placedOrderNumber}</span>
           </div>
           <div className="space-y-2 text-xs">
             <p className="flex justify-between">
@@ -252,7 +252,7 @@ export default function CheckoutContentClient() {
         <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
           <Link
             href="/dashboard/orders"
-            className="py-3 px-8 bg-[#801414] hover:bg-[#630f0f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all"
+            className="py-3 px-8 bg-[#0052CC] hover:bg-[#630f0f] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all"
           >
             {language === 'ta' ? 'எனது ஆர்டர்களைக் காண்க' : 'View My Orders'}
           </Link>
@@ -275,16 +275,16 @@ export default function CheckoutContentClient() {
       
       {/* Checkout step bar */}
       <div className="max-w-md mx-auto mb-8 flex items-center justify-between text-xs font-bold text-gray-400 select-none">
-        <div className={`flex items-center gap-2 ${step >= 1 ? 'text-[#801414]' : ''}`}>
+        <div className={`flex items-center gap-2 ${step >= 1 ? 'text-[#0052CC]' : ''}`}>
           <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${
-            step >= 1 ? 'bg-[#801414] text-white' : 'bg-gray-200 text-gray-500'
+            step >= 1 ? 'bg-[#0052CC] text-white' : 'bg-gray-200 text-gray-500'
           }`}>1</span>
           <span>1. Shipping Address</span>
         </div>
         <ChevronRight className="w-4 h-4 text-gray-300" />
-        <div className={`flex items-center gap-2 ${step >= 2 ? 'text-[#801414]' : ''}`}>
+        <div className={`flex items-center gap-2 ${step >= 2 ? 'text-[#0052CC]' : ''}`}>
           <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${
-            step >= 2 ? 'bg-[#801414] text-white' : 'bg-gray-200 text-gray-500'
+            step >= 2 ? 'bg-[#0052CC] text-white' : 'bg-gray-200 text-gray-500'
           }`}>2</span>
           <span>2. Review & Place Order</span>
         </div>
@@ -307,7 +307,7 @@ export default function CheckoutContentClient() {
             <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-gray-100 pb-3">
                 <h2 className="text-base font-serif font-black text-gray-900 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#801414]" />
+                  <MapPin className="w-4 h-4 text-[#0052CC]" />
                   Shipping Address
                 </h2>
                 
@@ -316,7 +316,7 @@ export default function CheckoutContentClient() {
                   <select
                     onChange={(e) => handleSelectSavedAddress(e.target.value)}
                     defaultValue=""
-                    className="bg-gray-50 border border-gray-200 rounded-lg py-1.5 px-3 font-semibold text-xs text-gray-800 focus:bg-white focus:border-[#801414] outline-none cursor-pointer"
+                    className="bg-gray-50 border border-gray-200 rounded-lg py-1.5 px-3 font-semibold text-xs text-gray-800 focus:bg-white focus:border-[#0052CC] outline-none cursor-pointer"
                   >
                     <option value="" disabled>Select Saved Address</option>
                     {user.addresses.map((addr, idx) => (
@@ -339,7 +339,7 @@ export default function CheckoutContentClient() {
                     required
                     value={addressForm.fullName}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -353,7 +353,7 @@ export default function CheckoutContentClient() {
                     placeholder="customer@example.com"
                     value={addressForm.email}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -366,7 +366,7 @@ export default function CheckoutContentClient() {
                     required
                     value={addressForm.addressLine1}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -378,7 +378,7 @@ export default function CheckoutContentClient() {
                     name="addressLine2"
                     value={addressForm.addressLine2}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -391,7 +391,7 @@ export default function CheckoutContentClient() {
                     required
                     value={addressForm.city}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -405,7 +405,7 @@ export default function CheckoutContentClient() {
                     placeholder="e.g. M5V 2T6"
                     value={addressForm.postalCode}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -419,7 +419,7 @@ export default function CheckoutContentClient() {
                     placeholder="+1 (416) 555-0199"
                     value={addressForm.phone}
                     onChange={handleInputChange}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#801414] text-gray-900 font-semibold"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-semibold"
                   />
                 </div>
 
@@ -441,7 +441,7 @@ export default function CheckoutContentClient() {
           {step === 2 && (
             <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
               <h2 className="text-base font-serif font-black text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-                <ClipboardList className="w-4 h-4 text-[#801414]" />
+                <ClipboardList className="w-4 h-4 text-[#0052CC]" />
                 Review Your Order
               </h2>
 
@@ -493,7 +493,7 @@ export default function CheckoutContentClient() {
                 <button
                   onClick={handlePlaceOrder}
                   disabled={placingOrder}
-                  className="w-full sm:w-auto h-12 flex items-center justify-center gap-2 bg-[#801414] hover:bg-[#630f0f] text-white font-bold text-xs uppercase tracking-wider px-8 rounded-lg shadow-md disabled:bg-gray-400 transition-all cursor-pointer"
+                  className="w-full sm:w-auto h-12 flex items-center justify-center gap-2 bg-[#0052CC] hover:bg-[#003D99] text-white font-bold text-xs uppercase tracking-wider px-8 rounded-lg shadow-md disabled:bg-gray-400 transition-all cursor-pointer"
                 >
                   <span>{placingOrder ? 'Placing Order...' : 'Place Order Now'}</span>
                   <ChevronRight className="w-4 h-4" />
@@ -554,7 +554,7 @@ export default function CheckoutContentClient() {
 
               <div className="flex justify-between items-baseline pt-4 border-t border-gray-100">
                 <span className="text-sm font-black text-gray-900">{t('cartTotal')}</span>
-                <span className="text-2xl font-serif font-black text-[#801414]">
+                <span className="text-2xl font-serif font-black text-[#0052CC]">
                   {formatCurrency(calcResult.total)}
                 </span>
               </div>
