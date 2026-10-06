@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-import { ShoppingCart, CheckCircle2, MapPin, Store, ChevronLeft, ChevronRight, Sparkles, Globe2, ShieldCheck, Truck } from 'lucide-react';
+import { ShoppingCart, CheckCircle2, MapPin, Store, ChevronLeft, ChevronRight, Sparkles, Globe2, ShieldCheck, Truck, ArrowRight, Play, Pause } from 'lucide-react';
 
 export default function Hero() {
   const { language } = useTranslation();
@@ -21,10 +21,13 @@ export default function Hero() {
       titleEn: 'CEYLON SPICES & GLOBAL EXPORT',
       titleTa: 'இலங்கை நறுமணப் பொருட்கள் & ஏற்றுமதி',
       titleSi: 'ලංකා කුළුබඩු සහ ගෝලීය අපනයන',
-      subtitleEn: 'Authentic Ceylon cinnamon, tea, pure spices & local goods exported worldwide.',
-      subtitleTa: 'அசல் இலங்கை கருவாபட்டைய, தேயிலை மற்றும் நறுமணப் பொருட்கள் உலகளாவிய விநியோகம்.',
+      subtitleEn: 'Authentic Ceylon cinnamon, single origin tea, pure spices & local goods exported worldwide.',
+      subtitleTa: 'அசல் இலங்கை கருவாபட்டை, தேயிலை மற்றும் நறுமணப் பொருட்கள் உலகளாவிய விநியோகம்.',
       subtitleSi: 'සැබෑ ලංකා කුරුඳු, තේ සහ කුළුබඩු ලොව පුරා යැවීම.',
       tag: '🔥 #1 Ceylon Export Portal',
+      priceNoticeEn: 'Worldwide Air & Sea Freight Ready',
+      priceNoticeTa: 'உலகளாவிய வான் & கடல் ஏற்றுமதி தயார்',
+      category: 'Export Spices & Tea',
     },
     {
       id: 2,
@@ -35,50 +38,59 @@ export default function Hero() {
       titleEn: 'FRESH DAILY GROCERIES & FOOD',
       titleTa: 'புதிய தினசரி மளிகைப் பொருட்கள்',
       titleSi: 'නැවුම් එදිනෙදා ද්‍රව්‍ය සහ ආහාර',
-      subtitleEn: 'Farm fresh essentials, household items & rice delivered to your home.',
-      subtitleTa: 'புதிய உணவுப் பொருட்கள் மற்றும் வீட்டுத் தேவைகள் உங்கள் வீட்டிற்கே விநியோகம்.',
+      subtitleEn: 'Farm fresh essentials, household items & staple grains delivered straight to your home.',
+      subtitleTa: 'புதிய உணவுப் பொருட்கள் மற்றும் வீட்டுத் தேவைகள் உங்கள் வீட்டிற்கே விரைவாக விநியோகம்.',
       subtitleSi: 'නැවුම් අත්‍යවශ්‍ය ද්‍රව්‍ය නිවසටම ගෙනැවිත් දෙනු ලැබේ.',
-      tag: '🛒 Fast Home Delivery',
+      tag: '🛒 Fast Islandwide Home Delivery',
+      priceNoticeEn: 'Orders Over LKR 7,500 Get Free Delivery',
+      priceNoticeTa: 'LKR 7,500 மேல் இலவச விநியோகம்',
+      category: 'Groceries & Rice',
     },
     {
       id: 3,
       image: '/images/rani_animal_feed.jpg',
-      badgeEn: 'AUTHORIZE DISTRIBUTOR',
+      badgeEn: 'AUTHORIZED DISTRIBUTOR',
       badgeTa: 'அங்கீகரிக்கப்பட்ட விநியோகஸ்தர்',
       badgeSi: 'බලයලත් බෙදාහරින්නා',
       titleEn: 'RANI ANIMAL FEED SOLUTIONS',
       titleTa: 'ராணி விலங்கு தீவன தீர்வுகள்',
       titleSi: 'රාණි සතුන්ගේ ආහාර විසඳුම්',
-      subtitleEn: 'Premium poultry, cattle & livestock feeds engineered for optimal health.',
+      subtitleEn: 'High grade poultry, cattle & livestock nutrition feeds engineered for health & maximum yield.',
       subtitleTa: 'கோழி மற்றும் கால்நடை வளர்ப்புக்கான உயர்தர ஊட்டச்சத்து தீவனங்கள்.',
       subtitleSi: 'පශු සම්පත් සඳහා උසස් තත්ත්වයේ ආහාර විසඳුම්.',
       tag: '🌾 Trusted Livestock Nutrition',
+      priceNoticeEn: 'Direct Factory Prices & Bulk Discounts',
+      priceNoticeTa: 'தொழிற்சாலை நேரடி விலை & மொத்த தள்ளுபடி',
+      category: 'Rani Feed',
     },
     {
       id: 4,
       image: '/images/storefront_3d.jpg',
-      badgeEn: 'MULTI-CATEGORY STORE',
+      badgeEn: 'MULTI-CATEGORY MARKETPLACE',
       badgeTa: 'பல்வேறு வகை கடைகள்',
       badgeSi: 'බහු-වර්ගවල වෙළඳසැල',
-      titleEn: 'VENTERSHOP VIRTUAL MARKETPLACE',
+      titleEn: 'VENTERSHOP DIGITAL ECOSYSTEM',
       titleTa: 'வென்டர்ஷாப் வர்ச்சுவல் சந்தை',
       titleSi: 'වෙන්ටර්ෂොප් වර්චුවල් වෙළඳපල',
-      subtitleEn: 'Connecting local entrepreneurs and buyers under one digital e-commerce hub.',
-      subtitleTa: 'உள்ளூர் வணிகர்களையும் வாங்குபவர்களையும் இணைக்கும் ஒரே இணையதளம்.',
+      subtitleEn: 'Connecting verified Sri Lankan entrepreneurs and buyers under one trusted e-commerce hub.',
+      subtitleTa: 'உள்ளூர் வணிகர்களையும் வாங்குபவர்களையும் இணைக்கும் ஒரே நம்பகமான இணையதளம்.',
       subtitleSi: 'දේශීය ව්‍යවසායකයින් සහ මිලදී ගන්නන් එක් කරන ඩිජිටල් වේදිකාව.',
-      tag: '🌟 Verified Ceylon Sellers',
+      tag: '🌟 100% Verified Ceylon Merchants',
+      priceNoticeEn: 'V2CC Community Vouchers Active',
+      priceNoticeTa: 'V2CC சமூக வவுச்சர்கள் சலுகைகள்',
+      category: 'Virtual Shops',
     },
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto transition every 4.5 seconds
+  // Auto transition every 4 seconds
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4500);
+    }, 4000);
     return () => clearInterval(timer);
   }, [isPaused, slides.length]);
 
@@ -91,176 +103,225 @@ export default function Hero() {
   };
 
   return (
-    <div className="w-full bg-[#021838] relative overflow-hidden border-b-4 border-[#FFB800]">
+    <div className="w-full bg-[#021430] relative overflow-hidden select-none">
       
-      {/* Dynamic Animated Background Slideshow */}
+      {/* Main Slideshow Container */}
       <div
-        className="relative min-h-[500px] sm:min-h-[560px] lg:min-h-[600px] flex items-center justify-center"
+        className="relative min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex items-center justify-center"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Background Image Carousel Layer */}
+        {/* Background Images Layer */}
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              index === currentSlide ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-105 pointer-events-none'
             }`}
           >
-            {/* Image with subtle zoom keyframe */}
             <img
               src={slide.image}
               alt={slide.titleEn}
-              className={`w-full h-full object-cover object-center transition-transform duration-7000 ease-out ${
-                index === currentSlide ? 'scale-105' : 'scale-100'
-              }`}
+              className="w-full h-full object-cover object-center filter brightness-95 transform transition-transform duration-7000 ease-linear scale-105"
             />
 
-            {/* Premium Dark Gradient Overlay for optimal legibility */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#021430]/95 via-[#021838]/85 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#021838] via-transparent to-[#021838]/50" />
+            {/* Gradient Overlays for optimal contrast & blue/gold tone */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#021430] via-[#021838]/90 to-transparent lg:to-[#021430]/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#021430] via-transparent to-[#021430]/60" />
           </div>
         ))}
 
-        {/* Content Overlay */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Floating Animated Header Logo Badge & Counter Top Right */}
+        <div className="absolute top-5 right-6 z-30 hidden sm:flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
+          <div className="w-2 h-2 rounded-full bg-[#FFB800] animate-ping" />
+          <span className="text-[11px] font-black text-amber-300 tracking-wider">
+            SLIDE 0{currentSlide + 1} / 0{slides.length}
+          </span>
+          <span className="text-white/40">|</span>
+          <button
+            onClick={() => setIsPaused(!isPaused)}
+            className="text-white/80 hover:text-white transition-colors"
+            title={isPaused ? "Resume Auto-slide" : "Pause Auto-slide"}
+          >
+            {isPaused ? <Play className="w-3.5 h-3.5 text-amber-300" /> : <Pause className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+
+        {/* Content Container */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Column: Animated Text & CTAs */}
-            <div className="lg:col-span-7 space-y-5 text-left text-white">
+            {/* Left Column: Hero Copy & Actions */}
+            <div className="lg:col-span-7 space-y-6 text-left text-white">
               
-              {/* Tag / Category Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFB800] text-[#021838] font-black text-xs uppercase tracking-wider shadow-lg animate-bounce-slow">
-                <Sparkles className="w-3.5 h-3.5 text-[#021838]" />
+              {/* Category Pill Navigation */}
+              <div className="flex flex-wrap items-center gap-2">
+                {slides.map((s, idx) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
+                      idx === currentSlide
+                        ? 'bg-[#FFB800] text-[#021430] shadow-md scale-105'
+                        : 'bg-white/15 text-white/80 hover:bg-white/25 hover:text-white'
+                    }`}
+                  >
+                    {s.category}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tag Highlight Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0052CC] text-white font-black text-xs uppercase tracking-wider shadow-lg border border-blue-400/40">
+                <Sparkles className="w-3.5 h-3.5 text-[#FFB800]" />
                 <span>{slides[currentSlide].tag}</span>
               </div>
 
-              {/* Main Subtitle Slogan */}
-              <div className="space-y-1">
-                <p className="text-xs sm:text-sm font-bold text-amber-300 tracking-wider uppercase">
-                  {isTa ? 'ஷாப்பிங் வாய்ப்புகளை சந்திக்கும் இடம்' : isSi ? 'සාප්පු සවාරිය අවස්ථාවන් සමඟ හමුවන ස්ථානය' : 'Where Shopping Meets Opportunity'}
+              {/* Dynamic Animated Main Slide Title */}
+              <div className="space-y-2">
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight font-sans drop-shadow-lg">
+                  {isTa
+                    ? slides[currentSlide].titleTa
+                    : isSi
+                    ? slides[currentSlide].titleSi
+                    : slides[currentSlide].titleEn}
+                </h1>
+                <p className="text-xs sm:text-base text-blue-100 font-medium leading-relaxed max-w-xl">
+                  {isTa
+                    ? slides[currentSlide].subtitleTa
+                    : isSi
+                    ? slides[currentSlide].subtitleSi
+                    : slides[currentSlide].subtitleEn}
                 </p>
               </div>
 
-              {/* Animated Main Slide Title */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight font-sans drop-shadow-md">
-                {isTa
-                  ? slides[currentSlide].titleTa
-                  : isSi
-                  ? slides[currentSlide].titleSi
-                  : slides[currentSlide].titleEn}
-              </h1>
-
-              {/* Slide Description */}
-              <p className="text-xs sm:text-base text-blue-100 font-medium leading-relaxed max-w-xl">
-                {isTa
-                  ? slides[currentSlide].subtitleTa
-                  : isSi
-                  ? slides[currentSlide].subtitleSi
-                  : slides[currentSlide].subtitleEn}
-              </p>
-
-              {/* Bullet Points */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 text-xs font-semibold text-gray-200">
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
+              {/* Feature Checklist */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs font-semibold text-gray-200">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/15 shadow-sm">
                   <CheckCircle2 className="w-4 h-4 text-[#FFB800] shrink-0" />
-                  <span>{isTa ? '100% அசல் தயாரிப்புகள்' : isSi ? '100% විශ්වාසනීය නිෂ්පාදන' : '100% Genuine Quality Products'}</span>
+                  <span>{isTa ? '100% அசல் தர உத்தரவாதம்' : isSi ? '100% විශ්වාසනීය නිෂ්පාදන' : '100% Genuine Quality Goods'}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/15 shadow-sm">
                   <Globe2 className="w-4 h-4 text-[#FFB800] shrink-0" />
-                  <span>{isTa ? 'சர்வதேச ஏற்றுமதி வசதி' : isSi ? 'ගෝලීය අපනයන සේවාව' : 'Worldwide Export Shipping'}</span>
+                  <span>{isTa ? 'சர்வதேச ஏற்றுமதி விநியோகம்' : isSi ? 'ගෝලීය අපනයන සේවාව' : 'Direct Global Export Shipping'}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/15 shadow-sm">
                   <Truck className="w-4 h-4 text-[#FFB800] shrink-0" />
-                  <span>{isTa ? 'இலங்கை முழுவதும் வேகமான விநியோகம்' : isSi ? 'දිවයින පුරාම බෙදාහැරීම' : 'Fast Delivery Across Sri Lanka'}</span>
+                  <span>{isTa ? 'இலங்கை முழுவதும் வேகமான டெலிவரி' : isSi ? 'දිවයින පුරාම බෙදාහැරීම' : 'Fast Delivery Across Sri Lanka'}</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/15 shadow-sm">
                   <ShieldCheck className="w-4 h-4 text-[#FFB800] shrink-0" />
-                  <span>{isTa ? 'பாதுகாப்பான கட்டணம் & வவுச்சர்கள்' : isSi ? 'ආරක්ෂිත ගෙවීම්' : 'Secure Checkout & Vouchers'}</span>
+                  <span>{isTa ? 'பாதுகாப்பான கட்டணம் & வவுச்சர்கள்' : isSi ? 'ආරක්ෂිත ගෙවීම්' : 'Safe Checkout & Vouchers'}</span>
                 </div>
               </div>
 
-              {/* Action Buttons with Logo Matching Blue & Gold theme */}
+              {/* Dual Action CTAs */}
               <div className="flex flex-wrap items-center gap-3 pt-3">
                 <Link
                   href="#featured-products"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-xs sm:text-sm font-black text-[#021838] bg-[#FFB800] hover:bg-[#FFA800] transition-all shadow-xl transform hover:-translate-y-1 active:scale-95 cursor-pointer uppercase tracking-wider"
+                  className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-xs sm:text-sm font-black text-[#021430] bg-[#FFB800] hover:bg-[#FFA500] transition-all shadow-xl transform hover:-translate-y-1 active:scale-95 cursor-pointer uppercase tracking-wider"
                 >
-                  <ShoppingCart className="w-4 h-4" />
+                  <ShoppingCart className="w-4.5 h-4.5 text-[#021430]" />
                   <span>{isTa ? 'தயாரிப்புகளைப் பார்க்க' : isSi ? 'නිෂ්පාදන බලන්න' : 'Shop Featured Products'}</span>
+                  <ArrowRight className="w-4 h-4 text-[#021430]" />
                 </Link>
 
                 <Link
                   href="/shop"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0052CC] hover:bg-[#0041A8] transition-all shadow-lg border border-blue-400/30 transform hover:-translate-y-1 active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0052CC] hover:bg-[#003893] transition-all shadow-lg border border-blue-400/40 transform hover:-translate-y-1 active:scale-95 cursor-pointer"
                 >
-                  <Store className="w-4 h-4 text-amber-300" />
+                  <Store className="w-4.5 h-4.5 text-amber-300" />
                   <span>{isTa ? 'கடைகளை ஆராய்க' : isSi ? 'සාප්පු ගවේෂණය කරන්න' : 'Browse All Shops'}</span>
                 </Link>
               </div>
             </div>
 
-            {/* Right Column: Dynamic Glassmorphism Showcase Card with Badge Logo */}
+            {/* Right Column: Dynamic Interactive Preview Showcase Card */}
             <div className="lg:col-span-5 hidden lg:flex justify-center items-center relative">
-              <div className="relative w-full max-w-sm bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl shadow-2xl text-center space-y-4 transform hover:scale-102 transition-transform duration-300">
-                <div className="relative mx-auto w-36 h-36 flex items-center justify-center p-2 rounded-full bg-gradient-to-br from-white/20 to-white/5 border border-white/30 shadow-inner">
+              <div className="relative w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl shadow-2xl space-y-4 transform hover:scale-102 transition-all duration-300">
+                
+                {/* Dynamic Image Preview Box */}
+                <div className="relative w-full h-52 rounded-2xl overflow-hidden border border-white/30 shadow-inner group">
                   <img
-                    src="/images/logo-badge.png"
-                    alt="VENTERSHOP Official Badge"
-                    className="w-full h-full object-contain filter drop-shadow-lg"
+                    src={slides[currentSlide].image}
+                    alt={slides[currentSlide].titleEn}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  
+                  {/* Badge Logo overlay top left */}
+                  <div className="absolute top-3 left-3 flex items-center gap-2 bg-[#021430]/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                    <img src="/images/logo-badge.png" alt="Logo" className="w-5 h-5 object-contain" />
+                    <span className="text-[10px] font-black text-amber-300 tracking-wider">VENTERSHOP</span>
+                  </div>
+
+                  {/* Notice overlay bottom */}
+                  <div className="absolute bottom-3 left-3 right-3 text-left">
+                    <span className="text-[10px] font-extrabold text-amber-300 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md inline-block">
+                      {isTa ? slides[currentSlide].priceNoticeTa : slides[currentSlide].priceNoticeEn}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-white font-extrabold text-base tracking-wide uppercase">VENTERSHOP CEYLON</h3>
-                  <p className="text-amber-300 text-xs font-bold mt-0.5">Find More. Shop Smart.</p>
+
+                {/* Card Title & Info */}
+                <div className="text-left space-y-1">
+                  <h3 className="text-white font-black text-base tracking-wide uppercase line-clamp-1">
+                    {slides[currentSlide].titleEn}
+                  </h3>
+                  <p className="text-amber-300 text-xs font-bold">
+                    {isTa ? 'உயர்தர இலங்கை ஏற்றுமதி & விநியோகம்' : 'Premium Ceylon Multi-Category Hub'}
+                  </p>
                 </div>
-                <div className="pt-2 border-t border-white/15 text-[11px] text-blue-100 flex justify-around font-semibold">
-                  <div>
+
+                {/* Live Stats Row */}
+                <div className="pt-3 border-t border-white/15 text-[11px] text-blue-100 flex justify-around font-semibold">
+                  <div className="text-center">
                     <span className="block text-amber-400 font-extrabold text-sm">1000+</span>
                     <span>Products</span>
                   </div>
-                  <div className="h-6 w-px bg-white/20" />
-                  <div>
+                  <div className="h-7 w-px bg-white/20" />
+                  <div className="text-center">
                     <span className="block text-amber-400 font-extrabold text-sm">25+</span>
                     <span>Distributors</span>
                   </div>
-                  <div className="h-6 w-px bg-white/20" />
-                  <div>
+                  <div className="h-7 w-px bg-white/20" />
+                  <div className="text-center">
                     <span className="block text-amber-400 font-extrabold text-sm">24/7</span>
-                    <span>Support</span>
+                    <span>Islandwide</span>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
         {/* Carousel Arrow Controls */}
         <button
           onClick={handlePrev}
-          className="absolute left-3 sm:left-6 z-30 p-2.5 rounded-full bg-black/40 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110"
+          className="absolute left-3 sm:left-6 z-30 p-3 rounded-full bg-black/50 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
           aria-label="Previous Slide"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5 text-amber-300" />
         </button>
         <button
           onClick={handleNext}
-          className="absolute right-3 sm:right-6 z-30 p-2.5 rounded-full bg-black/40 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110"
+          className="absolute right-3 sm:right-6 z-30 p-3 rounded-full bg-black/50 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
           aria-label="Next Slide"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5 text-amber-300" />
         </button>
 
         {/* Slide Indicator Dots (4 Slides) */}
-        <div className="absolute bottom-4 left-0 right-0 z-30 flex justify-center items-center gap-2">
+        <div className="absolute bottom-5 left-0 right-0 z-30 flex justify-center items-center gap-2.5">
           {slides.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               className={`h-2.5 rounded-full transition-all cursor-pointer ${
                 idx === currentSlide
-                  ? 'w-8 bg-[#FFB800] shadow-md'
-                  : 'w-2.5 bg-white/40 hover:bg-white/70'
+                  ? 'w-10 bg-[#FFB800] shadow-lg border border-amber-200'
+                  : 'w-2.5 bg-white/40 hover:bg-white/80'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -268,8 +329,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Blue & Gold Location & Guarantee Strip */}
-      <div className="w-full bg-[#0052CC] text-white py-3 px-4 text-center border-t border-blue-400/20">
+      {/* Location Strip */}
+      <div className="w-full bg-[#0052CC] text-white py-3 px-4 text-center border-t border-b border-blue-400/30">
         <p className="text-xs sm:text-sm font-bold flex items-center justify-center gap-2 tracking-wide">
           <MapPin className="w-4 h-4 text-[#FFB800] shrink-0" />
           <span>{isTa ? 'இலங்கை முழுவதும் இல்லங்களுக்கு விரைவான விநியோகம் & சர்வதேச ஏற்றுமதி.' : isSi ? 'ශ්‍රී ලංකාව පුරාම නිවසටම බෙදාහැරීම සහ ගෝලීය අපනයන.' : 'Fast Delivery Across All 25 Districts in Sri Lanka & Direct Global Export.'}</span>
