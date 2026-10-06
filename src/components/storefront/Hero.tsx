@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-import { ShoppingCart, CheckCircle2, MapPin, Store, ChevronLeft, ChevronRight, Sparkles, Globe2, ShieldCheck, Truck, ArrowRight, Play, Pause } from 'lucide-react';
+import { ShoppingCart, CheckCircle2, MapPin, Store, ChevronLeft, ChevronRight, Sparkles, Globe2, ShieldCheck, Truck, ArrowRight } from 'lucide-react';
 
 export default function Hero() {
   const { language } = useTranslation();
@@ -15,9 +15,6 @@ export default function Hero() {
     {
       id: 1,
       image: '/images/sri_lankan_exports.jpg',
-      badgeEn: 'PREMIUM EXPORT QUALITY',
-      badgeTa: 'உயர்தர ஏற்றுமதி தரம்',
-      badgeSi: 'ප්‍රමුඛ අපනයන ගුණාත්මකභාවය',
       titleEn: 'CEYLON SPICES & GLOBAL EXPORT',
       titleTa: 'இலங்கை நறுமணப் பொருட்கள் & ஏற்றுமதி',
       titleSi: 'ලංකා කුළුබඩු සහ ගෝලීය අපනයන',
@@ -30,12 +27,9 @@ export default function Hero() {
     {
       id: 2,
       image: '/images/groceries_basket.jpg',
-      badgeEn: 'SUPERMARKET DIRECT',
-      badgeTa: 'நேரடி சூப்பர் மார்க்கெட்',
-      badgeSi: 'සුපිරි වෙළඳසැලෙන්ම සෘජුව',
       titleEn: 'FRESH DAILY GROCERIES & FOOD',
       titleTa: 'புதிய தினசரி மளிகைப் பொருட்கள்',
-      titleSi: 'னக புதிய உணவுப் பொருட்கள்',
+      titleSi: 'නැවුම් එදினෙදා ද්‍රව්‍ය සහ ආහාර',
       subtitleEn: 'Farm fresh essentials, household items & staple grains delivered straight to your home.',
       subtitleTa: 'புதிய உணவுப் பொருட்கள் மற்றும் வீட்டுத் தேவைகள் உங்கள் வீட்டிற்கே விரைவாக விநியோகம்.',
       subtitleSi: 'නැවුම් අත්‍යවශ්‍ය ද්‍රව්‍ය නිවසටම ගෙනැවිත් දෙනු ලැබේ.',
@@ -45,9 +39,6 @@ export default function Hero() {
     {
       id: 3,
       image: '/images/rani_animal_feed.jpg',
-      badgeEn: 'AUTHORIZED DISTRIBUTOR',
-      badgeTa: 'அங்கீகரிக்கப்பட்ட விநியோகஸ்தர்',
-      badgeSi: 'බලයලත් බෙදාහරින්නා',
       titleEn: 'RANI ANIMAL FEED SOLUTIONS',
       titleTa: 'ராணி விலங்கு தீவன தீர்வுகள்',
       titleSi: 'රාණි සතුන්ගේ ආහාර විසඳුම්',
@@ -60,9 +51,6 @@ export default function Hero() {
     {
       id: 4,
       image: '/images/storefront_3d.jpg',
-      badgeEn: 'MULTI-CATEGORY MARKETPLACE',
-      badgeTa: 'பல்வேறு வகை கடைகள்',
-      badgeSi: 'බහු-වර්ගවල වෙළඳසැල',
       titleEn: 'VENTERSHOP DIGITAL ECOSYSTEM',
       titleTa: 'வென்டர்ஷாப் வர்ச்சுவல் சந்தை',
       titleSi: 'වෙන්ටර්ෂොප් වර්චුවල් වෙළඳපල',
@@ -75,16 +63,14 @@ export default function Hero() {
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
   // Auto transition every 4 seconds
   useEffect(() => {
-    if (isPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused, slides.length]);
+  }, [slides.length]);
 
   const handleNext = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -98,47 +84,33 @@ export default function Hero() {
     <div className="w-full bg-[#021430] relative overflow-hidden select-none">
       
       {/* Slideshow Area */}
-      <div
-        className="relative min-h-[440px] sm:min-h-[480px] lg:min-h-[500px] flex items-center justify-center overflow-hidden"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        {/* Background Images Layer with Full Dark Contrast Overlay */}
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-            }`}
-          >
-            <img
-              src={slide.image}
-              alt={slide.titleEn}
-              className="w-full h-full object-cover object-center filter brightness-90"
-            />
+      <div className="relative min-h-[440px] sm:min-h-[480px] lg:min-h-[500px] flex items-center justify-center overflow-hidden">
+        
+        {/* Background Images Layer with Animated Zoom & Fade */}
+        {slides.map((slide, index) => {
+          const isActive = index === currentSlide;
+          return (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-110 pointer-events-none'
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.titleEn}
+                className={`w-full h-full object-cover object-center filter brightness-95 transform transition-transform duration-5000 ease-out ${
+                  isActive ? 'scale-105' : 'scale-100'
+                }`}
+              />
 
-            {/* Consistent dark overlay across entire slide height - NO raw image gaps */}
-            <div className="absolute inset-0 bg-[#021430]/80" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#021430] via-[#021430]/90 to-[#021430]/75" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#021430]/90 via-transparent to-[#021430]" />
-          </div>
-        ))}
-
-        {/* Slide Counter Top Right */}
-        <div className="absolute top-4 right-6 z-30 hidden sm:flex items-center gap-3 bg-black/50 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
-          <div className="w-2 h-2 rounded-full bg-[#FFB800] animate-ping" />
-          <span className="text-[11px] font-black text-amber-300 tracking-wider">
-            SLIDE 0{currentSlide + 1} / 0{slides.length}
-          </span>
-          <span className="text-white/40">|</span>
-          <button
-            onClick={() => setIsPaused(!isPaused)}
-            className="text-white/80 hover:text-white transition-colors"
-            title={isPaused ? "Resume Auto-slide" : "Pause Auto-slide"}
-          >
-            {isPaused ? <Play className="w-3.5 h-3.5 text-amber-300" /> : <Pause className="w-3.5 h-3.5 text-white" />}
-          </button>
-        </div>
+              {/* Contrast Overlays so text is sharp & images are beautifully visible */}
+              <div className="absolute inset-0 bg-[#021430]/70" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#021430] via-[#021430]/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#021430]/80 via-transparent to-[#021430]" />
+            </div>
+          );
+        })}
 
         {/* Hero Content Box */}
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
@@ -153,7 +125,7 @@ export default function Hero() {
                   className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
                     idx === currentSlide
                       ? 'bg-[#FFB800] text-[#021430] shadow-md scale-105'
-                      : 'bg-white/15 text-white/80 hover:bg-white/25 hover:text-white'
+                      : 'bg-white/20 text-white/90 hover:bg-white/30 hover:text-white'
                   }`}
                 >
                   {s.category}
