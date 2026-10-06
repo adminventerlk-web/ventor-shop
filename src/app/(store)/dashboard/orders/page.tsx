@@ -324,7 +324,7 @@ function OrdersPageContent() {
           You haven't placed any purchases yet. Click below to explore our products.
           <Link
             href="/shop"
-            className="block py-2 px-6 bg-[#1A2A4A] text-white rounded-lg font-bold mt-4 max-w-xs mx-auto hover:bg-[#101A2D]"
+            className="block py-2.5 px-6 bg-[#0052CC] text-white rounded-lg font-bold mt-4 max-w-xs mx-auto hover:bg-[#003d99] shadow-sm transition-all"
           >
             Explore Catalog
           </Link>
@@ -465,7 +465,7 @@ function OrdersPageContent() {
                       {order.orderStatus !== 'CANCELLED' && (
                         <button
                           onClick={() => handleReorder(order.items)}
-                          className="flex items-center gap-1.5 py-2 px-4 bg-[#1A2A4A] hover:bg-[#101A2D] text-white rounded-lg font-bold shadow-xs transition-all"
+                          className="flex items-center gap-1.5 py-2 px-4 bg-[#0052CC] hover:bg-[#003d99] text-white rounded-lg font-bold shadow-sm transition-all"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
                           <span>Re-Order Items</span>

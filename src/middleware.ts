@@ -10,8 +10,6 @@ export async function middleware(request: NextRequest) {
 
   const isAdminLoginPath = pathname === '/admin/login';
   const isAdminPath = pathname.startsWith('/admin') && !isAdminLoginPath;
-  const isDashboardPath = pathname.startsWith('/dashboard');
-  const isCheckoutPath = pathname.startsWith('/checkout');
 
   // --- ADMIN ROUTE PROTECTION (uses admin_session cookie) ---
   if (isAdminPath) {
@@ -35,30 +33,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // --- CUSTOMER & DASHBOARD ROUTE PROTECTION ---
-  if (isDashboardPath || isCheckoutPath) {
-    const userToken = request.cookies.get('session')?.value || request.cookies.get('admin_session')?.value;
-    if (!userToken) {
-      url.pathname = '/login';
-      url.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(url);
-    }
-    try {
-      const secret = new TextEncoder().encode(JWT_SECRET);
-      await jwtVerify(userToken, secret);
-    } catch (error) {
-      url.pathname = '/login';
-      url.searchParams.set('callbackUrl', pathname);
-      const response = NextResponse.redirect(url);
-      response.cookies.delete('session');
-      return response;
-    }
-  }
-
+  // --- CUSTOMER & DASHBOARD ROUTES ---
+  // Managed gracefully in client-side components to allow smooth navigation
   return NextResponse.next();
 }
 
 // Config to specify matching paths
 export const config = {
-  matcher: ['/admin', '/admin/((?!login).*)', '/dashboard/:path*', '/checkout/:path*'],
+  matcher: ['/admin', '/admin/((?!login).*)'],
 };

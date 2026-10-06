@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
             <img
               src="/images/logo-badge.png"
               alt="VENTERSHOP Round Badge Logo"
-              className="w-24 h-24 sm:w-28 sm:h-28 object-contain rounded-full drop-shadow-2xl hover:scale-105 transition-transform"
+              className="w-28 h-28 sm:w-32 sm:h-32 object-contain drop-shadow-2xl hover:scale-105 transition-transform"
             />
           </Link>
           <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 text-amber-300 px-3 py-1 rounded-full shadow-xs">

@@ -77,7 +77,7 @@ export default function DashboardSidebar() {
                 href={link.href}
                 className={`flex-shrink-0 flex flex-col items-center gap-1 py-2 px-3 rounded-xl text-[10px] font-bold uppercase tracking-wide transition-colors ${
                   isActive
-                    ? 'bg-red-50 text-[#E53935]'
+                    ? 'bg-blue-50 text-[#0052CC]'
                     : 'text-[#333333] hover:bg-gray-50'
                 }`}
               >
@@ -122,7 +122,7 @@ export default function DashboardSidebar() {
                 href={link.href}
                 className={`flex items-center gap-3 py-2 px-3.5 rounded-lg text-xs font-bold transition-colors uppercase tracking-wider ${
                   isActive
-                    ? 'bg-red-50 text-[#E53935]'
+                    ? 'bg-blue-50 text-[#0052CC]'
                     : 'text-[#333333] hover:bg-gray-50'
                 }`}
               >
