@@ -129,7 +129,7 @@ export default function CategoryShowcase() {
                     <div
                       className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-115"
                       style={{
-                        backgroundImage: `url('${category.image || '/images/hero_banner.png'}')`,
+                        backgroundImage: `url('${category.image || '/images/hero_banner.webp'}')`,
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-50 group-hover:opacity-20 transition-opacity" />

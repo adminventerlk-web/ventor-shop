@@ -164,18 +164,6 @@ export default function Footer() {
                 <p className="text-[11px] text-emerald-400 font-bold">✓ Subscribed successfully!</p>
               )}
             </div>
-
-            {/* Payment Methods */}
-            <div className="pt-2 space-y-2">
-              <h5 className="text-[11px] font-black text-[#FFB800] uppercase tracking-wider">Accepted Payment Methods</h5>
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="bg-white text-[#021838] font-black px-2 py-0.5 rounded text-[10px]">VISA</span>
-                <span className="bg-white text-red-600 font-black px-2 py-0.5 rounded text-[10px]">Mastercard</span>
-                <span className="bg-white text-blue-600 font-black px-2 py-0.5 rounded text-[10px]">AMEX</span>
-                <span className="bg-white text-emerald-800 font-black px-2 py-0.5 rounded text-[10px]">Bank Transfer</span>
-                <span className="bg-white text-black font-black px-2 py-0.5 rounded text-[10px]">COD</span>
-              </div>
-            </div>
           </div>
 
         </div>

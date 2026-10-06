@@ -78,15 +78,20 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export",
     description: "Discover premium groceries, Rani livestock feed, Ceylon spices, stationery, electronics, and direct international export from Sri Lanka.",
-    images: ["/images/hero_banner.png"],
+    images: ["/images/hero_banner.webp"],
   },
   alternates: {
     canonical: "/",
   },
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/images/logo.svg",
+    icon: [
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/images/logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 

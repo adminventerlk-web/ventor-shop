@@ -32,9 +32,7 @@ export default function ShopPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#F5F5F5]">
       <JsonLd data={shopCatalogJsonLd} />
-      <Suspense fallback={<div className="h-20 bg-white" />}>
-        <Header />
-      </Suspense>
+      <Header />
       <main className="flex-grow">
         <Suspense
           fallback={

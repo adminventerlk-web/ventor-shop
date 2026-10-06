@@ -30,24 +30,20 @@ export const metadata: Metadata = {
     title: 'VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export',
     description: 'Free Fast Delivery on Orders over LKR 7,500. Premium Groceries, Rani Animal Feed, Ceylon Spices, Books, Electronics, and Direct Commercial Exports.',
     url: 'https://ventershop.vercel.app',
-    images: [{ url: '/images/hero_banner.png', width: 1200, height: 630, alt: 'VENTERSHOP Home' }],
+    images: [{ url: '/images/hero_banner.webp', width: 1200, height: 630, alt: 'VENTERSHOP Home' }],
   },
 };
 
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen w-full overflow-x-hidden bg-[#F8FAFC] font-sans antialiased text-xs font-semibold" style={{ gap: 0 }}>
-      {/* 1. Navigation Header */}
-      <Suspense fallback={<div className="h-24 bg-white border-b border-gray-100" />}>
-        <Header />
-      </Suspense>
+      {/* 1. Navigation Header - Direct Render for Instant First Paint */}
+      <Header />
 
-      {/* 2. Hero Banner Section + Location Strip */}
-      <Suspense fallback={<div className="bg-[#021430] animate-pulse" style={{ minHeight: '480px', margin: 0, padding: 0, lineHeight: 0 }} />}>
-        <Hero />
-      </Suspense>
+      {/* 2. Hero Banner Section + Location Strip - Direct Render with Priority Image */}
+      <Hero />
 
-      {/* 3. Featured Products Showcase (Moved right under Hero as requested) */}
+      {/* 3. Featured Products Showcase */}
       <Suspense fallback={<div className="h-96 bg-white animate-pulse" />}>
         <FeaturedProducts />
       </Suspense>

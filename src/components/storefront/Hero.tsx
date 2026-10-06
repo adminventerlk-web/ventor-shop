@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import {
   Sparkles,
@@ -24,62 +25,71 @@ export default function Hero() {
   const slides = [
     {
       id: 1,
-      image: '/images/sri_lankan_exports.jpg',
+      image: '/images/sri_lankan_exports.webp',
+      blurDataURL:
+        'data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoKAAcABUB8JagCdADcqZqWUAAA3NdCC3rJvBeyyj4GX54CRDgEe/6TiCkCWygTzQAAAA==',
+      dominantColor: '#021430',
       tagEn: '🇱🇰 DIRECT CEYLON EXPORTS & SPICES',
-      tagTa: '🇱🇰 இலங்கை ஏற்றுமதி & தூய நறுமணப் பொருட்கள்',
-      tagSi: '🇱🇰 සැබෑ ලංකා කුළුබඩු සහ අපනයන සේවාව',
+      tagTa: '🇱🇰 இலங்கை நேரடி ஏற்றுமதி & மசாலா பொருட்கள்',
+      tagSi: '🇱🇰 ශ්‍රී ලාංකීය සෘජු කුළුබඩු සහ අපනයන',
       titleLine1En: 'AUTHENTIC CEYLON EXPORTS,',
-      titleLine1Ta: 'அசல் இலங்கை ஏற்றுமதி பொருட்கள்,',
-      titleLine1Si: 'සැබෑ ලංකා අපනයන නිෂ්පාදන,',
+      titleLine1Ta: 'உண்மையான இலங்கை ஏற்றுமதி பொருட்கள்,',
+      titleLine1Si: 'නියම ශ්‍රී ලාංකීය අපනයන නිෂ්පාදන,',
       titleLine2En: 'SHIPPED DIRECTLY WORLDWIDE.',
-      titleLine2Ta: 'உலகெங்கிலும் நேரடி விநியோகம்.',
-      titleLine2Si: 'ලොව පුරා සෘජුවම බෙදාහැරීම.',
+      titleLine2Ta: 'உலகெங்கும் பாதுகாப்பாக டெலிவரி.',
+      titleLine2Si: 'ලොව පුරා සුරක්ෂිතව බෙදාහැරේ.',
       subtitleEn:
         'Direct source Ceylon cinnamon, premium single-origin black tea, cloves, and authentic local goods shipped securely from Sri Lanka to international buyers.',
       subtitleTa:
-        'அசல் இலங்கை கருவாபட்டை, தூய தேயிலை மற்றும் நறுமணப் பொருட்கள் இலங்கையிலிருந்து உலகெங்கிலும் பாதுகாப்பாக அனுப்பி வைக்கப்படுகிறது.',
+        'உண்மையான இலங்கை இலவங்கப்பட்டை, பிரீமியம் கருப்பு தேயிலை, கிராம்பு மற்றும் பாரம்பரிய உள்ளூர் பொருட்கள் இலங்கையிலிருந்து உலகெங்கும் உள்ள வாங்குபவர்களுக்கு பாதுகாப்பாக அனுப்பப்படுகிறது.',
       subtitleSi:
-        'සැබෑ ලංකා කුරුඳු, උසස් කළු තේ සහ කුළුබඩු ශ්‍රී ලංකාවෙන් ලොව පුරා ගැනුම්කරුවන් වෙත සුරක්ෂිතව යවනු ලැබේ.',
+        'ශ්‍රී ලාංකීය කුරුඳු, තේ, කරාබුනැටි ඇතුළු ගුණාත්මක නිෂ්පාදන ලොව පුරා පාරිභෝගිකයින් වෙත විශ්වාසනීයව සෘජුවම ලබාගන්න.',
       ctaTextEn: 'Explore Export Catalog',
-      ctaTextTa: 'ஏற்றுமதி தயாரிப்புகளைப் பார்க்க',
+      ctaTextTa: 'ஏற்றுமதி பட்டியலை காண்க',
       ctaTextSi: 'අපනයන නාමාවලිය',
       ctaLink: '/export',
     },
     {
       id: 2,
-      image: '/images/groceries_basket.jpg',
+      image: '/images/groceries_basket.webp',
+      blurDataURL:
+        'data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoKAAoABUB8JZACdAEQE6TU+OQAAP7h7OSV4Mw7NC5KofJeBv1dQ7j5CMfDpt7eZiSzhP5bGoyaEz2gAAA=',
+      dominantColor: '#021430',
       tagEn: '🛒 DAILY ESSENTIALS & SUPERMARKET',
-      tagTa: '🛒 தினசரி மளிகை & அத்தியாவசிய தேவைகள்',
-      tagSi: '🛒 එදිනෙදා අත්‍යවශ්‍ය ආහාර ද්‍රව්‍ය',
+      tagTa: '🛒 மளிகை பொருட்கள் & சூப்பர் மார்க்கெட்',
+      tagSi: '🛒 දෛනික අත්‍යවශ්‍ය ආහාර ද්‍රව්‍ය',
       titleLine1En: 'FRESH DAILY PROVISIONS,',
-      titleLine1Ta: 'புதிய தினசரி மளிகைப் பொருட்கள்,',
-      titleLine1Si: 'නැවුම් එදිනෙදා ආහාර ද්‍රව්‍ය,',
+      titleLine1Ta: 'புதிய மளிகைப் பொருட்கள்,',
+      titleLine1Si: 'නැවුම් දෛනික ආහාර ද්‍රව්‍ය,',
       titleLine2En: 'DELIVERED TO YOUR DOORSTEP.',
-      titleLine2Ta: 'உங்கள் இல்லங்களுக்கே அதிவிரைவாக.',
-      titleLine2Si: 'ඔබේ නිවසටම ගෙනැවිත් දෙනු ලැබේ.',
+      titleLine2Ta: 'உங்கள் இல்லத்திற்கே விரைவான டெலிவரி.',
+      titleLine2Si: 'ඔබේ නිවසටම කඩිනමින් බෙදාහැරේ.',
       subtitleEn:
         'Top-quality rice, pantry staples, cooking essentials, and household goods delivered safely across all 25 districts in Sri Lanka.',
       subtitleTa:
-        'உயர்தர அரிசி, சமையல் பொருட்கள், மற்றும் வீட்டு அத்தியாவசிய தேவைகள் இலங்கை முழுவதும் உள்ள அனைத்து மாவட்டங்களுக்கும் விரைவாக விநியோகிக்கப்படுகிறது.',
+        'உயர்தர அரிசி வகைகள், சமையல் பொருட்கள், மற்றும் வீட்டு உபயோகப் பொருட்கள் இலங்கை முழுவதும் உள்ள 25 மாவட்டங்களுக்கும் விரைவாக அனுப்பி வைக்கப்படுகிறது.',
       subtitleSi:
-        'උසස් තත්ත්වයේ සහල්, එදිනෙදා ආහාර සහ ගෘහස්ථ අවශ්‍යතා දිවයින පුරා සියලු දිස්ත්‍රික්ක වෙත විශ්වාසයෙන් බෙදාහැරේ.',
+        'උසස් තත්ත්වයේ සහල්, දෛනික කුළුබඩු සහ ගෘහස්ථ ද්‍රව්‍ය දිවයිනේ සියලු දිස්ත්‍රික්ක වෙත ආරක්ෂිතව බෙදාහැරේ.',
       ctaTextEn: 'Shop Daily Groceries',
-      ctaTextTa: 'மளிகை வாங்குக',
+      ctaTextTa: 'மளிகை பொருட்கள் வாங்க',
       ctaTextSi: 'ආහාර ද්‍රව්‍ය මිලදී ගන්න',
       ctaLink: '/shop?category=groceries',
     },
     {
       id: 3,
-      image: '/images/rani_animal_feed.jpg',
-      tagEn: '🌾 OFFICIAL RANI LIVESTOCK FEEDS',
-      tagTa: '🌾 அதிகாரப்பூர்வ ராணி விலங்கு தீவனங்கள்',
-      tagSi: '🌾 නිල රාණි සත්ව ආහාර විසඳුම්',
-      titleLine1En: 'RANI ANIMAL FEED SOLUTIONS,',
-      titleLine1Ta: 'ராணி கால்நடை தீவனங்கள்,',
-      titleLine1Si: 'රාණි සත්ව ආහාර විසඳුම්,',
-      titleLine2En: 'FOR HEALTHY FARMS & MAXIMUM YIELD.',
-      titleLine2Ta: 'சிறந்த வளர்ச்சிக்கும் அதிக உற்பத்திக்கும்.',
-      titleLine2Si: 'උපරිම ඵලදායිතාව සහ ගොවිපල වර්ධනයට.',
+      image: '/images/rani_animal_feed.webp',
+      blurDataURL:
+        'data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoKAAoABUB8JZACdAEQFOxffEAA/uDObunmPptbt2mELJiOCathnh1oNkWVc2GPmOAJzaAA',
+      dominantColor: '#021430',
+      tagEn: '🌾 OFFICIAL RANI LIVESTOCK & POULTRY FEED',
+      tagTa: '🌾 ராணி கால்நடை & கோழி தீவனங்கள்',
+      tagSi: '🌾 රාණි සත්ව සහ කුකුළු ආහාර',
+      titleLine1En: 'MAXIMIZE FARM YIELD & HEALTH,',
+      titleLine1Ta: 'பண்ணை உற்பத்தி மற்றும் ஆரோக்கியத்தை அதிகரிக்க,',
+      titleLine1Si: 'ගොවිපල ඵලදායිතාව ඉහළ නැංවීමට,',
+      titleLine2En: 'WITH SCIENTIFICALLY FORMULATED FEED.',
+      titleLine2Ta: 'அறிவியல் முறைப்படி தயாரிக்கப்பட்ட தீவனங்கள்.',
+      titleLine2Si: 'විද්‍යාත්මකව සකස් කළ පෝෂණ ආහාර.',
       subtitleEn:
         'Scientifically balanced poultry, broiler, layer, and dairy cattle feeds. Order in bulk for farms and retail stores across Sri Lanka.',
       subtitleTa:
@@ -93,7 +103,10 @@ export default function Hero() {
     },
     {
       id: 4,
-      image: '/images/storefront_3d.jpg',
+      image: '/images/storefront_3d.webp',
+      blurDataURL:
+        'data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoKAAoABUB8JaACdADZPzzgAAD+xnBz1pLw4noBNpyC03+WiBhk631mDIKD1rJ7lorAlWQ+sAA=',
+      dominantColor: '#021430',
       tagEn: '🏪 SRI LANKAN MERCHANT MARKETPLACE',
       tagTa: '🏪 இலங்கை விற்பனையாளர்களின் டிஜிட்டல் சந்தை',
       tagSi: '🏪 දේශීය ව්‍යවසායක ඩිජිටල් වෙළඳපල',
@@ -161,13 +174,22 @@ export default function Hero() {
               style={{
                 opacity: isActive ? 1 : 0,
                 pointerEvents: isActive ? 'auto' : 'none',
+                backgroundColor: slide.dominantColor || '#021430',
               }}
             >
-              {/* Ken Burns zooming image */}
-              <div className="absolute inset-0 overflow-hidden">
-                <img
+              {/* Ken Burns zooming image with Next.js Image optimizations */}
+              <div
+                className="absolute inset-0 overflow-hidden"
+                style={{ backgroundColor: slide.dominantColor || '#021430' }}
+              >
+                <Image
                   src={slide.image}
                   alt={slide.titleLine1En}
+                  fill
+                  priority={index === 0}
+                  placeholder="blur"
+                  blurDataURL={slide.blurDataURL}
+                  sizes="100vw"
                   className="w-full h-full object-cover object-center"
                   style={{
                     transform: isActive ? 'scale(1.10)' : 'scale(1)',

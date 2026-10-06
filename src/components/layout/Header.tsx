@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import { useCart } from '@/lib/cart/CartContext';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -27,7 +27,6 @@ export default function Header() {
   const { cartCount } = useCart();
   const { user, logoutUser } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,9 +35,12 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const q = searchParams.get('q');
-    if (q) setSearchQuery(q);
-  }, [searchParams]);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q');
+      if (q) setSearchQuery(q);
+    }
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -35,7 +35,7 @@ export default function WhyShopBanner() {
           {/* Center 3D Storefront Graphic */}
           <div className="w-36 sm:w-44 shrink-0 flex justify-center">
             <img
-              src="/images/storefront_3d.jpg"
+              src="/images/storefront_3d.webp"
               alt="VenterShop Canada Store"
               className="w-full h-auto object-contain rounded-xl drop-shadow-md"
             />

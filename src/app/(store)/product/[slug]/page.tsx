@@ -147,9 +147,7 @@ export default async function ProductDetailPage({ params }: Props) {
   return (
     <div className="flex flex-col min-h-screen bg-[#F5F5F5]">
       <JsonLd data={[productJsonLd, breadcrumbJsonLd]} />
-      <Suspense fallback={<div className="h-20 bg-white" />}>
-        <Header />
-      </Suspense>
+      <Header />
       <main className="flex-grow py-8">
         <ProductDetailClient product={product} />
       </main>

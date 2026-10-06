@@ -83,7 +83,7 @@ export default function DualFeatureCards() {
             {/* Image */}
             <div className="w-36 sm:w-44 lg:w-48 shrink-0 flex justify-center">
               <img
-                src="/images/groceries_basket.jpg"
+                src="/images/groceries_basket.webp"
                 alt="People's Multi Shop Groceries"
                 className="w-full h-auto object-contain rounded-xl drop-shadow-sm hover:scale-105 transition-transform duration-300"
               />
@@ -139,7 +139,7 @@ export default function DualFeatureCards() {
             {/* Image */}
             <div className="w-36 sm:w-44 lg:w-48 shrink-0 flex justify-center">
               <img
-                src="/images/rani_animal_feed.jpg"
+                src="/images/rani_animal_feed.webp"
                 alt="Rani Animal Feed"
                 className="w-full h-auto object-contain rounded-xl drop-shadow-sm hover:scale-105 transition-transform duration-300"
               />

@@ -24,8 +24,12 @@ export default function BrandLogo({
   return (
     <Link href="/" className="inline-flex items-center gap-2 group select-none py-0.5">
       <img
-        src="/images/logo.png"
+        src="/images/logo.webp"
         alt="VENTERSHOP Logo"
+        width={180}
+        height={48}
+        fetchPriority="high"
+        decoding="async"
         className={`${heightClasses[size]} w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xs`}
       />
     </Link>

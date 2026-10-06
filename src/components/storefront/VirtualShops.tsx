@@ -343,7 +343,7 @@ export default function VirtualShops() {
               <div className="relative w-full max-w-xs bg-white p-3 rounded-2xl border border-blue-100 shadow-md flex flex-col items-center text-center group">
                 <div className="relative w-full h-36 rounded-xl overflow-hidden">
                   <img
-                    src="/images/sri_lankan_exports.jpg"
+                    src="/images/sri_lankan_exports.webp"
                     alt="Sri Lankan Export Products"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

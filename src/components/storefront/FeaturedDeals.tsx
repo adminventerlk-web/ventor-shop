@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import { useCart } from '@/lib/cart/CartContext';
-import { ShoppingCart, Flame, ArrowRight, Star } from 'lucide-react';
+import { ShoppingCart, Flame, ArrowRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
 interface IProduct {
@@ -106,18 +106,12 @@ export default function FeaturedDeals() {
                 {/* Product Image */}
                 <div
                   className="h-36 sm:h-56 bg-cover bg-center bg-gray-50 border-b border-gray-100 transition-transform duration-500 group-hover:scale-101"
-                  style={{ backgroundImage: `url('${prod.images[0] || '/images/hero_banner.png'}')` }}
+                  style={{ backgroundImage: `url('${prod.images[0] || '/images/hero_banner.webp'}')` }}
                 />
 
                 {/* Card body */}
                 <div className="p-3 sm:p-6 flex-1 flex flex-col justify-between space-y-2 sm:space-y-4">
                   <div className="space-y-1">
-                    {/* Stars */}
-                    <div className="flex gap-0.5 text-amber-500">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" />
-                      ))}
-                    </div>
                     {/* Title */}
                     <h3 className="text-base font-extrabold text-[#101A2D] group-hover:text-[#E53935] transition-colors line-clamp-1">
                       {prod.name}

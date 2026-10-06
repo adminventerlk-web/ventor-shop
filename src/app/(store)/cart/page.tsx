@@ -16,9 +16,7 @@ export const metadata: Metadata = {
 export default function CartPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#F5F5F5]">
-      <Suspense fallback={<div className="h-20 bg-white" />}>
-        <Header />
-      </Suspense>
+      <Header />
       <main className="flex-grow py-8">
         <Suspense
           fallback={

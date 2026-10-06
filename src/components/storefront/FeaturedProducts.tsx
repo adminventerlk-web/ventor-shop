@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import { useCart } from '@/lib/cart/CartContext';
-import { ShoppingCart, Star, Sparkles } from 'lucide-react';
+import { ShoppingCart, Sparkles } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
 interface ProductItem {
@@ -234,10 +234,7 @@ export default function FeaturedProducts() {
                 {/* Details */}
                 <div className="pt-3 space-y-1.5 flex-1 flex flex-col justify-between text-left">
                   <div>
-                    <div className="flex items-center gap-1 text-amber-400 mb-1">
-                      <Star className="w-3 h-3 fill-amber-400" />
-                      <span className="text-[10px] font-bold text-gray-600">5.0</span>
-                    </div>
+
                     <Link
                       href={`/product/${prod.slug}`}
                       className="text-xs font-bold text-gray-900 group-hover:text-[#0052CC] transition-colors line-clamp-1 block leading-snug"
