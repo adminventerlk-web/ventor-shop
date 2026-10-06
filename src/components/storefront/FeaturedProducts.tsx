@@ -166,11 +166,11 @@ export default function FeaturedProducts() {
   };
 
   return (
-    <section id="featured-products" className="py-10 sm:py-14 bg-slate-50 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <section id="featured-products" className="pt-6 pb-12 bg-[#F8FAFC] border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gray-200 pb-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gray-200 pb-3">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#0052CC] rounded-xl text-[#FFB800] shadow-sm">
               <Sparkles className="w-5 h-5" />
