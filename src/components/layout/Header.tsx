@@ -18,7 +18,6 @@ import {
   Headphones,
   Package,
   Home,
-  Percent,
   ShieldCheck,
 } from 'lucide-react';
 import BrandLogo from '@/components/common/BrandLogo';
@@ -50,10 +49,6 @@ export default function Header() {
     }
   };
 
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'ta' : 'en');
-  };
-
   const handleLogout = async () => {
     setAccountDropdownOpen(false);
     await logoutUser();
@@ -74,14 +69,14 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm text-xs font-semibold">
+    <header className="sticky top-0 z-50 w-full text-xs font-semibold shadow-xl select-none">
       
-      {/* 1. TOP ROYAL BLUE & GOLD NOTIFICATION BAR */}
-      <div className="w-full bg-[#022B69] py-2 px-4 sm:px-8 text-white">
+      {/* 1. TOP ANNOUNCEMENT BAR (Deep Navy Blue #010E24) */}
+      <div className="w-full bg-[#010E24] py-2 px-4 sm:px-8 text-white border-b border-blue-900/40">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs gap-1">
-          <div className="flex items-center gap-2 text-white/95 font-medium">
-            <span className="text-amber-300 font-bold">✨</span>
-            <span>
+          <div className="flex items-center gap-2 text-blue-100 font-medium">
+            <span className="text-[#FFB800] font-bold animate-pulse">✨</span>
+            <span className="truncate max-w-md sm:max-w-none">
               {language === 'ta'
                 ? 'தொழில்முனைவோரை வலுப்படுத்துதல் • சந்தைகளை இணைத்தல் • ஒன்றாக வளர்வது'
                 : language === 'si'
@@ -89,59 +84,72 @@ export default function Header() {
                 : 'Empowering Entrepreneurs • Connecting Markets • Growing Together'}
             </span>
           </div>
+          
           <div className="flex items-center gap-4 text-white/90 text-xs">
             {user && (
               <>
                 {user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? (
-                  <Link href="/admin" className="hover:text-amber-200 transition-colors flex items-center gap-1 font-bold text-amber-300">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
+                  <Link href="/admin" className="hover:text-amber-200 transition-colors flex items-center gap-1 font-bold text-[#FFB800]">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#FFB800]" />
                     <span>Admin Control Panel</span>
                   </Link>
                 ) : (
-                  <Link href="/dashboard" className="hover:text-amber-200 transition-colors flex items-center gap-1 font-bold text-amber-200">
-                    <User className="w-3.5 h-3.5" />
+                  <Link href="/dashboard" className="hover:text-amber-200 transition-colors flex items-center gap-1 font-bold text-amber-300">
+                    <User className="w-3.5 h-3.5 text-amber-300" />
                     <span>Dashboard</span>
                   </Link>
                 )}
-                <span className="text-white/40">|</span>
+                <span className="text-white/30">|</span>
               </>
             )}
-            <Link href="/contact" className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
-              <Headphones className="w-3.5 h-3.5 text-amber-300" />
+
+            <Link href="/contact" className="hover:text-[#FFB800] transition-colors flex items-center gap-1.5">
+              <Headphones className="w-3.5 h-3.5 text-[#FFB800]" />
               <span>Help & Support</span>
             </Link>
-            <span className="text-white/40">|</span>
+
+            <span className="text-white/30">|</span>
+
             {user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') ? (
-              <Link href="/admin/orders" className="hover:text-amber-200 transition-colors flex items-center gap-1.5 font-bold">
-                <Package className="w-3.5 h-3.5 text-amber-300" />
+              <Link href="/admin/orders" className="hover:text-[#FFB800] transition-colors flex items-center gap-1.5 font-bold">
+                <Package className="w-3.5 h-3.5 text-[#FFB800]" />
                 <span>Store Orders</span>
               </Link>
             ) : (
-              <Link href="/dashboard/orders" className="hover:text-amber-200 transition-colors flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5 text-amber-300" />
+              <Link href="/dashboard/orders" className="hover:text-[#FFB800] transition-colors flex items-center gap-1.5">
+                <Package className="w-3.5 h-3.5 text-[#FFB800]" />
                 <span>Track Order</span>
               </Link>
             )}
-            <span className="text-white/40">|</span>
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-300">
-              <Globe className="w-3.5 h-3.5 text-amber-400" />
+
+            <span className="text-white/30">|</span>
+
+            {/* Language Selector */}
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#FFB800]">
+              <Globe className="w-3.5 h-3.5 text-[#FFB800]" />
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'en' ? 'bg-amber-400 text-[#022B69] font-black' : 'hover:text-white'}`}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                  language === 'en' ? 'bg-[#FFB800] text-[#021838] font-black' : 'hover:text-white'
+                }`}
               >
                 EN
               </button>
               <span className="text-white/30">|</span>
               <button
                 onClick={() => setLanguage('ta')}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'ta' ? 'bg-amber-400 text-[#022B69] font-black' : 'hover:text-white'}`}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                  language === 'ta' ? 'bg-[#FFB800] text-[#021838] font-black' : 'hover:text-white'
+                }`}
               >
                 தமிழ்
               </button>
               <span className="text-white/30">|</span>
               <button
                 onClick={() => setLanguage('si')}
-                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${language === 'si' ? 'bg-amber-400 text-[#022B69] font-black' : 'hover:text-white'}`}
+                className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                  language === 'si' ? 'bg-[#FFB800] text-[#021838] font-black' : 'hover:text-white'
+                }`}
               >
                 සිංහල
               </button>
@@ -150,24 +158,26 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. MAIN HEADER (Logo, Clean Dynamic Nav, Search, Account, Cart) */}
-      <div className="border-b border-gray-100 py-3 px-4 sm:px-8 bg-white">
+      {/* 2. MAIN NAVBAR (Deep Navy Blue #021838 with Logo & Gold Accents) */}
+      <div className="bg-[#021838] text-white py-3 px-4 sm:px-8 border-b-2 border-[#FFB800]/70 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
           
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg lg:hidden"
+            className="p-2 text-white bg-white/10 hover:bg-white/20 rounded-lg lg:hidden transition-colors"
             aria-label="Open menu"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-5 h-5 text-[#FFB800]" />
           </button>
 
-          {/* Brand Logo */}
-          <BrandLogo variant="dark" size="md" showSubtitle={true} />
+          {/* Brand Logo in White/Translucent Frame */}
+          <div className="bg-white/95 px-3 py-1 rounded-xl shadow-md backdrop-blur-md">
+            <BrandLogo variant="light" size="md" showSubtitle={true} />
+          </div>
 
-          {/* Desktop Dynamic Navigation Menu */}
-          <nav className="hidden lg:flex items-center gap-7 text-gray-700 font-bold text-xs">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-7 text-white font-bold text-xs tracking-wider">
             {navLinks.map((item, idx) => {
               let isActive = false;
               if (item.isHome) {
@@ -185,13 +195,13 @@ export default function Header() {
                 <Link
                   key={idx}
                   href={item.href}
-                  className={`flex items-center gap-1.5 py-0.5 tracking-wider transition-colors ${
+                  className={`flex items-center gap-1.5 py-1.5 px-3 rounded-lg tracking-wider transition-all ${
                     isActive
-                      ? 'text-[#0052CC] font-black border-b-2 border-[#0052CC]'
-                      : 'text-gray-700 hover:text-[#0052CC]'
+                      ? 'bg-[#FFB800] text-[#021838] font-black shadow-md'
+                      : 'text-gray-100 hover:text-[#FFB800] hover:bg-white/10'
                   }`}
                 >
-                  {item.isHome && <Home className={`w-3.5 h-3.5 ${isActive ? 'text-[#0052CC]' : 'text-gray-500'}`} />}
+                  {item.isHome && <Home className={`w-3.5 h-3.5 ${isActive ? 'text-[#021838]' : 'text-amber-400'}`} />}
                   <span>{item.label}</span>
                 </Link>
               );
@@ -200,49 +210,49 @@ export default function Header() {
 
           {/* Right Side: Search + Account + Cart */}
           <div className="flex items-center gap-3 shrink-0">
-            {/* Search Input */}
+            {/* Search Input Box */}
             <form
               onSubmit={handleSearchSubmit}
               className="hidden md:flex relative items-center w-52 xl:w-64"
             >
               <input
                 type="text"
-                placeholder="Search for products..."
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#F5F8FF] text-gray-800 text-xs pl-3 pr-8 py-2 rounded-full border border-blue-200 focus:border-[#0052CC] focus:bg-white outline-none transition-all font-semibold"
+                className="w-full bg-[#010E24] text-white placeholder-gray-400 text-xs pl-3.5 pr-9 py-2.5 rounded-full border border-blue-500/30 focus:border-[#FFB800] focus:bg-[#021430] outline-none transition-all font-semibold"
               />
               <button
                 type="submit"
-                className="absolute right-2.5 text-gray-400 hover:text-[#0052CC] cursor-pointer"
+                className="absolute right-3 text-[#FFB800] hover:text-white cursor-pointer"
                 aria-label="Search"
               >
                 <Search className="w-3.5 h-3.5" />
               </button>
             </form>
 
-            {/* Account / User Menu */}
+            {/* Account Menu Button */}
             <div className="relative">
               {user ? (
                 <div>
                   <button
                     onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                    className="flex flex-col items-center text-gray-700 hover:text-[#0052CC] transition-colors px-1 cursor-pointer"
+                    className="flex flex-col items-center text-white hover:text-[#FFB800] transition-colors px-1 cursor-pointer"
                   >
-                    <User className="w-5 h-5 text-gray-700" />
-                    <span className="text-[10px] font-bold truncate max-w-[60px]">
+                    <User className="w-5 h-5 text-[#FFB800]" />
+                    <span className="text-[10px] font-bold truncate max-w-[65px] text-white">
                       {user.firstName || 'Account'}
                     </span>
                   </button>
 
                   {accountDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 text-xs font-semibold">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="font-bold text-gray-900 truncate">
+                    <div className="absolute right-0 mt-2 w-52 bg-[#021838] border border-blue-500/40 rounded-xl shadow-2xl py-2 z-50 text-xs font-semibold text-white">
+                      <div className="px-4 py-2 border-b border-blue-900/50 bg-[#010E24]">
+                        <p className="font-bold text-white truncate">
                           {user.firstName} {user.lastName}
                         </p>
-                        <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-[9px] bg-blue-50 text-[#0052CC] rounded-full font-bold">
+                        <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
+                        <span className="inline-block mt-1 px-2 py-0.5 text-[9px] bg-[#FFB800] text-[#021838] rounded-full font-black">
                           {user.customerType || 'CUSTOMER'}
                         </span>
                       </div>
@@ -251,26 +261,18 @@ export default function Header() {
                           <Link
                             href="/admin"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-blue-700 hover:bg-blue-50 font-bold"
+                            className="flex items-center gap-2 px-4 py-2.5 text-[#FFB800] hover:bg-white/10 font-bold"
                           >
-                            <ShieldCheck className="w-4 h-4 text-[#0052CC]" />
+                            <ShieldCheck className="w-4 h-4 text-[#FFB800]" />
                             <span>Admin Control Panel</span>
                           </Link>
                           <Link
                             href="/admin/orders"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2.5 text-gray-200 hover:bg-white/10"
                           >
-                            <Package className="w-4 h-4 text-gray-500" />
+                            <Package className="w-4 h-4 text-gray-400" />
                             <span>Manage Store Orders</span>
-                          </Link>
-                          <Link
-                            href="/admin/settings"
-                            onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
-                          >
-                            <Settings className="w-4 h-4 text-gray-500" />
-                            <span>Store Settings</span>
                           </Link>
                         </>
                       ) : (
@@ -278,24 +280,24 @@ export default function Header() {
                           <Link
                             href="/dashboard"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2.5 text-gray-200 hover:bg-white/10"
                           >
-                            <User className="w-4 h-4 text-gray-500" />
+                            <User className="w-4 h-4 text-gray-400" />
                             <span>My Dashboard</span>
                           </Link>
                           <Link
                             href="/dashboard/orders"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2.5 text-gray-200 hover:bg-white/10"
                           >
-                            <Package className="w-4 h-4 text-gray-500" />
+                            <Package className="w-4 h-4 text-gray-400" />
                             <span>My Orders</span>
                           </Link>
                         </>
                       )}
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 text-left border-t border-gray-100 mt-1 cursor-pointer"
+                        className="w-full flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-500/20 text-left border-t border-blue-900/50 mt-1 cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>
@@ -306,42 +308,44 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex flex-col items-center text-gray-700 hover:text-[#0052CC] transition-colors px-1"
+                  className="flex flex-col items-center text-white hover:text-[#FFB800] transition-colors px-1"
                 >
-                  <User className="w-5 h-5 text-gray-700" />
+                  <User className="w-5 h-5 text-[#FFB800]" />
                   <span className="text-[10px] font-bold">Account</span>
                 </Link>
               )}
             </div>
 
-            {/* Cart Button */}
+            {/* Shopping Cart Button */}
             <Link
               href="/cart"
-              className="flex items-center gap-1.5 text-gray-700 hover:text-[#0052CC] transition-colors px-1"
+              className="flex items-center gap-1.5 text-white hover:text-[#FFB800] transition-colors px-1"
             >
               <div className="relative">
-                <ShoppingCart className="w-5 h-5 text-gray-700" />
-                <span className="absolute -top-1.5 -right-2 bg-[#0052CC] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                <ShoppingCart className="w-5.5 h-5.5 text-white" />
+                <span className="absolute -top-1.5 -right-2 bg-[#FFB800] text-[#021838] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md">
                   {cartCount}
                 </span>
               </div>
-              <span className="hidden sm:inline text-xs font-bold">Cart</span>
+              <span className="hidden sm:inline text-xs font-bold text-amber-300">Cart</span>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 lg:hidden flex">
-          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col p-5 overflow-y-auto">
-            <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-              <BrandLogo variant="dark" size="sm" showSubtitle={false} />
+        <div className="fixed inset-0 z-50 bg-black/70 lg:hidden flex backdrop-blur-xs">
+          <div className="w-4/5 max-w-sm bg-[#021838] text-white h-full shadow-2xl flex flex-col p-5 overflow-y-auto border-r border-[#FFB800]/40">
+            <div className="flex justify-between items-center pb-4 border-b border-blue-900/50">
+              <div className="bg-white px-2 py-1 rounded-lg">
+                <BrandLogo variant="dark" size="sm" showSubtitle={false} />
+              </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 text-gray-500 hover:text-gray-800"
+                className="p-1.5 text-gray-300 hover:text-white"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-[#FFB800]" />
               </button>
             </div>
 
@@ -352,22 +356,22 @@ export default function Header() {
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-100 text-xs px-3 py-2.5 rounded-lg border border-gray-200 outline-none font-semibold"
+                className="w-full bg-[#010E24] text-white text-xs px-3 py-2.5 rounded-lg border border-blue-500/30 outline-none font-semibold"
               />
-              <button type="submit" className="absolute right-3 top-2.5 text-gray-400">
+              <button type="submit" className="absolute right-3 top-2.5 text-[#FFB800]">
                 <Search className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Clean Fixed Navigation Links */}
+            {/* Mobile Navigation Links */}
             <div className="flex flex-col gap-2 mt-5 text-xs font-bold">
               {navLinks.map((item, idx) => (
                 <Link
                   key={idx}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2.5 border-b border-gray-50 flex items-center gap-2 ${
-                    item.isHome ? 'text-[#801414]' : 'text-gray-800 hover:text-[#801414]'
+                  className={`py-3 px-3 rounded-lg border-b border-blue-900/30 flex items-center gap-2 ${
+                    item.isHome ? 'bg-[#FFB800] text-[#021838] font-black' : 'text-gray-100 hover:text-[#FFB800]'
                   }`}
                 >
                   {item.isHome && <Home className="w-4 h-4" />}
@@ -377,18 +381,17 @@ export default function Header() {
             </div>
 
             {/* Language & Account Footer */}
-            <div className="mt-auto pt-6 border-t border-gray-100 space-y-4">
-              {/* Language Selector */}
+            <div className="mt-auto pt-6 border-t border-blue-900/50 space-y-4">
               <div className="space-y-1.5">
-                <div className="flex items-center gap-1.5 text-gray-500 font-bold text-[11px] uppercase tracking-wider px-1">
-                  <Globe className="w-3.5 h-3.5 text-[#801414]" />
+                <div className="flex items-center gap-1.5 text-[#FFB800] font-bold text-[11px] uppercase tracking-wider px-1">
+                  <Globe className="w-3.5 h-3.5 text-[#FFB800]" />
                   <span>Select Language</span>
                 </div>
                 <div className="grid grid-cols-3 gap-1">
                   <button
                     onClick={() => setLanguage('en')}
                     className={`py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                      language === 'en' ? 'bg-[#801414] text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      language === 'en' ? 'bg-[#FFB800] text-[#021838] font-black' : 'bg-white/10 text-gray-200'
                     }`}
                   >
                     English
@@ -396,7 +399,7 @@ export default function Header() {
                   <button
                     onClick={() => setLanguage('ta')}
                     className={`py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                      language === 'ta' ? 'bg-[#801414] text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      language === 'ta' ? 'bg-[#FFB800] text-[#021838] font-black' : 'bg-white/10 text-gray-200'
                     }`}
                   >
                     தமிழ்
@@ -404,7 +407,7 @@ export default function Header() {
                   <button
                     onClick={() => setLanguage('si')}
                     className={`py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                      language === 'si' ? 'bg-[#801414] text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      language === 'si' ? 'bg-[#FFB800] text-[#021838] font-black' : 'bg-white/10 text-gray-200'
                     }`}
                   >
                     සිංහල
@@ -416,56 +419,25 @@ export default function Header() {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full py-2.5 bg-[#801414] text-white text-center rounded-lg text-xs font-bold"
+                  className="block w-full py-2.5 bg-[#FFB800] text-[#021838] text-center rounded-lg text-xs font-black shadow-md"
                 >
                   Sign In / Register
                 </Link>
               ) : (
                 <div className="space-y-2">
-                  {/* User Profile Card */}
-                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-150">
-                    <p className="font-extrabold text-gray-900 text-xs truncate">
+                  <div className="p-3 bg-[#010E24] rounded-xl border border-blue-500/30">
+                    <p className="font-extrabold text-white text-xs truncate">
                       {user.firstName} {user.lastName}
                     </p>
-                    <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
-                    <span className="inline-block mt-1 px-2 py-0.5 text-[9px] bg-red-50 text-[#801414] rounded-full font-bold">
-                      {user.customerType || 'CUSTOMER'}
-                    </span>
+                    <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
                   </div>
-
-                  {/* Dashboard Quick Links */}
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full py-2 px-3 bg-[#801414] text-white text-center rounded-lg text-xs font-bold"
+                    className="block w-full py-2 px-3 bg-[#FFB800] text-[#021838] text-center rounded-lg text-xs font-black"
                   >
-                    Go to My Dashboard
+                    Go to Dashboard
                   </Link>
-
-                  <Link
-                    href="/dashboard/orders"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full py-2 px-3 bg-gray-100 text-gray-800 text-center rounded-lg text-xs font-bold hover:bg-gray-200"
-                  >
-                    My Orders
-                  </Link>
-
-                  {user.role === 'ADMIN' && (
-                    <Link
-                      href="/admin"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block w-full py-2 px-3 bg-emerald-50 text-emerald-800 border border-emerald-200 text-center rounded-lg text-xs font-bold"
-                    >
-                      Admin Portal
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={handleLogout}
-                    className="w-full py-2 bg-red-50 text-red-700 text-center rounded-lg text-xs font-bold cursor-pointer"
-                  >
-                    Sign Out
-                  </button>
                 </div>
               )}
             </div>
