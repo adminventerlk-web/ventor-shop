@@ -6,6 +6,8 @@ import { useTranslation } from '@/lib/i18n/LanguageContext';
 import ProductCard from '@/components/product/ProductCard';
 import { SlidersHorizontal, ArrowUpDown, Filter, RotateCcw } from 'lucide-react';
 
+import { fallbackProducts, fallbackCategories } from '@/lib/data/fallbackData';
+
 interface ICategoryData {
   _id: string;
   name: string;
@@ -31,15 +33,40 @@ interface IProductData {
   wholesaleMinQty?: number;
 }
 
+const initialProductData: IProductData[] = fallbackProducts.map((p) => ({
+  _id: p._id,
+  name: p.name,
+  slug: p.slug,
+  sku: p.sku,
+  description: p.description,
+  shortDescription: p.shortDescription,
+  images: p.images,
+  retailPrice: p.retailPrice,
+  communityPrice: p.communityPrice,
+  wholesalePrice: p.wholesalePrice,
+  stock: p.stock,
+  lowStockThreshold: p.lowStockThreshold,
+  isFeatured: p.isFeatured,
+  isBestSeller: p.isBestSeller,
+  isNewArrival: p.isNewArrival,
+  wholesaleMinQty: p.wholesaleMinQty,
+}));
+
+const initialCategoryData: ICategoryData[] = fallbackCategories.map((c) => ({
+  _id: c._id,
+  name: c.name,
+  slug: c.slug,
+}));
+
 export default function ShopContent() {
   const { t, language } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const [products, setProducts] = useState<IProductData[]>([]);
-  const [categories, setCategories] = useState<ICategoryData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<IProductData[]>(initialProductData);
+  const [categories, setCategories] = useState<ICategoryData[]>(initialCategoryData);
+  const [loading, setLoading] = useState(false);
 
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState('all');
