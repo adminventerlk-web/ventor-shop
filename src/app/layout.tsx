@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from '@/lib/i18n/LanguageContext';
 import { AuthProvider } from '@/lib/auth/AuthContext';
@@ -24,10 +25,7 @@ const getBaseUrl = () => {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return 'https://ventershop.vercel.app';
+  return 'https://www.ventershop.com';
 };
 
 const baseUrl = getBaseUrl();
@@ -147,6 +145,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <meta name="google-site-verification" content="0_1NZwRkRmOvJ-eyxHzb0bFzhF4dJ68w6q6eay0nrQU" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-D21MSK7H7K"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-D21MSK7H7K');
+          `}
+        </Script>
         <JsonLd data={[organizationJsonLd, websiteJsonLd]} />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
