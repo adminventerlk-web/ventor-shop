@@ -16,7 +16,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ventershop.vercel.app';
+const getBaseUrl = () => {
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (envUrl && !envUrl.includes('localhost')) {
+    return envUrl.replace(/\/$/, '');
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return 'https://ventershop.vercel.app';
+};
+
+const baseUrl = getBaseUrl();
 
 export const viewport: Viewport = {
   themeColor: '#1A2A4A',
