@@ -84,6 +84,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   manifest: "/manifest.json",
+  verification: {
+    google: "0_1NZwRkRmOvJ-eyxHzb0bFzhF4dJ68w6q6eay0nrQU",
+  },
   icons: {
     icon: [
       { url: "/icon.png", sizes: "512x512", type: "image/png" },
@@ -129,6 +132,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <meta name="google-site-verification" content="0_1NZwRkRmOvJ-eyxHzb0bFzhF4dJ68w6q6eay0nrQU" />
         <JsonLd data={[organizationJsonLd, websiteJsonLd]} />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
