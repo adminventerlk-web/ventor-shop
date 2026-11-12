@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
+import { useSectionEntrance } from './useSectionEntrance';
 import { useAuth } from '@/lib/auth/AuthContext';
 import {
   ArrowRight,
@@ -40,6 +41,7 @@ interface ICommunityProgramVoucher {
 }
 
 export default function PromoBanners() {
+  const sectionRef = useSectionEntrance();
   const { language } = useTranslation();
   const isTa = language === 'ta';
   const isSi = language === 'si';
@@ -148,44 +150,37 @@ export default function PromoBanners() {
   const isFamilyOn = familyVoucher?.status === 'ON';
 
   return (
-    <section className="py-6 sm:py-8 bg-white font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} aria-labelledby="community-vouchers-heading" className="pb-8 pt-2 text-[#800020] font-sans sm:pb-10 [&_a:focus-visible]:outline-3 [&_a:focus-visible]:outline-[#800020] [&_a:focus-visible]:outline-offset-4 [&_button:focus-visible]:outline-3 [&_button:focus-visible]:outline-[#800020] [&_button:focus-visible]:outline-offset-4 motion-reduce:[&_*]:animate-none! motion-reduce:[&_*]:transition-none!">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-8">
         
         {/* COMMUNITY GIFT VOUCHERS BANNER */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-[#7B0000] via-[#8D0606] to-[#6A0000] p-6 sm:p-8 text-white overflow-hidden shadow-xl border border-red-900/40">
+        <div className="relative isolate overflow-hidden rounded-3xl border border-[#d6b46a]/40 bg-linear-to-br from-[#780019] via-[#A50030] to-[#570015] p-5 shadow-[0_10px_28px_-18px_#57001580] sm:p-7 lg:p-8">
           
-          {/* Subtle Decorative Background Glows */}
-          <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-red-500/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -right-10 -top-10 w-48 h-48 bg-yellow-500/20 rounded-full blur-2xl pointer-events-none" />
+          <span aria-hidden="true" className="pointer-events-none absolute -left-24 -top-28 h-64 w-64 rounded-full border border-[#e4bd63]/30" />
+          <span aria-hidden="true" className="pointer-events-none absolute -bottom-32 -right-20 h-72 w-72 rounded-full border border-[#e4bd63]/25" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10">
+          <div className="relative z-10 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-7 lg:items-center">
             
             {/* Left Column: Gift Box Icon + Text Info */}
-            <div className="lg:col-span-6 flex items-start gap-4 sm:gap-5">
+            <div data-entrance="up" className="min-w-0 lg:col-span-4">
               
-              {/* Gift Box Graphic Frame with % Badge */}
-              <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-red-600 to-red-800 p-2 border border-red-400/30 flex items-center justify-center shadow-lg group">
-                <Gift className="w-10 h-10 sm:w-12 sm:h-12 text-yellow-300 drop-shadow-md group-hover:scale-110 transition-transform duration-300 stroke-[2.5]" />
-                
-                {/* Floating Ribbon Percent Badge */}
-                <div className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-red-950 w-5 h-5 rounded-full shadow-md flex items-center justify-center text-[10px] font-black">
-                  %
-                </div>
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#edcc83]/40 bg-white/5 text-[#f0ce7a]">
+                <Gift className="h-6 w-6" aria-hidden="true" />
               </div>
 
               {/* Title & Description */}
-              <div className="space-y-1.5 flex-1">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight uppercase leading-tight">
-                  {isTa ? 'சமூக பரிசு வவுச்சர்கள்' : isSi ? 'සමූහ ත්‍යාග වවුචර' : 'COMMUNITY GIFT VOUCHERS'}
-                </h3>
-                <p className="text-xs sm:text-sm font-bold text-white/95">
+              <div className="space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-[.16em] text-white">COMMUNITY BENEFITS</p>
+                <h2 id="community-vouchers-heading" className="font-serif text-[clamp(24px,2.2vw,32px)] font-bold leading-[1.2] tracking-[-.02em] text-white">
+                  {isTa ? 'சமூக பரிசு வவுச்சர்கள்' : isSi ? 'සමූහ ත්‍යාග වවුචර' : 'Community Gift Vouchers'}
+                </h2>
+                <div aria-hidden="true" className="h-0.5 w-12 rounded-full bg-[#edc76a]" />
+                <p className="text-[13px] font-semibold leading-relaxed text-white">
                   {isTa ? 'கல்வி மற்றும் சமூகப் பராமரிப்பிற்கு ஆதரவளித்தல்' : isSi ? 'අධ්‍යාපනය සහ සමාජ සුභසාධනය සඳහා සහය වීම' : 'Supporting Education & Community Care'}
                 </p>
                 
-                {/* Yellow Underline Accent */}
-                <div className="w-12 h-1 bg-yellow-400 rounded-full my-1.5" />
 
-                <p className="text-[11px] sm:text-xs text-red-100/90 font-medium leading-relaxed pt-0.5">
+                <p className="text-xs font-normal leading-[1.7] text-white/90">
                   {isTa
                     ? 'எங்கள் சமூகத் திட்டங்கள் மூலம் வழங்கப்படும் பரிசு வவுச்சர்கள் மாணவர்கள் மற்றும் குடும்பங்கள் VENTERSHOP மூலம் அத்தியாவசிய பொருட்களைப் பெற உதவுகின்றன.'
                     : isSi
@@ -196,21 +191,21 @@ export default function PromoBanners() {
             </div>
 
             {/* Right Column: 2 Voucher Interactive Cards */}
-            <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8">
               
               {/* 1. Student Gift Voucher Card */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 text-gray-900 shadow-lg border border-gray-100 flex flex-col justify-between space-y-3">
+              <div data-entrance="left" data-entrance-delay="120" className="flex min-w-0 flex-col justify-between gap-5 rounded-2xl border border-[#e5e7eb] bg-white p-5 text-gray-900 shadow-[0_5px_16px_-10px_#4e152333] transition-[transform,translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-12px_#4e152340] motion-reduce:hover:translate-y-0 sm:p-6">
                 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#E8F1FD] text-[#0055D4] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#FCE4E6] text-[#800020] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                     <GraduationCap className="w-6 h-6 stroke-[2.2]" />
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <h4 className="text-xs sm:text-sm font-black text-[#003B7A] leading-tight truncate">
+                    <h4 className="text-[15px] font-bold leading-snug text-[#800020]">
                       {isTa ? 'மாணவர் பரிசு வவுச்சர்' : isSi ? 'ශිෂ්‍ය ත්‍යාග වවුචරය' : 'Student Gift Voucher'}
                     </h4>
-                    <p className="text-[10px] text-gray-500 font-semibold">Supported by</p>
-                    <span className="inline-block bg-[#E8F1FD] text-[#0055D4] text-[9px] font-extrabold px-2 py-0.5 rounded-md truncate max-w-full">
+                    <p className="text-[10px] text-[#64748B] font-semibold">Supported by</p>
+                    <span className="inline-block bg-[#FCE4E6] text-[#800020] text-[10px] font-semibold px-2 py-1 rounded-md max-w-full whitespace-normal">
                       Educating Bank System of V2CC
                     </span>
                   </div>
@@ -221,28 +216,28 @@ export default function PromoBanners() {
                   <span className="text-gray-600 font-bold text-[11px]">Status:</span>
                   
                   {!voucher && (
-                    <div className="inline-flex items-center gap-1.5 bg-[#00A859] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <span>ON</span>
                       <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
                     </div>
                   )}
 
                   {voucher?.status === 'PENDING' && (
-                    <div className="inline-flex items-center gap-1.5 bg-amber-500 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-gray-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <Clock className="w-3 h-3" />
                       <span>PENDING</span>
                     </div>
                   )}
 
                   {voucher?.status === 'VERIFIED' && (
-                    <div className="inline-flex items-center gap-1.5 bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <ShieldCheck className="w-3 h-3" />
                       <span>VERIFIED & ACTIVE</span>
                     </div>
                   )}
 
                   {voucher?.status === 'REJECTED' && (
-                    <div className="inline-flex items-center gap-1.5 bg-red-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <XCircle className="w-3 h-3" />
                       <span>REJECTED</span>
                     </div>
@@ -252,7 +247,7 @@ export default function PromoBanners() {
                 {/* CTA Action Button */}
                 <button
                   onClick={handleUseVoucherClick}
-                  className="w-full py-2 px-3 bg-[#0066E6] hover:bg-[#0052B8] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
+                  className="w-full min-h-11 py-2.5 px-3 bg-[#800020] hover:bg-[#650019] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
                 >
                   <span>
                     {voucher?.status === 'PENDING'
@@ -266,22 +261,20 @@ export default function PromoBanners() {
               </div>
 
               {/* 2. Family Support / Community Voucher Card (DYNAMIC ON/OFF STATUS) */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 text-gray-900 shadow-lg border border-gray-100 flex flex-col justify-between space-y-3">
+              <div data-entrance="right" data-entrance-delay="240" className="flex min-w-0 flex-col justify-between gap-5 rounded-2xl border border-[#e5e7eb] bg-white p-5 text-gray-900 shadow-[0_5px_16px_-10px_#4e152333] transition-[transform,translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-12px_#4e152340] motion-reduce:hover:translate-y-0 sm:p-6">
                 
                 <div className="flex items-start gap-3">
                   <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs mt-0.5 ${
-                      isFamilyOn ? 'bg-[#E8F8EE] text-[#0E703C]' : 'bg-gray-100 text-gray-500'
-                    }`}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs mt-0.5 bg-[#FCE4E6] text-[#800020]"
                   >
                     <Home className="w-6 h-6 stroke-[2.2]" />
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <h4 className="text-xs sm:text-sm font-black text-[#0E703C] leading-tight truncate">
+                    <h4 className="text-[15px] font-bold leading-snug text-[#800020]">
                       {familyVoucher?.title || (isTa ? 'குடும்ப ஆதரவு வவுச்சர்' : 'Family Support Voucher')}
                     </h4>
-                    <p className="text-[10px] text-gray-500 font-semibold">Supported by</p>
-                    <span className="inline-block bg-[#E8F8EE] text-[#0E703C] text-[9px] font-extrabold px-2 py-0.5 rounded-md truncate max-w-full">
+                    <p className="text-[10px] text-[#64748B] font-semibold">Supported by</p>
+                    <span className="inline-block bg-[#FCE4E6] text-[#800020] text-[10px] font-semibold px-2 py-1 rounded-md max-w-full whitespace-normal">
                       {familyVoucher?.supportedBy || 'TMSAP Project of V2CC'}
                     </span>
                   </div>
@@ -292,7 +285,7 @@ export default function PromoBanners() {
                   <span className="text-gray-600 font-bold text-[11px]">Status:</span>
                   
                   {isFamilyOn ? (
-                    <div className="inline-flex items-center gap-1.5 bg-[#00A859] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <span>ON</span>
                       <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
                     </div>
@@ -308,7 +301,7 @@ export default function PromoBanners() {
                 {isFamilyOn ? (
                   <button
                     onClick={() => handleCopyCode(familyVoucher?.voucherCode || 'FAMILY-V2CC')}
-                    className="w-full py-2 px-3 bg-[#0E703C] hover:bg-[#0a522c] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
+                    className="w-full min-h-11 py-2.5 px-3 bg-[#800020] hover:bg-[#650019] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
                   >
                     {copiedCode === (familyVoucher?.voucherCode || 'FAMILY-V2CC') ? (
                       <>
@@ -325,7 +318,7 @@ export default function PromoBanners() {
                 ) : (
                   <Link
                     href="/vouchers#family"
-                    className="w-full py-2 px-3 bg-white hover:bg-gray-50 text-[#0066E6] border border-[#0066E6]/30 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-2xs hover:shadow-xs transition-all text-center"
+                    className="w-full min-h-11 py-2.5 px-3 bg-white hover:bg-[#fff5f6] text-[#800020] border border-[#800020] text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-2xs hover:shadow-xs transition-all text-center"
                   >
                     <span>{isTa ? 'விபரங்களைப் பார்க்க' : isSi ? 'විස්තර බලන්න' : 'View Details'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />

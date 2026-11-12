@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
+import { useSectionEntrance } from './useSectionEntrance';
 import {
   ShoppingBag,
   Footprints,
@@ -13,12 +14,10 @@ import {
   Settings,
   MoreHorizontal,
   ArrowRight,
-  Globe,
-  CheckCircle2,
-  Plane,
 } from 'lucide-react';
 
 export default function VirtualShops() {
+  const sectionRef = useSectionEntrance();
   const { language } = useTranslation();
   const isTa = language === 'ta';
   const isSi = language === 'si';
@@ -154,48 +153,27 @@ export default function VirtualShops() {
     },
   ];
 
-  const exportPoints = isTa
-    ? [
-        'இலங்கை விநியோகஸ்தர்களிடமிருந்து நேரடியாக',
-        'ஏற்றுமதிக்கு தயார்நிலையில் உள்ள பொருட்கள்',
-        'மொத்த வியாபாரம் & பல்க் ஆர்டர்கள்',
-        'உலகளாவிய ஷிப்பிங் ஆதரவு',
-      ]
-    : isSi
-    ? [
-        'ශ්‍රී ලාංකික සැපයුම්කරුවන්ගෙන් සෘජුවම',
-        'අපනයනයට සූදානම් නිෂ්පාදන',
-        'තොග සහ විශාල ඇණවුම්',
-        'ලොව පුරා බෙදාහැරීමේ සහාය',
-      ]
-    : [
-        'Direct from Sri Lankan Suppliers',
-        'Export-Ready Products',
-        'Wholesale & Bulk Orders',
-        'Worldwide Shipping Support',
-      ];
-
   return (
-    <section id="virtual-shops" className="py-8 sm:py-12 bg-white border-b border-gray-100 font-sans scroll-mt-20">
+    <section ref={sectionRef} id="virtual-shops" className="py-8 sm:py-12 bg-white border-b border-gray-100 font-sans scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Section Header */}
-        <div className="relative text-center space-y-1">
-          <span className="text-[11px] font-extrabold tracking-wider text-[#990000] uppercase block">
+        <div data-entrance="up" className="relative text-center space-y-3">
+          <span className="inline-flex items-center justify-center gap-3 text-[10px] font-bold tracking-[.12em] text-[#800020] uppercase before:h-px before:w-6 before:bg-[#800020]/25 after:h-px after:w-6 after:bg-[#800020]/25 sm:before:w-12 sm:after:w-12">
             {isTa ? 'எங்களின் பிற வர்ச்சுவல் கடைகள்' : 'OUR OTHER VIRTUAL SHOPS'}
           </span>
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">
+          <h2 className="mx-auto max-w-3xl font-serif text-[clamp(24px,2.2vw,32px)] font-bold leading-[1.2] tracking-[-.02em] text-[#102b4c]">
             {isTa ? 'VENTERSHOP இல் மேலும் கடைகளை ஆராயுங்கள்' : 'Explore More Shops on VENTERSHOP'}
           </h2>
-          <p className="text-xs sm:text-sm font-semibold text-gray-500">
+          <p className="mx-auto max-w-2xl text-xs font-medium leading-relaxed text-[#64748b] sm:text-sm">
             {isTa ? 'பல்வேறு கடைகள், பல சாத்தியக்கூறுகள் - ஒரே தளத்தில்' : 'Different Shops, More Possibilities – All in One Platform'}
           </p>
 
           {/* Top Right "View All Shops" Button */}
-          <div className="mt-3 sm:mt-0 sm:absolute sm:right-0 sm:top-1/2 sm:-translate-y-1/2">
+          <div className="flex justify-center lg:justify-end">
             <Link
               href="/virtual-shops"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-white border border-gray-300 text-xs font-bold text-gray-700 hover:text-[#990000] hover:border-[#990000] shadow-xs transition-all duration-200"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-white border border-gray-300 text-xs font-bold text-gray-700 hover:text-[#990000] hover:border-[#990000] shadow-xs transition-all duration-200 focus-visible:outline-3 focus-visible:outline-[#075bb9] focus-visible:outline-offset-4 motion-reduce:transition-none!"
             >
               <span>{isTa ? 'அனைத்து கடைகளையும் காண்க' : 'View All Shops'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -203,164 +181,43 @@ export default function VirtualShops() {
           </div>
         </div>
 
-        {/* 8 Virtual Shops Grid with Product Images & Circle Icons */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          {virtualShops.map((shop) => {
+        {/* Existing shop content and availability, presented in a responsive grid. */}
+        <div data-shop-grid className="mx-auto grid grid-cols-2 auto-rows-fr gap-3 sm:gap-5 lg:w-[94%] lg:grid-cols-4">
+          {virtualShops.map((shop, index) => {
             const Icon = shop.icon;
-            return shop.isAvailable ? (
-              <Link
-                key={shop.id}
-                href={shop.href}
-                className={`group relative ${shop.cardBg} border ${shop.borderColor} rounded-2xl p-3 flex flex-col items-center text-center justify-between min-h-[220px] overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
-              >
-                {/* Top Image Showcase */}
-                <div className="relative w-full h-20 rounded-xl overflow-hidden shadow-xs mb-2 bg-white/50">
-                  <img
-                    src={shop.image}
-                    alt={shop.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  {/* Floating Icon Circle */}
-                  <div className={`absolute bottom-1 right-1 w-7 h-7 rounded-full ${shop.iconBg} text-white flex items-center justify-center shadow-md`}>
-                    <Icon className="w-3.5 h-3.5" />
+            const cardClassName = `group flex min-w-0 flex-col rounded-3xl border ${shop.borderColor} ${shop.cardBg} bg-linear-to-b from-white/65 to-transparent p-2.5 text-center shadow-[0_6px_18px_-12px_#264b7040] transition-[transform,translate,box-shadow] duration-300 hover:-translate-y-[5px] hover:shadow-[0_14px_26px_-14px_#264b7055] motion-reduce:hover:translate-y-0 motion-reduce:transition-none! sm:p-4`;
+            const content = (
+              <>
+                <div className="relative mb-6 w-full sm:mb-7">
+                  <div className="h-[112px] overflow-hidden rounded-2xl bg-white/60 sm:h-[180px] lg:h-[170px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={shop.image} alt={shop.title} loading="lazy" width={400} height={280}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04] motion-reduce:scale-100! motion-reduce:transition-none" />
                   </div>
-                </div>
-
-                {/* Title & Desc */}
-                <div className="space-y-1 my-1">
-                  <h3 className={`text-xs font-black ${shop.titleColor} leading-tight line-clamp-2`}>
-                    {shop.title}
-                  </h3>
-                  <p className={`text-[10px] font-semibold ${shop.descColor} leading-tight line-clamp-2`}>
-                    {shop.desc}
-                  </p>
-                </div>
-
-                {/* Bottom Center CTA */}
-                <div className="mt-auto pt-2 flex items-center justify-center gap-1 text-[11px] font-extrabold">
-                  <span className={`${shop.ctaColor} group-hover:underline`}>
-                    {shop.buttonText}
+                  <span aria-hidden="true" className={`absolute -bottom-4 right-2 flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-white ${shop.iconBg} text-white shadow-sm sm:-bottom-5 sm:right-3 sm:h-11 sm:w-11`}>
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </span>
-                  <ArrowRight className={`w-3 h-3 ${shop.ctaColor} group-hover:translate-x-0.5 transition-transform`} />
                 </div>
+                <div className="flex flex-1 flex-col items-center">
+                  <h3 className={`flex min-h-[36px] items-center justify-center text-[13px] font-bold leading-[1.35] tracking-[-.015em] ${shop.titleColor} sm:min-h-[44px] sm:text-base`}>{shop.title}</h3>
+                  <p className={`mt-1 mb-4 text-[11px] font-medium leading-[1.5] ${shop.descColor} sm:text-xs`}>{shop.desc}</p>
+                  <span className={`mt-auto inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-full border px-2 py-2 text-[11px] font-bold leading-[1.3] sm:mt-auto sm:min-h-11 sm:px-3 sm:text-xs ${shop.isAvailable ? (shop.id === 'supermarket' ? 'border-[#004085] bg-[#004085] text-white' : 'border-[#4C1D95] bg-[#4C1D95] text-white') : 'border-white/80 bg-white/60 text-[#566176]'}`}>
+                    {shop.buttonText}
+                    <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+                  </span>
+                </div>
+              </>
+            );
+            return shop.isAvailable ? (
+              <Link key={shop.id} data-entrance="up" data-entrance-delay={100 + index * 85} href={shop.href} className={`${cardClassName} focus-visible:outline-3 focus-visible:outline-[#075bb9] focus-visible:outline-offset-4`}>
+                {content}
               </Link>
             ) : (
-              <div
-                key={shop.id}
-                className={`relative ${shop.cardBg} border ${shop.borderColor} rounded-2xl p-3 flex flex-col items-center text-center justify-between min-h-[220px] overflow-hidden shadow-2xs select-none`}
-              >
-                {/* Top Image Showcase */}
-                <div className="relative w-full h-20 rounded-xl overflow-hidden shadow-xs mb-2 bg-white/50">
-                  <img
-                    src={shop.image}
-                    alt={shop.title}
-                    className="w-full h-full object-cover"
-                  />
-                  {/* Floating Icon Circle */}
-                  <div className={`absolute bottom-1 right-1 w-7 h-7 rounded-full ${shop.iconBg} text-white flex items-center justify-center shadow-md`}>
-                    <Icon className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-
-                {/* Title & Desc */}
-                <div className="space-y-1 my-1">
-                  <h3 className={`text-xs font-black ${shop.titleColor} leading-tight line-clamp-2`}>
-                    {shop.title}
-                  </h3>
-                  <p className={`text-[10px] font-semibold ${shop.descColor} leading-tight line-clamp-2`}>
-                    {shop.desc}
-                  </p>
-                </div>
-
-                {/* Bottom Center Disabled Indicator */}
-                <div className="mt-auto pt-2 flex items-center justify-center gap-1 text-[11px] font-bold text-gray-500">
-                  <span className="text-gray-500 font-bold">
-                    {shop.buttonText}
-                  </span>
-                  <ArrowRight className="w-3 h-3 text-gray-400" />
-                </div>
+              <div key={shop.id} data-entrance="up" data-entrance-delay={100 + index * 85} aria-disabled="true" className={cardClassName}>
+                {content}
               </div>
             );
           })}
-        </div>
-
-        {/* VIRTUAL FOREIGN BUYERS BANNER */}
-        <div id="export" className="relative rounded-2xl bg-gradient-to-r from-[#D9EAFE] via-[#E8F1FD] to-[#D9EAFE] p-5 sm:p-7 text-gray-900 border border-blue-200 shadow-sm overflow-hidden scroll-mt-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            
-            {/* Left Graphic + Content */}
-            <div className="lg:col-span-8 flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-              
-              {/* Giant Globe with Airplane Icon Badge */}
-              <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0055D4] text-white flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
-                <Globe className="w-10 h-10 sm:w-12 sm:h-12 text-white/90" />
-                <Plane className="w-5 h-5 text-cyan-300 absolute bottom-2 right-2 animate-bounce" />
-              </div>
-
-              {/* Text Info */}
-              <div className="space-y-2">
-                <span className="text-[11px] font-black uppercase tracking-wider text-[#0055D4] block">
-                  {isTa ? 'வர்ச்சுவல் வெளிநாட்டு வாங்குவோர்' : 'VIRTUAL FOREIGN BUYERS'}
-                </span>
-
-                <h3 className="text-lg sm:text-2xl font-black text-[#002B66] leading-tight">
-                  {isTa
-                    ? 'சர்வதேச வாங்குபவர்களுக்கான இலங்கை தயாரிப்புகள்'
-                    : 'Sri Lankan Products for International Buyers'}
-                </h3>
-
-                <p className="text-xs font-semibold text-[#1A4578]">
-                  {isTa
-                    ? 'இலங்கையின் உயர்தர பொருட்களை உலகளாவிய சந்தையுடன் இணைக்கிறது'
-                    : 'Connecting Sri Lankan Quality Products to the Global Market'}
-                </p>
-
-                {/* Explore Export Button & 4 Checklist Items */}
-                <div className="pt-2 space-y-3">
-                  <Link
-                    href="/shop?export=true"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0055D4] hover:bg-[#0040A8] text-white font-black text-xs shadow-md hover:shadow-lg transition-all duration-200 group"
-                  >
-                    <span>{isTa ? 'ஏற்றுமதி பொருட்களை ஆராயுங்கள்' : 'Explore Export Products'}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 pt-1">
-                    {exportPoints.map((point, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-[11px] font-bold text-[#003B7A]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#00A859] flex-shrink-0" />
-                        <span>{point}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Right Product Collage Visual */}
-            <div className="lg:col-span-4 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-xs bg-white p-3 rounded-2xl border border-blue-100 shadow-md flex flex-col items-center text-center group">
-                <div className="relative w-full h-36 rounded-xl overflow-hidden">
-                  <img
-                    src="/images/sri_lankan_exports.webp"
-                    alt="Sri Lankan Export Products"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-2 right-2 bg-[#002B66]/90 backdrop-blur-xs text-white px-2.5 py-1 rounded-full text-[9px] font-black flex items-center gap-1">
-                    <Plane className="w-3 h-3 text-cyan-300" />
-                    <span>Sri Lankan Products to the World</span>
-                  </div>
-                </div>
-
-                <div className="mt-2 text-center">
-                  <p className="text-xs font-black text-gray-900">Discover Sri Lankan Products to the World</p>
-                  <p className="text-[10px] text-gray-500 font-medium">Ceylon Tea, Spices, Handicrafts & Souvenirs</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
         </div>
 
       </div>

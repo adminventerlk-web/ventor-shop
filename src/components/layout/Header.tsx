@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
@@ -13,17 +13,40 @@ import {
   Menu,
   X,
   Globe,
-  Settings,
   LogOut,
   Headphones,
   Package,
-  Home,
+  House,
+  ShoppingBag,
+  Store,
+  Mail,
+  type LucideIcon,
   ShieldCheck,
 } from 'lucide-react';
-import BrandLogo from '@/components/common/BrandLogo';
+import Image from 'next/image';
+import styles from './Header.module.css';
+
+function NavbarLogo({ compact = false }: { compact?: boolean }) {
+  return (
+    <Link href="/" className={compact ? styles.drawerLogo : styles.logo} aria-label="VentorShop home">
+      <Image
+        src="/images/ventershop-logo.png"
+        alt="VENTERSHOP - Find more. Shop smart."
+        width={1254}
+        height={1254}
+        sizes={compact ? '44px' : '(max-width: 767px) 44px, 64px'}
+        preload={!compact}
+      />
+      <span className={styles.brandText}>
+        <span className={styles.brandName}>VENTER<span>SHOP</span></span>
+        <span className={styles.tagline}>FIND MORE. SHOP SMART.</span>
+      </span>
+    </Link>
+  );
+}
 
 export default function Header() {
-  const { t, language, setLanguage } = useTranslation();
+  const { language, setLanguage } = useTranslation();
   const { cartCount } = useCart();
   const { user, logoutUser } = useAuth();
   const router = useRouter();
@@ -33,17 +56,47 @@ export default function Header() {
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 
   const pathname = usePathname();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const menuButton = menuButtonRef.current;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    drawerRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+      if (event.key !== 'Tab') return;
+      const items = drawerRef.current?.querySelectorAll<HTMLElement>('a[href], button, input');
+      if (!items?.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    const onResize = () => { if (window.innerWidth >= 1280) setMobileMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
+    return () => {
+      document.body.style.overflow = overflow;
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', onResize);
+      menuButton?.focus();
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const q = params.get('q');
-      if (q) setSearchQuery(q);
+      // Synchronize the initial browser URL after hydration.
+      if (q) queueMicrotask(() => setSearchQuery(q));
     }
   }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setMobileMenuOpen(false);
     if (searchQuery.trim()) {
       router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
     } else {
@@ -60,22 +113,23 @@ export default function Header() {
     label: string;
     href: string;
     isHome?: boolean;
+    icon: LucideIcon;
   }
 
   const navLinks: INavLink[] = [
-    { label: language === 'ta' ? 'முகப்பு' : 'HOME', href: '/', isHome: true },
-    { label: language === 'ta' ? 'ஷாப்' : 'SHOP', href: '/shop' },
-    { label: language === 'ta' ? 'வர்ச்சுவல் கடைகள்' : 'VIRTUAL SHOPS', href: '/virtual-shops' },
-    { label: language === 'ta' ? 'ஏற்றுமதி' : 'EXPORT', href: '/export' },
-    { label: language === 'ta' ? 'தொடர்பு' : 'CONTACT', href: '/contact' },
+    { label: language === 'ta' ? 'முகப்பு' : 'Home', href: '/', isHome: true, icon: House },
+    { label: language === 'ta' ? 'ஷாப்' : 'Shop', href: '/shop', icon: ShoppingBag },
+    { label: language === 'ta' ? 'வர்ச்சுவல் கடைகள்' : 'Virtual Shops', href: '/virtual-shops', icon: Store },
+    { label: language === 'ta' ? 'ஏற்றுமதி' : 'Export', href: '/export', icon: Globe },
+    { label: language === 'ta' ? 'தொடர்பு' : 'Contact', href: '/contact', icon: Mail },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm text-xs font-semibold">
+    <header className={`sticky top-0 z-50 w-full text-xs font-semibold ${styles.header}`}>
       
       {/* 1. TOP ROYAL BLUE & GOLD NOTIFICATION BAR */}
       <div className="w-full bg-[#022B69] py-2 px-4 sm:px-8 text-white">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs gap-1">
+        <div className="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-center text-xs gap-2">
           <div className="flex items-center gap-2 text-white/95 font-medium">
             <span className="text-amber-300 font-bold">✨</span>
             <span>
@@ -86,7 +140,7 @@ export default function Header() {
                 : 'Empowering Entrepreneurs • Connecting Markets • Growing Together'}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-white/90 text-xs">
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-white/90 text-xs">
             {user && (
               <>
                 {user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? (
@@ -147,64 +201,38 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 2. MAIN HEADER (Clean White Background with Blue Links & Logo) */}
-      <div className="border-b border-gray-100 py-3 px-4 sm:px-8 bg-white">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
-          
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="p-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg lg:hidden"
-            aria-label="Open menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-
-          {/* Brand Logo */}
-          <BrandLogo variant="dark" size="md" showSubtitle={true} />
-
-          {/* Desktop Dynamic Navigation Menu */}
-          <nav className="hidden lg:flex items-center gap-7 text-gray-700 font-bold text-xs">
-            {navLinks.map((item, idx) => {
-              let isActive = false;
-              if (item.isHome) {
-                isActive = pathname === '/';
-              } else if (item.href.startsWith('/#')) {
-                isActive = false;
-              } else if (item.href === '/shop') {
-                isActive = pathname === '/shop';
-              } else {
-                const basePath = item.href.split('?')[0];
-                isActive = pathname.startsWith(basePath);
-              }
-
-              return (
-                <Link
-                  key={idx}
-                  href={item.href}
-                  className={`flex items-center gap-1.5 py-0.5 tracking-wider transition-colors ${
-                    isActive
-                      ? 'text-[#0052CC] font-black border-b-2 border-[#0052CC]'
-                      : 'text-gray-700 hover:text-[#0052CC]'
-                  }`}
-                >
-                  {item.isHome && <Home className={`w-3.5 h-3.5 ${isActive ? 'text-[#0052CC]' : 'text-gray-500'}`} />}
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
+      <div className={styles.navShell}>
+        <div className={styles.navbar}>
+          <div className={styles.leftSide}>
+            <button ref={menuButtonRef} onClick={() => setMobileMenuOpen(true)} className={styles.menuButton}
+              aria-label="Open menu" aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation">
+              <Menu className="w-5 h-5" />
+            </button>
+            <nav aria-label="Main navigation" className={styles.desktopNav}>
+              {navLinks.slice(0, 4).map((item) => {
+                const isActive = item.isHome ? pathname === '/' : pathname.startsWith(item.href);
+                return (
+                  <Link key={item.href} href={item.href} aria-current={isActive ? 'page' : undefined}
+                    className={`${styles.navLink} ${isActive ? styles.activeLink : ''}`}>
+                    <item.icon className={styles.navIcon} aria-hidden="true" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+          <NavbarLogo />
           {/* Right Side: Search + Account + Cart */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className={styles.rightSide}>
+            <Link href="/contact" className={`${styles.contactLink} ${styles.navLink}`}><Mail className={styles.navIcon} aria-hidden="true" />{navLinks[4].label}</Link>
             {/* Search Input */}
             <form
               onSubmit={handleSearchSubmit}
-              className="hidden md:flex relative items-center w-52 xl:w-64"
+              role="search" aria-label="Product search" className={styles.search}
             >
               <input
                 type="text"
-                placeholder="Search for products..."
+                aria-label="Search products" placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#F5F8FF] text-gray-800 text-xs pl-3 pr-8 py-2 rounded-full border border-blue-200 focus:border-[#0052CC] focus:bg-white outline-none transition-all font-semibold"
@@ -223,10 +251,11 @@ export default function Header() {
               {user ? (
                 <div>
                   <button
+                    aria-label="Account" aria-expanded={accountDropdownOpen}
                     onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                    className="flex flex-col items-center text-gray-700 hover:text-[#0052CC] transition-colors px-1 cursor-pointer"
+                    className="flex flex-col items-center text-[#132d50] hover:text-[#0052CC] transition-colors px-1 cursor-pointer"
                   >
-                    <User className="w-5 h-5 text-gray-700" />
+                    <User className="w-5 h-5 text-[#132d50]" />
                     <span className="text-[10px] font-bold truncate max-w-[60px]">
                       {user.firstName || 'Account'}
                     </span>
@@ -256,7 +285,7 @@ export default function Header() {
                           <Link
                             href="/admin/orders"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2 text-[#132d50] hover:bg-gray-50"
                           >
                             <Package className="w-4 h-4 text-gray-500" />
                             <span>Manage Store Orders</span>
@@ -267,7 +296,7 @@ export default function Header() {
                           <Link
                             href="/dashboard"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2 text-[#132d50] hover:bg-gray-50"
                           >
                             <User className="w-4 h-4 text-gray-500" />
                             <span>My Dashboard</span>
@@ -275,7 +304,7 @@ export default function Header() {
                           <Link
                             href="/dashboard/orders"
                             onClick={() => setAccountDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-4 py-2 text-[#132d50] hover:bg-gray-50"
                           >
                             <Package className="w-4 h-4 text-gray-500" />
                             <span>My Orders</span>
@@ -295,9 +324,10 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex flex-col items-center text-gray-700 hover:text-[#0052CC] transition-colors px-1"
+                  aria-label="Account"
+                  className="flex flex-col items-center text-[#132d50] hover:text-[#0052CC] transition-colors px-1"
                 >
-                  <User className="w-5 h-5 text-gray-700" />
+                  <User className="w-5 h-5 text-[#132d50]" />
                   <span className="text-[10px] font-bold">Account</span>
                 </Link>
               )}
@@ -305,16 +335,16 @@ export default function Header() {
 
             {/* Cart Button */}
             <Link
-              href="/cart"
-              className="flex items-center gap-1.5 text-gray-700 hover:text-[#0052CC] transition-colors px-1"
+              href="/cart" aria-label={`Cart, ${cartCount} items`}
+              className="flex items-center gap-1.5 text-[#132d50] hover:text-[#0052CC] transition-colors px-1"
             >
               <div className="relative">
-                <ShoppingCart className="w-5 h-5 text-gray-700" />
-                <span className="absolute -top-1.5 -right-2 bg-[#0052CC] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                <ShoppingCart className="w-5 h-5 text-[#132d50]" />
+                <span className="absolute -top-1.5 -right-2 bg-amber-300 text-[#132d50] text-[9px] font-black min-w-4 px-0.5 h-4 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               </div>
-              <span className="hidden sm:inline text-xs font-bold">Cart</span>
+              <span className="hidden 2xl:inline text-xs font-bold">Cart</span>
             </Link>
           </div>
         </div>
@@ -322,13 +352,13 @@ export default function Header() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 lg:hidden flex">
-          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col p-5 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-[#071d3d]/50 xl:hidden flex">
+          <div ref={drawerRef} id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigation menu" className="w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col p-5 overflow-y-auto">
             <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-              <BrandLogo variant="dark" size="sm" showSubtitle={false} />
+              <NavbarLogo compact />
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 text-gray-500 hover:text-gray-800"
+                aria-label="Close menu" className="p-2.5 text-gray-500 hover:text-gray-800"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -343,7 +373,7 @@ export default function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-gray-100 text-xs px-3 py-2.5 rounded-lg border border-gray-200 outline-none font-semibold"
               />
-              <button type="submit" className="absolute right-3 top-2.5 text-gray-400">
+              <button type="submit" aria-label="Search" className="absolute right-3 top-2.5 text-[#132d50]">
                 <Search className="w-4 h-4" />
               </button>
             </form>
@@ -356,10 +386,10 @@ export default function Header() {
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`py-2.5 border-b border-gray-50 flex items-center gap-2 ${
-                    item.isHome ? 'text-[#0052CC]' : 'text-gray-800 hover:text-[#0052CC]'
+                    (item.isHome ? pathname === '/' : pathname.startsWith(item.href)) ? 'text-[#0052CC]' : 'text-gray-800 hover:text-[#0052CC]'
                   }`}
                 >
-                  {item.isHome && <Home className="w-4 h-4" />}
+                  <item.icon className={styles.navIcon} aria-hidden="true" />
                   <span>{item.label}</span>
                 </Link>
               ))}
@@ -376,7 +406,7 @@ export default function Header() {
                   <button
                     onClick={() => setLanguage('en')}
                     className={`py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                      language === 'en' ? 'bg-[#0052CC] text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      language === 'en' ? 'bg-[#0052CC] text-white shadow-xs' : 'bg-gray-100 text-[#132d50] hover:bg-gray-200'
                     }`}
                   >
                     English
@@ -384,7 +414,7 @@ export default function Header() {
                   <button
                     onClick={() => setLanguage('ta')}
                     className={`py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                      language === 'ta' ? 'bg-[#0052CC] text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      language === 'ta' ? 'bg-[#0052CC] text-white shadow-xs' : 'bg-gray-100 text-[#132d50] hover:bg-gray-200'
                     }`}
                   >
                     தமிழ்
@@ -392,7 +422,7 @@ export default function Header() {
                   <button
                     onClick={() => setLanguage('si')}
                     className={`py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                      language === 'si' ? 'bg-[#0052CC] text-white shadow-xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      language === 'si' ? 'bg-[#0052CC] text-white shadow-xs' : 'bg-gray-100 text-[#132d50] hover:bg-gray-200'
                     }`}
                   >
                     සිංහල

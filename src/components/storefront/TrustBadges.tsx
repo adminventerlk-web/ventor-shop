@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
+import { useSectionEntrance } from './useSectionEntrance';
 import {
   ShieldCheck,
   Truck,
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function TrustBadges() {
+  const sectionRef = useSectionEntrance();
   const { language } = useTranslation();
 
   const badges = [
@@ -42,26 +44,22 @@ export default function TrustBadges() {
   ];
 
   return (
-    <section className="py-8 bg-white border-b border-gray-100">
+    <section ref={sectionRef} aria-label="Service Benefits" className="py-5 sm:py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 text-center">
+        <ul className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-5">
           {badges.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div key={idx} className="flex flex-col items-center space-y-2 p-3">
-                <div className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-700">
-                  <Icon className="w-5 h-5 text-gray-700 stroke-[1.75]" />
-                </div>
-                <h4 className="text-xs font-bold text-gray-900 leading-tight">
+              <li key={idx} data-entrance="up" data-entrance-delay={idx * 80} className="flex min-h-16 min-w-0 items-center gap-2 rounded-full border border-[#93C5FD] bg-[#fcfeff] px-3 py-3 shadow-[0_4px_12px_-6px_#2563eb40] last:col-span-2 last:w-[calc(50%_-_6px)] last:justify-self-center sm:gap-2.5 lg:last:col-span-1 lg:last:w-full">
+                <Icon aria-hidden="true" className="h-6 w-6 shrink-0 text-[#075bb9] stroke-[1.75]" />
+                <span aria-hidden="true" className="h-7 w-0.5 shrink-0 rounded-full bg-[#FACC15]" />
+                <h4 className="min-w-0 text-xs font-bold leading-[1.35] text-[#0B1B45] sm:text-[13px] lg:text-xs xl:text-[13px]">
                   {item.title}
                 </h4>
-                <p className="text-[11px] text-gray-500 font-medium">
-                  {item.desc}
-                </p>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );

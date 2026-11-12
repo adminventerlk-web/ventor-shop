@@ -1,0 +1,148 @@
+.header {
+  background: linear-gradient(115deg, #d7eaff, #e0efff 45%, #cce5fc);
+}
+
+.header a:focus-visible,
+.header button:focus-visible,
+.header input:focus-visible {
+  outline: 3px solid #2873c2;
+  outline-offset: 3px;
+}
+
+.navShell { padding: 14px 32px; }
+
+.navbar {
+  display: grid;
+  /* Equal side tracks keep the complete logo centered independently of content. */
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  max-width: 1440px;
+  min-height: 84px;
+  margin: auto;
+  padding: 8px 24px;
+  border: 1px solid #e0ebf8;
+  border-radius: 999px;
+  background: linear-gradient(110deg, #fff 15%, #f9fbff 52%, #fff 90%);
+  box-shadow: 0 8px 28px -12px #244d7a38, inset 0 1px 0 #fff;
+}
+
+.navIcon { width: 17px; height: 17px; flex-shrink: 0; }
+
+.leftSide { min-width: 0; }
+.desktopNav { display: flex; align-items: center; gap: 4px; }
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: #132d50;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.navLink:hover { background: #e7f0fc; color: #034aa4; }
+.activeLink,
+.activeLink:hover {
+  color: white;
+  background: linear-gradient(115deg, #102c52, #0759b6);
+  box-shadow: 0 4px 12px #0759b62b;
+}
+
+.logo,
+.drawerLogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.logo img,
+.drawerLogo img {
+  display: block;
+  width: 64px;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover img,
+.drawerLogo:hover img { transform: scale(1.05); }
+
+.brandText { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.brandName { color: #132d50; font-family: var(--font-geist-sans), Arial, sans-serif; font-size: 23px; font-weight: 850; letter-spacing: -0.03em; line-height: 1.1; }
+.brandName > span { color: #d99a00; }
+.tagline { color: #132d50; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; line-height: 1.2; }
+.drawerLogo { gap: 8px; }
+.drawerLogo .brandName { font-size: 18px; }
+.drawerLogo .tagline { font-size: 7px; }
+.drawerLogo img { width: 44px; }
+.rightSide { display: flex; justify-content: flex-end; align-items: center; gap: 16px; min-width: 0; }
+.search { display: flex; position: relative; align-items: center; width: 175px; min-width: 0; }
+
+.menuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #132d50;
+  background: #eaf1fa;
+  cursor: pointer;
+}
+
+.menuButton:hover { background: #dbe8f8; }
+
+@media (max-width: 1399px) {
+  .navbar { gap: 16px; padding-inline: 20px; }
+  .navLink { padding-inline: 10px; font-size: 12px; }
+  .rightSide { gap: 12px; }
+  .search { width: 145px; }
+}
+
+@media (max-width: 1279px) {
+  .desktopNav, .contactLink { display: none; }
+  .menuButton { display: flex; }
+  .search { width: 120px; }
+  .rightSide { gap: 10px; }
+}
+
+@media (min-width: 768px) and (max-width: 900px) {
+  .rightSide > div > a > span,
+  .rightSide > div > div > button > span { display: none; }
+}
+
+@media (max-width: 767px) {
+  .navShell { padding: 10px 12px; }
+  .navbar {
+    min-height: 104px;
+    padding: 8px 14px;
+    gap: 6px 12px;
+    border-radius: 28px;
+  }
+  .logo { gap: 6px; }
+  .logo img { width: 44px; }
+  .logo .brandName { font-size: 15px; }
+  .logo .tagline { font-size: 6.5px; letter-spacing: 0.02em; }
+  .logo .brandText { gap: 3px; }
+  .rightSide > div > a > span,
+  .rightSide > div > div > button > span { display: none; }
+  .rightSide { display: contents; }
+  .rightSide > form { grid-column: 1 / -1; grid-row: 2; width: 100%; }
+  .rightSide > div { grid-column: 3; grid-row: 1; justify-self: start; }
+  .rightSide > a:last-child { grid-column: 3; grid-row: 1; justify-self: end; }
+  .rightSide > div > a,
+  .rightSide > div > div > button { min-height: 44px; justify-content: center; }
+  .rightSide > a:last-child { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header a, .header button, .header img { transition: none; }
+}

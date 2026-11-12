@@ -1,0 +1,26 @@
+/* Layout, sizing, colors and typography use Tailwind in FeaturedProducts.styles.ts.
+ * Retain coordinated motion and exact transitions outside Tailwind's layers:
+ * globals.css sets unlayered transitions on all links/buttons.
+ */
+.card { transition: transform 300ms ease-out, box-shadow 300ms ease-out, border-color 300ms ease-out; }
+.image { transition: transform 300ms ease-out; }
+.addButton { transition: background 300ms ease-out, transform 300ms ease-out; }
+.addButton:active { transform: scale(.98); }
+
+.section[data-motion='ready'] .entrance:not([data-entered='true']) { opacity: 0; transform: translateY(20px); }
+.entrance[data-entered='true'] { animation: productEntrance 600ms cubic-bezier(.16,1,.3,1) both; animation-delay: var(--entrance-delay, 0ms); }
+.entrance[data-entered='true'] .floating { animation: productFloat 6s ease-in-out infinite; animation-delay: calc(var(--entrance-delay, 0ms) + 650ms + var(--product-index) * 90ms); }
+.floating:focus-within { animation-play-state: paused !important; }
+@keyframes productEntrance { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes productFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-6px); border-color: #a5c3e2; box-shadow: 0 15px 28px -12px #214f804d; }
+  .card:hover .image { transform: scale(1.04); }
+  .floating:hover { animation-play-state: paused !important; }
+}
+@media (hover: none), (pointer: coarse) { .entrance[data-entered='true'] .floating { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .section *, .section *::after { animation: none !important; transition: none !important; }
+  .section[data-motion='ready'] .entrance { opacity: 1; transform: none; }
+  .card:hover, .card:hover .image, .addButton:active { transform: none; }
+}

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useTranslation } from '@/lib/i18n/LanguageContext';
+import styles from './ShopByCategory.module.css';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 
 interface ICategoryItem {
@@ -57,68 +57,108 @@ const CANONICAL_CATEGORIES: ICategoryItem[] = [
 
 const FALLBACK_CATEGORY_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80';
 
-// Single Minimalist Category Item without outer card box
-function CategoryItem({ cat }: { cat: ICategoryItem }) {
+function CategoryItem({ cat, index }: { cat: ICategoryItem; index: number }) {
   const [imgUrl, setImgUrl] = useState(cat.img || FALLBACK_CATEGORY_IMAGE);
+  const cardRef = useRef<HTMLAnchorElement>(null);
+  const frameRef = useRef<number | null>(null);
+  const pointerRef = useRef({ x: 0, y: 0 });
 
+  useEffect(() => () => {
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+  }, []);
+
+  const resetTilt = () => {
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
+    cardRef.current?.style.setProperty('--tilt-x', '0deg');
+    cardRef.current?.style.setProperty('--tilt-y', '0deg');
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLAnchorElement>) => {
+    if (event.pointerType !== 'mouse' ||
+        !window.matchMedia('(hover: hover) and (pointer: fine)').matches ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    pointerRef.current = { x: event.clientX, y: event.clientY };
+    if (frameRef.current !== null) return;
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null;
+      const card = cardRef.current;
+      // Measure the un-tilted float layer so rotation never feeds back into the math.
+      const rect = card?.parentElement?.getBoundingClientRect();
+      if (!card || !rect || !rect.width || !rect.height) return;
+      const x = Math.max(-1, Math.min(1, (pointerRef.current.x - rect.left) / rect.width * 2 - 1));
+      const y = Math.max(-1, Math.min(1, (pointerRef.current.y - rect.top) / rect.height * 2 - 1));
+      card.style.setProperty('--tilt-x', (-y * 4).toFixed(2) + 'deg');
+      card.style.setProperty('--tilt-y', (x * 4).toFixed(2) + 'deg');
+    });
+  };
   return (
-    <Link
-      href={`/shop?category=${cat.slug}`}
-      className="group flex-shrink-0 w-24 sm:w-28 flex flex-col items-center text-center p-1.5 snap-center select-none transition-transform duration-200"
-    >
-      {/* Square Rounded Graphic Frame */}
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#F8F8F8] border border-gray-150 p-2 flex items-center justify-center overflow-hidden shadow-xs group-hover:scale-108 group-hover:shadow-md group-hover:border-red-200 transition-all duration-300">
-        <img
-          src={imgUrl}
-          alt={cat.title.replace('\n', ' ')}
-          onError={() => setImgUrl(FALLBACK_CATEGORY_IMAGE)}
-          className="w-full h-full object-cover rounded-xl"
-          loading="lazy"
-        />
+    <div className={styles.entrance} style={{ '--card-index': index } as React.CSSProperties}>
+      <div className={styles.floating}>
+        <Link ref={cardRef} href={`/shop?category=${cat.slug}`} className={styles.card}
+          onPointerMove={handlePointerMove} onPointerLeave={resetTilt} onPointerCancel={resetTilt}>
+          <div className={styles.scene}>
+            <span className={styles.halo} aria-hidden="true" />
+            <span className={styles.backplate} aria-hidden="true" />
+            <div className={styles.imageMotion}>
+              <div className={styles.imageFrame}>
+                {/* Keep the existing remote assets and fallback behavior. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imgUrl} alt={cat.title.replace('\n', ' ')}
+                  onError={() => setImgUrl(FALLBACK_CATEGORY_IMAGE)}
+                  className={styles.image} loading="lazy" width={240} height={180} />
+              </div>
+            </div>
+          </div>
+          <span className={styles.cardFooter}>
+            <span className={styles.label}>{cat.title}</span>
+            <span className={styles.cardArrow} aria-hidden="true"><ArrowRight size={20} /></span>
+          </span>
+        </Link>
       </div>
-
-      {/* Category Label */}
-      <span className="text-[11px] font-bold text-gray-800 group-hover:text-[#0052CC] transition-colors whitespace-pre-line leading-tight mt-2 line-clamp-2">
-        {cat.title}
-      </span>
-    </Link>
+    </div>
   );
 }
 
 export default function ShopByCategory() {
-  const { language } = useTranslation();
+  const sectionRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const categories = CANONICAL_CATEGORIES;
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    section.dataset.motion = 'ready';
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        section.dataset.entered = 'true';
+        observer.disconnect();
+      }
+    }, { threshold: 0.15 });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   const handleScroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const scrollAmount = direction === 'left' ? -240 : 240;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }
   };
 
   return (
-    <section className="py-10 sm:py-14 bg-white border-b border-gray-100 overflow-hidden text-xs font-semibold">
+    <section ref={sectionRef} aria-label="Shop by Category" className={`${styles.section} py-10 sm:py-14 bg-white border-b border-gray-100 overflow-hidden text-xs font-semibold`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
-        {/* Section Header with Navigation arrows and View All link */}
+        {/* Section Header with Navigation arrows */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#0052CC] animate-pulse" />
-            <h2 className="text-base sm:text-lg font-black text-gray-900 uppercase tracking-widest font-sans">
-              SHOP BY CATEGORY
+            <h2 className={styles.heading}>
+              <span>SHOP</span>{' '}<span>BY</span>{' '}<span>CATEGORY</span>
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/shop"
-              className="text-xs font-bold text-[#0052CC] hover:underline flex items-center gap-1 hidden sm:flex"
-            >
-              <span>View All Categories</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => handleScroll('left')}
@@ -138,15 +178,15 @@ export default function ShopByCategory() {
           </div>
         </div>
 
-        {/* Minimalist Single-line Horizontal Category Track without Card Borders */}
+        {/* Horizontal scrolling remains available at smaller widths. */}
         <div className="relative">
           <div
             ref={scrollRef}
-            className="flex items-center gap-3 sm:gap-6 overflow-x-auto pb-3 pt-1 scroll-smooth snap-x snap-mandatory scrollbar-none"
+            className={styles.track}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {categories.map((cat, idx) => (
-              <CategoryItem key={cat._id || idx} cat={cat} />
+              <CategoryItem key={cat._id || idx} cat={cat} index={idx} />
             ))}
           </div>
         </div>

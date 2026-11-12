@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, Headphones, MessageCircle, Globe } from 'lucide-react';
 
 export default function ContactClient() {
   const { language } = useTranslation();
@@ -38,32 +38,45 @@ export default function ContactClient() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F5F5] text-xs font-semibold">
-      <Suspense fallback={<div className="h-20 bg-white" />}>
+    <div className="flex flex-col min-h-screen bg-[#EAF5FF] [&>header]:bg-none! [&>header]:bg-inherit! text-xs font-semibold">
+      <Suspense fallback={<div className="h-20 bg-inherit" />}>
         <Header />
       </Suspense>
 
-      <main className="flex-grow max-w-7xl w-full mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+      <main className="flex-grow max-w-7xl w-full mx-auto pt-6 pb-12 px-4 sm:px-6 sm:pt-8 lg:px-8 lg:pt-4 space-y-8">
+        <section aria-label="Contact introduction" data-contact-hero className="relative isolate overflow-hidden rounded-[36px] border border-[#4d80cc]/30 bg-linear-to-br from-[#071F50] via-[#082B68] to-[#0759D6] px-6 py-8 text-white shadow-[0_16px_40px_-22px_#071f5070] sm:p-9 lg:flex lg:h-[300px] lg:items-center lg:px-12 lg:py-6">
+          <div aria-hidden="true" className="pointer-events-none absolute -bottom-48 -right-32 -z-10 h-[520px] w-[620px] -rotate-12 rounded-[50%] border border-white/10 bg-linear-to-br from-[#247bec]/30 to-[#0759D6]/5" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-52 -top-64 -z-10 h-[540px] w-[640px] rounded-[50%] border border-white/5 bg-linear-to-b from-[#4d92f2]/15 to-transparent" />
+          <div className="grid w-full items-center gap-6 md:grid-cols-[1.4fr_1fr] lg:gap-10">
         {/* Page title banner */}
-        <div className="text-center max-w-xl mx-auto space-y-3">
-          <span className="text-[10px] sm:text-xs uppercase font-extrabold tracking-[0.3em] text-[#E53935] block">
+        <div className="relative z-10 min-w-0 space-y-3">
+          <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.1em] text-[#dceaff]">
             {language === 'ta' ? 'தொடர்பு கொள்ள' : 'GET IN TOUCH'}
           </span>
-          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#1A2A4A] tracking-tight">
-            {language === 'ta' ? 'எங்களை தொடர்பு கொள்ள' : 'Contact Us'}
+          <h1 className="font-serif text-3xl sm:text-[44px] font-bold leading-[1.12] text-white tracking-tight">
+            {language === 'ta' ? 'எங்களை தொடர்பு கொள்ள' : <>Contact <span className="text-[#FFC400]">Us</span></>}
           </h1>
-          <div className="w-12 h-0.5 bg-[#E53935] mx-auto rounded-full" />
-          <p className="text-sm text-gray-500 font-medium leading-relaxed pt-2">
+          <p className="max-w-xl text-sm text-[#dceaff] font-medium leading-relaxed">
             Have questions about orders, B2B wholesale applications, export inquiries, or community group discount vouchers? Send us a message and our support desk will reply shortly.
           </p>
         </div>
+
+
+            <div role="img" aria-label="Customer support headset with email and message icons" className="relative mx-auto h-44 w-full max-w-[280px] sm:h-48">
+              <div aria-hidden="true" className="absolute inset-x-12 inset-y-1 rounded-full border border-white/15 bg-white/5" />
+              <Headphones aria-hidden="true" strokeWidth={1.3} className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow-xl" />
+              <span className="absolute bottom-3 left-1 flex h-16 w-20 -rotate-12 items-center justify-center rounded-2xl border border-white/30 bg-[#0759D6] shadow-xl"><Mail aria-hidden="true" className="h-9 w-9 text-white" /></span>
+              <span className="absolute right-1 top-3 flex h-16 w-20 rotate-12 items-center justify-center rounded-2xl bg-[#FFC400] shadow-xl"><MessageCircle aria-hidden="true" className="h-9 w-9 text-[#071F50]" /></span>
+            </div>
+          </div>
+        </section>
 
         {/* Content Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           
           {/* Left Column: Form Card */}
-          <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-gray-200 shadow-xs space-y-6">
-            <h2 className="text-base font-extrabold text-[#1A2A4A] uppercase tracking-wider border-b border-gray-100 pb-3">
+          <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-[#c7def5] shadow-[0_8px_24px_-16px_#082b6333] space-y-6">
+            <h2 className="text-base font-extrabold text-[#082B68] uppercase tracking-wider border-b border-[#dceaff] pb-3">
               Send Message
             </h2>
 
@@ -77,50 +90,54 @@ export default function ContactClient() {
             <form onSubmit={handleSubmit} className="space-y-4 text-xs font-semibold">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[#101A2D] font-bold block mb-1">Full Name *</label>
+                  <label className="text-[#082B68] font-bold block mb-1" htmlFor="contact-name">Full Name *</label>
                   <input
                     type="text"
+                    id="contact-name"
                     name="name"
                     required
                     value={form.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
+                    className="w-full px-4 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[#101A2D] font-bold block mb-1">Email Address *</label>
+                  <label className="text-[#082B68] font-bold block mb-1" htmlFor="contact-email">Email Address *</label>
                   <input
                     type="email"
+                    id="contact-email"
                     name="email"
                     required
                     value={form.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
+                    className="w-full px-4 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">Subject *</label>
+                <label className="text-[#082B68] font-bold block mb-1" htmlFor="contact-subject">Subject *</label>
                 <input
                   type="text"
-                  name="subject"
+                  id="contact-subject"
+                    name="subject"
                   required
                   value={form.subject}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
+                  className="w-full px-4 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[#101A2D] font-bold block mb-1">Message Content *</label>
+                <label className="text-[#082B68] font-bold block mb-1" htmlFor="contact-message">Message Content *</label>
                 <textarea
-                  name="message"
+                  id="contact-message"
+                    name="message"
                   required
                   rows={5}
                   value={form.message}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
+                  className="w-full px-4 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                 />
               </div>
 
@@ -128,9 +145,9 @@ export default function ContactClient() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full sm:w-auto h-11 flex items-center justify-center gap-2 bg-[#1A2A4A] hover:bg-[#101A2D] text-white font-bold px-8 rounded-lg shadow-sm transition-colors cursor-pointer"
+                  className="w-full sm:w-auto h-11 flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#efb900] text-[#071F50] font-bold px-8 rounded-full shadow-sm transition-colors cursor-pointer disabled:opacity-60 focus-visible:outline-3 focus-visible:outline-[#0759D6] focus-visible:outline-offset-3 motion-reduce:transition-none"
                 >
-                  <Send className="w-4 h-4 text-[#E53935]" />
+                  <Send className="w-4 h-4" />
                   <span>{submitting ? 'Sending Message...' : 'Submit Message'}</span>
                 </button>
               </div>
@@ -138,55 +155,55 @@ export default function ContactClient() {
           </div>
 
           {/* Right Column: Contact Details Cards */}
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             
             {/* Info details card */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-xs space-y-6">
-              <h3 className="font-extrabold text-sm text-[#1A2A4A] uppercase tracking-wider border-b border-gray-100 pb-3">
+            <div className="bg-white p-6 rounded-3xl border border-[#c7def5] shadow-[0_8px_24px_-16px_#082b6333] space-y-6">
+              <h3 className="font-extrabold text-sm text-[#082B68] uppercase tracking-wider border-b border-[#dceaff] pb-3">
                 Support Desk & Offices
               </h3>
               
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 bg-[#1A2A4A]/5 rounded-full border border-gray-100 text-[#E53935] mt-0.5">
+                  <div className="shrink-0 p-2.5 bg-[#EAF5FF] rounded-full border border-[#dceaff] text-[#0759D6] mt-0.5">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold text-[#1A2A4A]">Customer Desk</h4>
-                    <p className="text-gray-500 font-medium pt-0.5">VenterShop Headquarters & Logistics Center, Sri Lanka</p>
+                    <h4 className="font-extrabold text-[#082B68]">Customer Desk</h4>
+                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere">VenterShop Headquarters & Logistics Center, Sri Lanka</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 border-t border-gray-100 pt-4">
-                  <div className="p-2.5 bg-[#1A2A4A]/5 rounded-full border border-gray-100 text-[#E53935] mt-0.5">
+                <div className="flex items-start gap-3 border-t border-[#dceaff] pt-4">
+                  <div className="shrink-0 p-2.5 bg-[#EAF5FF] rounded-full border border-[#dceaff] text-[#0759D6] mt-0.5">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold text-[#1A2A4A]">Phone Hotline</h4>
-                    <p className="text-gray-500 font-medium pt-0.5">+94 77 123 4567 / +1 (800) 555-0199</p>
+                    <h4 className="font-extrabold text-[#082B68]">Phone Hotline</h4>
+                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere">+94 77 123 4567 / +1 (800) 555-0199</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 border-t border-gray-100 pt-4">
-                  <div className="p-2.5 bg-[#1A2A4A]/5 rounded-full border border-gray-100 text-[#E53935] mt-0.5">
+                <div className="flex items-start gap-3 border-t border-[#dceaff] pt-4">
+                  <div className="shrink-0 p-2.5 bg-[#EAF5FF] rounded-full border border-[#dceaff] text-[#0759D6] mt-0.5">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-extrabold text-[#1A2A4A]">Support Email</h4>
-                    <p className="text-gray-500 font-medium pt-0.5">support@ventershop.com / export@ventershop.com</p>
+                    <h4 className="font-extrabold text-[#082B68]">Support Email</h4>
+                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere"><a href="mailto:support@ventershop.com" className="rounded-sm hover:text-[#0759D6] focus-visible:outline-2 focus-visible:outline-[#0759D6]">support@ventershop.com</a> / <a href="mailto:export@ventershop.com" className="rounded-sm hover:text-[#0759D6] focus-visible:outline-2 focus-visible:outline-[#0759D6]">export@ventershop.com</a></p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Stylized Maps Card */}
-            <div className="bg-[#101A2D] text-white p-6 rounded-3xl border border-gray-800 shadow-xs relative overflow-hidden h-48 flex items-center justify-center">
-              <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80')" }} />
+            <div className="bg-linear-to-br from-[#071F50] via-[#082B68] to-[#0759D6] text-white p-6 rounded-3xl border border-[#4d80cc]/30 shadow-[0_8px_24px_-16px_#082b6333] relative overflow-hidden h-40 flex items-center justify-center">
+              <Globe aria-hidden="true" strokeWidth={.7} className="absolute -right-5 -top-10 h-56 w-56 text-[#82b8ff]/20" />
               <div className="relative text-center z-10 space-y-2">
-                <span className="inline-block bg-[#E53935] text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                <span className="inline-block bg-[#FFC400] text-[#071F50] text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">
                   Global Logistics Center
                 </span>
-                <p className="text-xs font-bold text-gray-300">Sri Lanka & International Logistics</p>
+                <p className="text-xs font-bold text-[#dceaff]">Sri Lanka & International Logistics</p>
               </div>
             </div>
 

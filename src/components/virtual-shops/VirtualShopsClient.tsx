@@ -2,8 +2,10 @@
 
 import React, { Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import FlipShopCard from './FlipShopCard';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import {
   Store,
@@ -17,9 +19,6 @@ import {
   MoreHorizontal,
   ArrowRight,
   Globe,
-  ChevronRight,
-  ArrowLeft,
-  CheckCircle2,
 } from 'lucide-react';
 
 export default function VirtualShopsClient() {
@@ -198,152 +197,97 @@ export default function VirtualShopsClient() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FDFBF7] font-sans antialiased text-xs font-semibold">
+    <div className="flex flex-col min-h-screen bg-[#EAF5FF] [&>header]:bg-none! [&>header]:bg-inherit! font-sans antialiased text-xs font-semibold">
       {/* 1. Header */}
-      <Suspense fallback={<div className="h-24 bg-white border-b border-gray-100" />}>
+      <Suspense fallback={<div className="h-24 bg-inherit" />}>
         <Header />
       </Suspense>
 
-      {/* 2. Sub-Header Navigation Strip */}
-      <div className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
-          <nav className="flex items-center gap-2 text-gray-500 font-bold uppercase tracking-wider">
-            <Link href="/" className="hover:text-black transition-colors">
-              {isTa ? 'முகப்பு' : 'Home'}
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            <span className="text-[#801414] font-black">
-              {isTa ? 'வர்ச்சுவல் கடைகள்' : 'Virtual Shops'}
-            </span>
-          </nav>
-
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#801414] font-bold transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{isTa ? 'முகப்புக்குத் திரும்பு' : 'Back to Home'}</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* 3. Hero Header Section */}
-      <section className="bg-gradient-to-r from-[#1A2A4A] via-[#101A2D] to-[#0A1220] text-white py-12 sm:py-16 px-4 sm:px-8 relative overflow-hidden">
-        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-[#801414]/20 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto space-y-4 relative z-10 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-amber-300 text-[11px] font-extrabold uppercase tracking-widest">
-            <Store className="w-3.5 h-3.5" />
-            <span>{isTa ? 'எங்களின் சிறப்பு வர்ச்சுவல் கடைகள்' : 'Specialized Virtual Marketplace'}</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight">
-            {isTa
-              ? 'ஒரே தளத்தில் பல்வேறு சிறப்பு கடைகள்'
-              : 'Explore All Virtual Specialty Shops'}
-          </h1>
-
-          <p className="text-xs sm:text-sm text-gray-300 font-medium max-w-2xl leading-relaxed">
-            {isTa
+      {/* Virtual specialty shops hero */}
+      <section aria-labelledby="virtual-shops-hero-heading" className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pt-4">
+        <div className="relative isolate overflow-hidden rounded-[36px] border border-[#4d80cc]/30 bg-linear-to-br from-[#071F50] via-[#082B68] to-[#0759D6] px-6 py-8 text-white shadow-[0_16px_40px_-22px_#071f5070] sm:p-9 lg:flex lg:h-[350px] lg:min-h-0 xl:h-[320px] lg:items-center lg:px-12 lg:py-6">
+          <div aria-hidden="true" className="pointer-events-none absolute -bottom-48 -right-32 -z-10 h-[520px] w-[620px] -rotate-12 rounded-[50%] border border-white/10 bg-linear-to-br from-[#247bec]/30 to-[#0759D6]/5" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-52 -top-64 -z-10 h-[540px] w-[640px] rounded-[50%] border border-white/5 bg-linear-to-b from-[#4d92f2]/15 to-transparent" />
+          <div className="grid min-w-0 items-center gap-8 md:grid-cols-2 lg:w-full lg:gap-10">
+            <div className="relative z-10 min-w-0">
+              <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-bold uppercase tracking-[.1em] text-[#dceaff]">
+                <Store aria-hidden="true" className="h-4 w-4 shrink-0" />
+                <span>{isTa ? 'எங்களின் சிறப்பு வர்ச்சுவல் கடைகள்' : 'Specialized Virtual Marketplace'}</span>
+              </div>
+              <h1 id="virtual-shops-hero-heading" className="mt-5 lg:mt-3 font-serif text-[clamp(30px,3.5vw,48px)] font-bold leading-[1.12] tracking-[-.025em] text-white">
+                {isTa ? 'ஒரே தளத்தில் பல்வேறு சிறப்பு கடைகள்' : <>Explore All <span className="text-[#FFC400]">Virtual</span> Specialty Shops</>}
+              </h1>
+              <p className="mt-4 lg:mt-2 max-w-xl text-xs font-medium leading-[1.8] text-[#dceaff] sm:text-sm">
+                {isTa
               ? 'சூப்பர் மார்க்கெட் மற்றும் புக் லேப் இப்போது நேரலையில் உள்ளது. பிற கடைகள் விரைவில் திறக்கப்படவுள்ளன.'
               : 'Virtual Supermarket and Virtual Book Lab are live for shopping now. Additional specialty shops are launching soon.'}
-          </p>
+              </p>
+              <div className="mt-6 lg:mt-3 flex flex-col gap-3 lg:flex-row lg:flex-wrap">
+                <Link href={shopsList[0].href} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#FFC400] px-5 py-3 text-xs font-bold text-[#071F50] transition-colors hover:bg-[#efb900] focus-visible:outline-3 focus-visible:outline-white focus-visible:outline-offset-3 motion-reduce:transition-none!">
+                  Shop Virtual Supermarket <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
+                </Link>
+                <Link href={shopsList[2].href} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/35 bg-white/10 px-5 py-3 text-xs font-bold text-white transition-colors hover:bg-white/20 focus-visible:outline-3 focus-visible:outline-[#FFC400] focus-visible:outline-offset-3 motion-reduce:transition-none!">
+                  Visit Book Lab <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
+                </Link>
+              </div>
+            </div>
+
+            <div role="img" aria-label="Laptop storefront with a grocery basket and a stack of books" className="relative mx-auto aspect-[1.2] w-full max-w-[500px] min-w-0 lg:aspect-[2.1818182]">
+              <div className="contents lg:absolute lg:inset-x-0 lg:top-1/2 lg:block lg:aspect-[1.2] lg:-translate-y-1/2 lg:scale-[.55]">
+              <div aria-hidden="true" className="absolute inset-[10%] rounded-full bg-[#4f9bff]/25 blur-3xl" />
+              <div className="absolute left-[7%] right-[2%] top-[8%] [transform:perspective(1000px)_rotateY(-8deg)_rotateX(4deg)]">
+                <div className="rounded-t-2xl border border-[#b9d8ff]/50 bg-[#07172f] p-2 shadow-[0_18px_35px_-12px_#020b2799] sm:p-2.5">
+                  <div className="mb-1.5 flex justify-center"><span className="h-1 w-1 rounded-full bg-[#7192b5]" /></div>
+                  <div className="overflow-hidden rounded-lg border border-white/10 bg-[#f4f8ff]">
+                    <div className="flex h-5 items-center gap-1.5 bg-[#0759D6] px-3"><span className="h-1 w-6 rounded bg-[#FFC400]" /><span className="ml-auto h-1 w-4 rounded bg-white/65" /><span className="h-1 w-4 rounded bg-white/65" /></div>
+                    <div className="grid aspect-[1.6] grid-cols-[1.2fr_1fr] gap-2 p-2 sm:p-3">
+                      <div className="relative overflow-hidden rounded-lg bg-[#ead0a6]"><Image src="/images/storefront_3d.webp" alt="" fill sizes="(min-width: 1024px) 240px, 40vw" className="object-contain" /></div>
+                      <div className="flex flex-col justify-center gap-2">
+                        <div className="h-2 w-4/5 rounded bg-[#082B68]/80" /><div className="h-1.5 w-full rounded bg-[#9abce6]" /><div className="h-1.5 w-3/4 rounded bg-[#c7dafa]" />
+                        <div className="grid grid-cols-3 gap-1.5">{[ShoppingBag, BookOpen, Store].map((Icon, i) => <span key={i} className="flex aspect-square items-center justify-center rounded-md border border-[#cee1f8] bg-white text-[#0759D6]"><Icon className="h-4 w-4 sm:h-6 sm:w-6" /></span>)}</div>
+                        <div className="h-3.5 w-3/5 rounded-full bg-[#FFC400]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative -mx-[5%] h-3 rounded-b-[50%] border-t border-white/70 bg-linear-to-b from-[#e0edff] to-[#709bc8] shadow-lg sm:h-4"><div className="mx-auto h-1 w-1/4 rounded-b-full bg-[#819bb8]" /></div>
+              </div>
+              <div className="absolute -bottom-[3%] -left-[4%] z-10 aspect-square w-[55%] [mask-image:radial-gradient(ellipse_at_50%_58%,#000_42%,transparent_72%)]">
+                <Image src="/images/groceries_basket.webp" alt="" fill sizes="(min-width: 1024px) 280px, 45vw" className="object-contain" />
+              </div>
+              <div aria-hidden="true" className="absolute bottom-[6%] right-[3%] w-[36%] -rotate-6 drop-shadow-[0_12px_10px_#020b2766]">
+                <div className="relative ml-3 h-7 rounded-r-lg border-y-[5px] border-[#d4e7ff] bg-white [transform:skewY(-5deg)] sm:h-9"><span className="absolute inset-y-0 left-0 w-4 bg-[#0759D6]" /></div>
+                <div className="relative -mt-1 h-7 rounded-r-lg border-y-[5px] border-[#0759D6] bg-[#f8fbff] [transform:skewY(-5deg)] sm:h-9"><span className="absolute inset-y-0 left-0 w-4 bg-[#082B68]" /></div>
+                <div className="relative -mt-1 ml-2 h-7 rounded-r-lg border-y-[5px] border-[#FFC400] bg-white [transform:skewY(-5deg)] sm:h-9"><span className="absolute inset-y-0 left-0 w-4 bg-[#dfac00]" /></div>
+                <BookOpen className="absolute -right-2 -top-6 h-8 w-8 -rotate-12 text-[#dceaff]" />
+              </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* 4. Shops Grid Showcase */}
       <main className="max-w-7xl w-full mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {shopsList.map((shop) => {
-            const Icon = shop.icon;
-            return (
-              <div
-                key={shop.id}
-                className={`group ${shop.cardBg} border ${shop.borderColor} rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1`}
-              >
-                {/* Image & Floating Badge */}
-                <div className="relative h-44 w-full overflow-hidden bg-white/50">
-                  <img
-                    src={shop.image}
-                    alt={shop.title}
-                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
-                  />
-                  
-                  {/* Category Badge */}
-                  <span className={`absolute top-3 left-3 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full shadow-sm ${shop.badgeColor}`}>
-                    {shop.badge}
-                  </span>
-
-                  {/* Circle Icon */}
-                  <div className={`absolute bottom-3 right-3 w-10 h-10 rounded-2xl ${shop.iconBg} text-white flex items-center justify-center shadow-lg`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
-                  <div className="space-y-1.5">
-                    <h3 className={`text-base font-black ${shop.titleColor} leading-snug`}>
-                      {shop.title}
-                    </h3>
-                    <p className="text-[11px] font-bold text-gray-700">
-                      {shop.subtitle}
-                    </p>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium line-clamp-3">
-                      {shop.desc}
-                    </p>
-                  </div>
-
-                  {/* Highlights Bullet List */}
-                  <div className="space-y-1.5 pt-3 border-t border-black/5 text-[11px] text-gray-600">
-                    {shop.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Action Link Button */}
-                  <div className="pt-4">
-                    {shop.isAvailable ? (
-                      <Link
-                        href={shop.href}
-                        className="w-full py-2.5 px-4 bg-[#15793B] hover:bg-[#0E5428] text-white rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm"
-                      >
-                        <span>{isTa ? 'இப்போதே வாங்கு' : 'Shop Now'}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    ) : (
-                      <div
-                        className="w-full py-2.5 px-4 bg-gray-200 text-gray-600 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-not-allowed select-none"
-                      >
-                        <span>{isTa ? 'விரைவில்' : 'Coming Soon'}</span>
-                        <ArrowRight className="w-4 h-4 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div data-virtual-shop-grid className="grid grid-cols-1 auto-rows-fr gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {shopsList.map(shop => <FlipShopCard key={shop.id} shop={shop} isTa={isTa} />)}
         </div>
 
         {/* 5. Direct Foreign Buyers & Export Gateway Banner */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-[#003B95] via-[#0055D4] to-[#0A2540] p-6 sm:p-10 text-white shadow-xl overflow-hidden">
+        <div className="relative rounded-3xl border border-[#c7def5] bg-linear-to-br from-[#f5faff] via-[#EAF5FF] to-[#dceeff] p-6 sm:p-8 text-[#082B63] shadow-[0_8px_24px_-16px_#082b6333] overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             
             <div className="lg:col-span-8 space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-cyan-200 text-[10px] font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 text-[#0755B8] text-[10px] font-bold uppercase tracking-wider">
                 <Globe className="w-3.5 h-3.5" />
                 <span>{isTa ? 'சர்வதேச பல்க் ஏற்றுமதி' : 'International Bulk Supply'}</span>
               </div>
-              <h2 className="text-xl sm:text-3xl font-serif font-black tracking-tight text-white">
+              <h2 className="text-xl sm:text-3xl font-serif font-bold tracking-tight text-[#082B63]">
                 {isTa
                   ? 'வெளிநாட்டு இறக்குமதியாளர்கள் & மொத்த வியாபாரிகள்'
                   : 'Are You a Foreign Buyer or Wholesale Importer?'}
               </h2>
-              <p className="text-xs sm:text-sm text-cyan-100 font-medium leading-relaxed max-w-2xl">
+              <p className="text-xs sm:text-sm text-[#526681] font-medium leading-relaxed max-w-2xl">
                 {isTa
                   ? 'இலங்கையிலிருந்து நேரடி மசாலாக்கள், தேயிலை, மளிகைப் பொருட்கள் மற்றும் ராணி கால்நடை தீவனங்களை பல்க் ஆர்டரில் இறக்குமதி செய்ய எங்கள் பிரத்யேக ஏற்றுமதி தளத்தைப் பார்வையிடுங்கள்.'
                   : 'Source bulk commercial containers (FCL/LCL) and priority air cargo direct from Sri Lankan manufacturers with certified documentation and FOB/CIF pricing.'}
@@ -353,14 +297,14 @@ export default function VirtualShopsClient() {
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
               <Link
                 href="/export"
-                className="px-6 py-3.5 bg-[#E53935] hover:bg-[#c62828] text-white text-center rounded-xl font-bold uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2"
+                className="px-6 py-3.5 bg-[#0755B8] hover:bg-[#082B63] text-white text-center rounded-xl font-bold uppercase tracking-wider shadow-lg transition-all focus-visible:outline-3 focus-visible:outline-[#0755B8] focus-visible:outline-offset-3 motion-reduce:transition-none! flex items-center justify-center gap-2"
               >
                 <span>{isTa ? 'ஏற்றுமதி தளம் செல்ல' : 'Visit Export Portal'}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
-                className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-center rounded-xl font-bold uppercase tracking-wider border border-white/20 transition-colors"
+                className="px-6 py-3.5 bg-white hover:bg-[#EAF5FF] text-[#082B63] text-center rounded-xl font-bold uppercase tracking-wider border border-[#9fc5ed] transition-colors focus-visible:outline-3 focus-visible:outline-[#0755B8] focus-visible:outline-offset-3 motion-reduce:transition-none!"
               >
                 {isTa ? 'தொடர்பு கொள்ள' : 'Contact Support Desk'}
               </Link>
