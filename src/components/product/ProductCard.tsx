@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useCart } from '@/lib/cart/CartContext';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
-import { ShoppingCart, Eye, Sparkles, Check } from 'lucide-react';
+import { ShoppingCart, ArrowRight, Sparkles, Check } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
 interface IProductData {
@@ -29,7 +29,7 @@ interface IProductData {
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
 
-export default function ProductCard({ product }: { product: IProductData }) {
+export default function ProductCard({ product, variant = 'default' }: { product: IProductData; variant?: 'default' | 'shop' }) {
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { t, language } = useTranslation();
@@ -77,6 +77,46 @@ export default function ProductCard({ product }: { product: IProductData }) {
 
   const formattedPrice = formatCurrency(price);
   const formattedCrossedPrice = crossedOutPrice ? formatCurrency(crossedOutPrice) : null;
+
+  if (variant === 'shop') {
+    return (
+      <article className="group flex h-full min-w-0 flex-col rounded-2xl border border-[#d5e7fb] bg-white p-2.5 text-[#082B68] shadow-[0_6px_18px_-12px_#0759d640] transition-shadow duration-300 hover:border-[#93baf1] hover:shadow-[0_10px_24px_-12px_#0759d650] sm:p-3.5">
+        <div className="relative">
+          <Link href={`/product/${product.slug}`} className="block aspect-square overflow-hidden rounded-xl bg-[#F2F8FF] focus-visible:outline-2 focus-visible:outline-[#0759D6] focus-visible:outline-offset-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={imgSrc} alt={product.name} onError={() => setImgSrc(FALLBACK_IMAGE)} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.04] motion-reduce:scale-100! motion-reduce:transition-none" />
+          </Link>
+          <div className="pointer-events-none absolute left-2 top-2 flex max-w-[calc(100%-16px)] flex-col items-start gap-1">
+            {product.isBestSeller && <span className="rounded-full bg-[#082B68] px-2 py-1 text-[9px] font-bold leading-tight text-white">Best Seller</span>}
+            {product.isNewArrival && <span className="rounded-full bg-[#0759D6] px-2 py-1 text-[9px] font-bold leading-tight text-white">New Arrival</span>}
+            {product.isFeatured && !product.isBestSeller && !product.isNewArrival && <span className="rounded-full bg-[#FFC400] px-2 py-1 text-[9px] font-bold leading-tight text-[#071F50]">Popular</span>}
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col pt-3">
+          <span className="break-all text-[9px] font-semibold uppercase tracking-wide text-[#64748B] sm:text-[10px]">SKU: {product.sku}</span>
+          <Link href={`/product/${product.slug}`} className="mt-1 focus-visible:outline-2 focus-visible:outline-[#0759D6] focus-visible:outline-offset-2">
+            <h3 className="line-clamp-2 min-h-[35px] text-[13px] font-bold leading-[1.35] text-[#082B68] transition-colors hover:text-[#0759D6] sm:min-h-[38px] sm:text-sm">{product.name}</h3>
+          </Link>
+          {product.shortDescription && <p className="mt-1 line-clamp-2 text-[11px] font-medium leading-relaxed text-[#64748B]">{product.shortDescription}</p>}
+          <div className="mt-auto pt-3">
+            <div className="mb-3 flex flex-wrap items-baseline gap-1.5">
+              <span className="text-base font-extrabold text-[#0759D6] sm:text-lg">{formattedPrice}</span>
+              {formattedCrossedPrice && <span className="text-[11px] font-semibold text-[#64748B] line-through">{formattedCrossedPrice}</span>}
+              {priceBadge && <span className="inline-flex items-center gap-1 rounded-full border border-[#bbd7fa] bg-[#F2F8FF] px-2 py-0.5 text-[9px] font-bold text-[#0759D6]"><Sparkles className="h-2.5 w-2.5" />{priceBadge}</span>}
+            </div>
+            <div className="flex w-full flex-col gap-2 sm:flex-row">
+              <button onClick={handleAddToCart} disabled={isOutOfStock} className={`flex min-h-10 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full border px-2 py-2 text-[11px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-[#0759D6] focus-visible:outline-offset-2 motion-reduce:transition-none! sm:text-xs ${isOutOfStock ? 'cursor-not-allowed border-[#d5e7fb] bg-[#F2F8FF] text-[#64748B]' : added ? 'border-[#0759D6] bg-[#0759D6] text-white' : 'cursor-pointer border-[#0759D6] bg-white text-[#0759D6] hover:bg-[#DBEDFF]'}`}>
+                {added ? <><Check className="h-3.5 w-3.5 shrink-0" /><span>Added</span></> : <><ShoppingCart className="h-3.5 w-3.5 shrink-0" /><span>Add to Cart</span></>}
+              </button>
+              <Link href={`/product/${product.slug}`} className="flex min-h-10 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full border border-transparent bg-[#FFC400]/70 px-2 py-2 text-[11px] font-bold text-[#071F50] transition-colors hover:bg-[#edb700] focus-visible:outline-2 focus-visible:outline-[#0759D6] focus-visible:outline-offset-2 motion-reduce:transition-none! sm:text-xs">
+                <span>View Details</span><ArrowRight className="h-3.5 w-3.5 shrink-0" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <div className="group bg-white rounded-2xl border border-gray-200 hover:border-[#0052CC]/40 hover:shadow-lg overflow-hidden flex flex-col justify-between h-full relative transition-all duration-300 p-3.5">

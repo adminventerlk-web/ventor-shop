@@ -1,13 +1,14 @@
 import React, { Suspense } from 'react';
+import styles from './page.module.css';
 import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Hero from '@/components/storefront/Hero';
-import DualFeatureCards from '@/components/storefront/DualFeatureCards';
 import VirtualShops from '@/components/storefront/VirtualShops';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import PromoBanners from '@/components/storefront/PromoBanners';
 import FeaturedProducts from '@/components/storefront/FeaturedProducts';
 import WhyShopBanner from '@/components/storefront/WhyShopBanner';
+import InternationalBuyers from '@/components/storefront/InternationalBuyers';
 import TrustBadges from '@/components/storefront/TrustBadges';
 import Footer from '@/components/layout/Footer';
 
@@ -36,45 +37,45 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen w-full overflow-x-hidden bg-[#F8FAFC] font-sans antialiased text-xs font-semibold" style={{ gap: 0 }}>
+    <div className={`${styles.homepage} flex flex-col min-h-screen w-full overflow-x-hidden font-sans antialiased text-xs font-semibold`} style={{ gap: 0 }}>
       {/* 1. Navigation Header - Direct Render for Instant First Paint */}
       <Header />
 
       {/* 2. Hero Banner Section + Location Strip - Direct Render with Priority Image */}
       <Hero />
 
-      {/* 3. Featured Products Showcase */}
-      <Suspense fallback={<div className="h-96 bg-white animate-pulse" />}>
-        <FeaturedProducts />
-      </Suspense>
-
-      {/* 4. Dual Category Showcase (Groceries & Rani Animal Feed) */}
-      <Suspense fallback={<div className="h-72 bg-white animate-pulse" />}>
-        <DualFeatureCards />
-      </Suspense>
-
-      {/* 5. Virtual Shops / Shop Categories & Foreign Buyers Banner */}
-      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse" />}>
-        <VirtualShops />
-      </Suspense>
-
-      {/* 6. Shop By Category (8 Categories Grid) */}
-      <Suspense fallback={<div className="h-48 bg-white animate-pulse" />}>
+      {/* 3. Shop By Category (8 Categories Grid) */}
+      <Suspense fallback={<div className="h-48 bg-transparent animate-pulse" />}>
         <ShopByCategory />
       </Suspense>
 
-      {/* 7. Secondary Promotional Banners */}
-      <Suspense fallback={<div className="h-44 bg-white animate-pulse" />}>
+      {/* 4. Featured Products Showcase */}
+      <Suspense fallback={<div className="h-96 bg-transparent animate-pulse" />}>
+        <FeaturedProducts />
+      </Suspense>
+
+      {/* 5. Community Gift Vouchers */}
+      <Suspense fallback={<div className="h-44 bg-transparent animate-pulse" />}>
         <PromoBanners />
       </Suspense>
 
+      {/* 6. Virtual Shops / Shop Categories */}
+      <Suspense fallback={<div className="h-96 bg-transparent animate-pulse" />}>
+        <VirtualShops />
+      </Suspense>
+
       {/* 8. Why Shop With VenterShop? Banner */}
-      <Suspense fallback={<div className="h-40 bg-blue-50 animate-pulse" />}>
+      <Suspense fallback={<div className="h-40 bg-transparent animate-pulse" />}>
         <WhyShopBanner />
       </Suspense>
 
+      {/* International Buyers */}
+      <Suspense fallback={<div className="h-64 bg-transparent animate-pulse" />}>
+        <InternationalBuyers />
+      </Suspense>
+
       {/* 9. 5-Column Trust Badges */}
-      <Suspense fallback={<div className="h-28 bg-white animate-pulse" />}>
+      <Suspense fallback={<div className="h-28 bg-transparent animate-pulse" />}>
         <TrustBadges />
       </Suspense>
 

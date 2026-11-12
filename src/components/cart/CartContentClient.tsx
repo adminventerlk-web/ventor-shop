@@ -202,18 +202,31 @@ export default function CartContentClient() {
     updateQuantity(productId, newQty);
   };
 
+  const cartBanner = (
+    <section aria-labelledby="cart-heading" data-cart-hero className="relative isolate mb-8 flex flex-col justify-center gap-5 overflow-hidden rounded-[36px] border border-[#4d80cc]/30 bg-linear-to-br from-[#071F50] via-[#082B68] to-[#0759D6] px-6 py-8 text-white shadow-[0_16px_40px_-22px_#071f5070] sm:px-9 lg:h-[180px] lg:flex-row lg:items-center lg:justify-between lg:px-12 lg:py-6">
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-56 -right-20 -z-10 h-[420px] w-[540px] -rotate-12 rounded-[50%] border border-white/10 bg-linear-to-br from-[#247bec]/30 to-[#0759D6]/5" />
+      <div className="min-w-0 space-y-2">
+        <h1 id="cart-heading" className="font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl">{t('cartTitle')}</h1>
+        <p className="text-xs font-medium text-[#dceaff]"><span className="font-bold text-[#FFC400]">{calcResult?.items.length ?? cart.length}</span> {(calcResult?.items.length ?? cart.length) === 1 ? 'item' : 'items'} in your cart</p>
+      </div>
+      <Link href="/shop" className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-full border border-white/35 bg-white/10 px-5 py-3 text-xs font-bold text-white transition-colors hover:bg-white/20 lg:self-auto"><ArrowRight aria-hidden="true" className="h-4 w-4 rotate-180" />Continue Shopping</Link>
+    </section>
+  );
+
   // 3. Render Empty Cart State
   if (!loading && (!calcResult || calcResult.items.length === 0)) {
     return (
-      <div className="max-w-4xl mx-auto py-20 px-4 text-center space-y-6">
-        <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 mx-auto text-[#0052CC]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs font-semibold">
+        {cartBanner}
+        <div className="mx-auto max-w-3xl rounded-3xl border border-[#c7def5] bg-white px-6 py-12 text-center shadow-sm space-y-6">
+        <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 mx-auto text-[#0759D6]">
           <ShoppingBag className="w-10 h-10" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-serif font-black text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#082B68]">
             {language === 'ta' ? 'உங்கள் கார்ட் காலியாக உள்ளது' : 'Your Shopping Cart is Empty'}
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto font-medium">
+          <p className="text-xs sm:text-sm text-[#526681] max-w-md mx-auto font-medium">
             {language === 'ta'
               ? 'உங்கள் கூடையில் பொருட்கள் எதுவும் இல்லை. புதிய தயாரிப்புகளை வாங்க ஷாப்பிங் தொடங்குங்கள்.'
               : 'You have no items in your shopping cart. Discover our fresh groceries and quality products.'}
@@ -221,11 +234,12 @@ export default function CartContentClient() {
         </div>
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#0052CC] hover:bg-[#003D99] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-md hover:shadow-lg transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#FFC400] hover:bg-[#efb900] text-[#071F50] font-bold text-xs rounded-full shadow-sm transition-colors"
         >
           <span>{language === 'ta' ? 'ஷாப்பிங் தொடரவும்' : 'Continue Shopping'}</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
+      </div>
       </div>
     );
   }
@@ -233,9 +247,12 @@ export default function CartContentClient() {
   // 4. Loading state
   if (loading || !calcResult) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="inline-block w-8 h-8 border-4 border-[#0052CC] border-t-transparent rounded-full animate-spin mb-3" />
-        <p className="text-xs text-gray-500 font-bold">Calculating cart totals...</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {cartBanner}
+        <div role="status" className="rounded-3xl border border-[#c7def5] bg-white py-16 text-center">
+        <div className="inline-block w-8 h-8 border-4 border-[#0759D6] border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-xs text-[#526681] font-bold">Calculating cart totals...</p>
+        </div>
       </div>
     );
   }
@@ -243,25 +260,9 @@ export default function CartContentClient() {
   const isFreeDelivery = calcResult.deliveryFee === 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs font-semibold">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs font-semibold">
       
-      {/* Page Title */}
-      <div className="mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-gray-200 pb-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-serif font-black text-gray-900">
-            {t('cartTitle')}
-          </h1>
-          <p className="text-xs text-gray-500 font-medium mt-0.5">
-            {calcResult.items.length} {calcResult.items.length === 1 ? 'item' : 'items'} in your cart
-          </p>
-        </div>
-        <Link
-          href="/shop"
-          className="text-xs text-[#0052CC] hover:underline font-bold flex items-center gap-1"
-        >
-          <span>← Continue Shopping</span>
-        </Link>
-      </div>
+      {cartBanner}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
@@ -272,20 +273,20 @@ export default function CartContentClient() {
             return (
               <div
                 key={item.productId}
-                className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm"
+                className="bg-white p-4 sm:p-5 rounded-2xl border border-[#c7def5] flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 shadow-sm"
               >
                 {/* Product Image & Info */}
-                <div className="flex items-center gap-4 flex-1">
+                <div className="flex min-w-0 items-center gap-4 flex-1">
                   <div
                     className="w-20 h-20 bg-cover bg-center rounded-lg border border-gray-150 shrink-0 bg-gray-50"
                     style={{ backgroundImage: `url('${item.image || '/images/hero_banner.png'}')` }}
                   />
-                  <div className="space-y-1">
-                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 line-clamp-2">
+                  <div className="min-w-0 space-y-1">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#082B68] wrap-anywhere">
                       {item.name}
                     </h3>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-sm font-black text-[#0052CC]">
+                      <span className="text-sm font-black text-[#0759D6]">
                         {formatCurrency(item.finalPrice)}
                       </span>
                       {hasDiscount && (
@@ -295,7 +296,7 @@ export default function CartContentClient() {
                       )}
                     </div>
                     {item.appliedOfferName && (
-                      <span className="bg-green-50 text-[#1B5E20] text-[9px] font-bold px-1.5 py-0.5 rounded border border-green-200 uppercase tracking-wide inline-flex items-center gap-0.5">
+                      <span className="bg-blue-50 text-[#0759D6] text-[9px] font-bold px-1.5 py-0.5 rounded border border-[#c7def5] uppercase tracking-wide inline-flex items-center gap-0.5">
                         <Sparkles className="w-2.5 h-2.5" />
                         {item.appliedOfferName}
                       </span>
@@ -304,20 +305,20 @@ export default function CartContentClient() {
                 </div>
 
                 {/* Quantity adjustments */}
-                <div className="flex items-center border border-gray-300 rounded-lg bg-gray-50 h-9 w-28 select-none shrink-0">
+                <div className="flex items-center border border-[#c7def5] rounded-xl bg-[#EAF5FF] h-10 w-32 select-none shrink-0">
                   <button
                     onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
-                    className="w-8 h-full flex items-center justify-center text-gray-600 hover:text-black transition-colors cursor-pointer"
+                    className="w-8 h-full flex items-center justify-center text-[#082B68] hover:bg-[#dceaff] rounded-lg hover:text-[#0759D6] transition-colors cursor-pointer"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="flex-grow text-center text-xs font-black text-gray-900">
+                  <span className="flex-grow text-center text-xs font-black text-[#082B68]">
                     {item.quantity}
                   </span>
                   <button
                     onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
-                    className="w-8 h-full flex items-center justify-center text-gray-600 hover:text-black transition-colors cursor-pointer"
+                    className="w-8 h-full flex items-center justify-center text-[#082B68] hover:bg-[#dceaff] rounded-lg hover:text-[#0759D6] transition-colors cursor-pointer"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-3 h-3" />
@@ -325,8 +326,8 @@ export default function CartContentClient() {
                 </div>
 
                 {/* Subtotal & Delete button */}
-                <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
-                  <span className="text-sm font-black text-gray-900 sm:w-28 text-right">
+                <div className="flex items-center justify-between xl:justify-end gap-4 w-full xl:w-auto">
+                  <span className="text-sm font-black text-[#082B68] xl:w-24 text-right">
                     {formatCurrency(item.total)}
                   </span>
                   <button
@@ -346,12 +347,12 @@ export default function CartContentClient() {
         <div className="space-y-5">
           
           {/* 1. Clear Delivery Notice */}
-          <div className={`p-4 rounded-xl border flex items-center gap-3 ${
+          <div className={`p-4 rounded-2xl border shadow-sm flex items-center gap-3 ${
             isFreeDelivery
-              ? 'bg-[#F3F8F3] border-[#C8E6C9] text-[#1B5E20]'
-              : 'bg-amber-50 border-amber-200 text-amber-900'
+              ? 'bg-[#EAF5FF] border-[#93bdf0] text-[#082B68]'
+              : 'bg-white border-[#c7def5] text-[#082B68]'
           }`}>
-            <Truck className="w-5 h-5 shrink-0" />
+            <Truck className="w-5 h-5 shrink-0 text-[#0759D6]" />
             <div className="space-y-0.5">
               <p className="text-xs font-bold">
                 {isFreeDelivery ? 'Free Delivery Applied' : `Standard Delivery (${formatCurrency(calcResult.deliveryFee)})`}
@@ -365,20 +366,20 @@ export default function CartContentClient() {
           </div>
 
           {/* 2. Totals box */}
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-5">
-            <h3 className="font-bold text-xs text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-3">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#c7def5] shadow-sm space-y-5">
+            <h3 className="font-bold text-xs text-[#082B68] uppercase tracking-wider border-b border-[#dceaff] pb-3">
               Order Summary
             </h3>
 
             {/* Calculations Breakdown */}
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between text-gray-600 font-medium">
+              <div className="flex justify-between text-[#526681] font-medium">
                 <span>{t('cartSubtotal')}</span>
-                <span className="font-bold text-gray-900">{formatCurrency(calcResult.subtotal)}</span>
+                <span className="font-bold text-[#082B68]">{formatCurrency(calcResult.subtotal)}</span>
               </div>
               
               {calcResult.itemDiscounts > 0 && (
-                <div className="flex justify-between text-[#1B5E20] font-bold">
+                <div className="flex justify-between text-[#0759D6] font-bold">
                   <span className="flex items-center gap-1">
                     <Percent className="w-3.5 h-3.5" />
                     Offers Discount
@@ -388,7 +389,7 @@ export default function CartContentClient() {
               )}
 
               {calcResult.voucherDiscount > 0 && (
-                <div className="flex justify-between text-[#1B5E20] font-bold">
+                <div className="flex justify-between text-[#0759D6] font-bold">
                   <span className="flex items-center gap-1">
                     <Percent className="w-3.5 h-3.5" />
                     Voucher Discount
@@ -397,11 +398,11 @@ export default function CartContentClient() {
                 </div>
               )}
 
-              <div className="flex justify-between text-gray-600 font-medium">
+              <div className="flex justify-between text-[#526681] font-medium">
                 <span>Delivery Fee</span>
                 <span className="font-bold">
                   {isFreeDelivery ? (
-                    <span className="text-[#1B5E20] font-bold">FREE</span>
+                    <span className="text-[#0759D6] font-bold">FREE</span>
                   ) : (
                     formatCurrency(calcResult.deliveryFee)
                   )}
@@ -409,25 +410,25 @@ export default function CartContentClient() {
               </div>
 
               {/* Total Row */}
-              <div className="flex justify-between items-baseline pt-4 border-t border-gray-100">
-                <span className="text-sm font-black text-gray-900">{t('cartTotal')}</span>
-                <span className="text-2xl font-serif font-black text-[#0052CC]">
+              <div className="flex justify-between items-baseline pt-4 border-t border-[#dceaff]">
+                <span className="text-sm font-black text-[#082B68]">{t('cartTotal')}</span>
+                <span className="text-2xl font-serif font-black text-[#0759D6]">
                   {formatCurrency(calcResult.total)}
                 </span>
               </div>
             </div>
 
             {/* Voucher apply box */}
-            <div className="border-t border-gray-100 pt-4 space-y-2.5">
-              <h4 className="text-xs font-bold text-gray-900">{t('cartApplyVoucher')}</h4>
+            <div className="border-t border-[#dceaff] pt-4 space-y-2.5">
+              <h4 className="text-xs font-bold text-[#082B68]">{t('cartApplyVoucher')}</h4>
               
               {calcResult.appliedVoucher ? (
-                <div className="bg-green-50 text-green-900 border border-green-200 rounded-lg p-2.5 flex justify-between items-center">
+                <div className="bg-blue-50 text-[#082B68] border border-[#c7def5] rounded-lg p-2.5 flex justify-between items-center">
                   <div className="space-y-0.5">
                     <p className="text-xs font-black">
                       CODE: {calcResult.appliedVoucher.code}
                     </p>
-                    <p className="text-[10px] text-green-700 font-medium">
+                    <p className="text-[10px] text-[#0759D6] font-medium">
                       Saved {formatCurrency(calcResult.appliedVoucher.discountAmount)}
                     </p>
                   </div>
@@ -448,12 +449,12 @@ export default function CartContentClient() {
                       setVoucherInput(e.target.value.toUpperCase());
                       setVoucherErrorMsg(null);
                     }}
-                    className="flex-grow px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs outline-none focus:bg-white focus:border-[#0052CC] text-gray-900 font-bold uppercase tracking-wider"
+                    className="min-w-0 flex-1 px-3 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg text-xs outline-none focus:bg-white focus:border-[#0759D6] text-[#082B68] font-bold uppercase tracking-wider"
                     disabled={applyingVoucher}
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#0052CC] hover:bg-[#003D99] text-white text-xs font-bold rounded-lg transition-colors disabled:bg-gray-400 cursor-pointer"
+                    className="px-4 py-2 bg-[#071F50] hover:bg-[#082B68] text-white text-xs font-bold rounded-lg transition-colors disabled:bg-gray-400 cursor-pointer"
                     disabled={applyingVoucher || !voucherInput.trim()}
                   >
                     {applyingVoucher ? 'Applying...' : 'Apply'}
@@ -472,7 +473,7 @@ export default function CartContentClient() {
             {/* Proceed to checkout CTA */}
             <button
               onClick={() => router.push('/checkout')}
-              className="w-full h-11 flex items-center justify-center gap-2 bg-[#1B5E20] hover:bg-[#144718] text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-md hover:shadow-lg active:scale-98 transition-all cursor-pointer"
+              className="w-full h-11 flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#efb900] text-[#071F50] font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm hover:shadow-md active:scale-98 transition-all cursor-pointer"
             >
               <span>{t('cartCheckout')}</span>
               <ArrowRight className="w-4 h-4" />

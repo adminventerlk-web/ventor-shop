@@ -37,14 +37,14 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#021838] text-gray-200 text-xs font-semibold border-t-4 border-[#FFB800]">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-[#021838] mt-4 lg:mt-10 text-gray-200 text-xs font-semibold border-t-4 border-[#FFB800]">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 lg:py-6">
         
         {/* Main 4 Columns Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-10 border-b border-blue-900/50">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-10 lg:pb-5 border-b border-blue-900/50">
           
           {/* Col 1: Brand & Socials (Span 4) */}
-          <div className="lg:col-span-4 space-y-4 text-left">
+          <div className="lg:col-span-4 space-y-4 lg:space-y-3 text-left">
             <div className="bg-white/95 px-3 py-1.5 rounded-xl inline-block shadow-md">
               <BrandLogo variant="light" size="md" showSubtitle={true} />
             </div>
@@ -54,7 +54,7 @@ export default function Footer() {
             </p>
 
             {/* Contact details */}
-            <div className="space-y-2 text-xs text-amber-300 font-bold pt-1">
+            <div className="space-y-2 lg:space-y-1.5 text-xs text-amber-300 font-bold pt-1">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#FFB800] shrink-0" />
                 <span>Colombo & Jaffna, Sri Lanka</span>
@@ -70,7 +70,7 @@ export default function Footer() {
             </div>
 
             {/* Social Icons */}
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2 pt-2 lg:pt-1">
               <a
                 href="https://facebook.com"
                 target="_blank"
@@ -108,9 +108,9 @@ export default function Footer() {
           </div>
 
           {/* Col 2: Quick Links (Span 2) */}
-          <div className="lg:col-span-2 space-y-3 text-left">
+          <div className="lg:col-span-2 space-y-3 lg:space-y-2 text-left">
             <h4 className="text-[#FFB800] font-black text-xs uppercase tracking-widest">Quick Links</h4>
-            <ul className="space-y-2 text-xs text-blue-100 font-semibold">
+            <ul className="space-y-2 lg:space-y-1.5 text-xs text-blue-100 font-semibold">
               {quickLinks.map((item, idx) => (
                 <li key={idx}>
                   <Link href={item.href} className="hover:text-[#FFB800] transition-colors">
@@ -122,9 +122,9 @@ export default function Footer() {
           </div>
 
           {/* Col 3: Customer Support (Span 3) */}
-          <div className="lg:col-span-3 space-y-3 text-left">
+          <div className="lg:col-span-3 space-y-3 lg:space-y-2 text-left">
             <h4 className="text-[#FFB800] font-black text-xs uppercase tracking-widest">Customer Support</h4>
-            <ul className="space-y-2 text-xs text-blue-100 font-semibold">
+            <ul className="space-y-2 lg:space-y-1.5 text-xs text-blue-100 font-semibold">
               {customerService.map((item, idx) => (
                 <li key={idx}>
                   <Link href={item.href} className="hover:text-[#FFB800] transition-colors">
@@ -137,14 +137,14 @@ export default function Footer() {
 
           {/* Col 4: Newsletter & Guarantee (Span 3) */}
           <div className="lg:col-span-3 space-y-4 text-left">
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1.5">
               <h4 className="text-[#FFB800] font-black text-xs uppercase tracking-widest">Stay Updated</h4>
               <p className="text-xs text-blue-100/90 font-normal leading-relaxed">
                 Subscribe to receive special discounts, Ceylon export updates & exclusive vouchers.
               </p>
               
               {/* Newsletter Form */}
-              <form onSubmit={handleSubscribe} className="flex gap-1.5 pt-1">
+              <form onSubmit={handleSubscribe} className="flex gap-1.5 pt-1 lg:pt-0">
                 <input
                   type="email"
                   placeholder="Enter your email..."
@@ -169,7 +169,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-blue-200/70 font-semibold gap-2">
+        <div className="pt-6 lg:pt-3 flex flex-col sm:flex-row justify-between items-center text-xs text-blue-200/70 font-semibold gap-2">
           <p>© 2026 VENTERSHOP. Find More. Shop Smart. All Rights Reserved.</p>
           <div className="flex items-center gap-1 text-amber-300 font-bold">
             <ShieldCheck className="w-4 h-4 text-[#FFB800]" />

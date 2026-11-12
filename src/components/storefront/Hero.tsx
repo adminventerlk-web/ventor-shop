@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import styles from './Hero.module.css';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import {
   Sparkles,
@@ -25,7 +26,8 @@ export default function Hero() {
   const slides = [
     {
       id: 1,
-      image: '/images/sri_lankan_exports.webp',
+      image: '/images/hero/ceylon-exports.png',
+      imageClass: styles.ceylon,
       blurDataURL:
         'data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoKAAcABUB8JagCdADcqZqWUAAA3NdCC3rJvBeyyj4GX54CRDgEe/6TiCkCWygTzQAAAA==',
       dominantColor: '#021430',
@@ -52,6 +54,7 @@ export default function Hero() {
     {
       id: 2,
       image: '/images/groceries_basket.webp',
+      imageClass: styles.groceries,
       blurDataURL:
         'data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoKAAoABUB8JZACdAEQE6TU+OQAAP7h7OSV4Mw7NC5KofJeBv1dQ7j5CMfDpt7eZiSzhP5bGoyaEz2gAAA=',
       dominantColor: '#021430',
@@ -78,6 +81,7 @@ export default function Hero() {
     {
       id: 3,
       image: '/images/rani_animal_feed.webp',
+      imageClass: styles.feed,
       blurDataURL:
         'data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoKAAoABUB8JZACdAEQFOxffEAA/uDObunmPptbt2mELJiOCathnh1oNkWVc2GPmOAJzaAA',
       dominantColor: '#021430',
@@ -104,6 +108,7 @@ export default function Hero() {
     {
       id: 4,
       image: '/images/storefront_3d.webp',
+      imageClass: styles.storefront,
       blurDataURL:
         'data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoKAAoABUB8JaACdADZPzzgAAD+xnBz1pLw4noBNpyC03+WiBhk631mDIKD1rJ7lorAlWQ+sAA=',
       dominantColor: '#021430',
@@ -159,76 +164,38 @@ export default function Hero() {
   };
 
   const current = slides[currentSlide];
+  const secondLine = isTa ? current.titleLine2Ta : isSi ? current.titleLine2Si : current.titleLine2En;
+  const secondLineWords = secondLine.split(' ');
+  const highlightWordCount = (currentSlide === 0 && !isTa && !isSi) || secondLineWords.length <= 2 ? 1 : 2;
+  const highlightedPhrase = secondLineWords.slice(-highlightWordCount).join(' ');
+  const highlightStart = secondLine.length - highlightedPhrase.length;
 
   return (
     <>
-      {/* Hero Section - Matching Sithisha Masala & Snacks structure with flex-center and generous vertical padding */}
-      <section className="relative overflow-hidden bg-[#021430] text-white min-h-[520px] sm:min-h-[600px] lg:min-h-[650px] flex items-center select-none">
-        {/* Background Images Layer with smooth Ken Burns animated zoom */}
-        {slides.map((slide, index) => {
-          const isActive = index === currentSlide;
-          return (
-            <div
-              key={slide.id}
-              className="absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out"
-              style={{
-                opacity: isActive ? 1 : 0,
-                pointerEvents: isActive ? 'auto' : 'none',
-                backgroundColor: slide.dominantColor || '#021430',
-              }}
-            >
-              {/* Ken Burns zooming image with Next.js Image optimizations */}
-              <div
-                className="absolute inset-0 overflow-hidden"
-                style={{ backgroundColor: slide.dominantColor || '#021430' }}
-              >
-                <Image
-                  src={slide.image}
-                  alt={slide.titleLine1En}
-                  fill
-                  priority={index === 0}
-                  placeholder="blur"
-                  blurDataURL={slide.blurDataURL}
-                  sizes="100vw"
-                  className="w-full h-full object-cover object-center"
-                  style={{
-                    transform: isActive ? 'scale(1.10)' : 'scale(1)',
-                    transition: 'transform 7s ease-out',
-                    filter: 'brightness(0.85)',
-                  }}
-                />
-              </div>
-
-              {/* Seamless Dark Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#021430]/95 via-[#021430]/80 to-[#021430]/50" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#021430] via-transparent to-[#021430]/60" />
-            </div>
-          );
-        })}
-
-        {/* Glowing Decorative Orbs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none z-[1]" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#FFB800]/10 rounded-full blur-3xl pointer-events-none z-[1]" />
-
-        {/* Content Container - generous padding so buttons and text are 100% visible */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 sm:py-20 lg:py-24 w-full">
-          <div className="max-w-3xl space-y-6 text-left">
+      <section className={styles.hero} aria-label="Featured collections" aria-roledescription="carousel"
+        onKeyDown={(event) => {
+          if ((event.target as HTMLElement).tagName === 'INPUT') return;
+          if (event.key === 'ArrowLeft') { event.preventDefault(); handlePrev(); }
+          if (event.key === 'ArrowRight') { event.preventDefault(); handleNext(); }
+        }}>
+        <div className={styles.stage}>
+          <div className={styles.content} aria-live="off">
             {/* 1. Tag Highlight Badge */}
             <div
               key={`tag-${currentSlide}`}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/80 border border-blue-700/60 text-[#FFB800] text-xs font-black uppercase tracking-widest shadow-md backdrop-blur-md"
+              className={styles.badge}
               style={{ animation: 'heroFadeSlideIn 0.5s ease-out both' }}
             >
-              <Sparkles className="w-4 h-4 text-[#FFB800]" />
+              <Sparkles className="w-4 h-4 text-green-600" />
               <span>
                 {isTa ? current.tagTa : isSi ? current.tagSi : current.tagEn}
               </span>
             </div>
 
-            {/* 2. Main Title with gradient accent */}
+            {/* 2. Main Title with a short blue accent */}
             <h1
               key={`title-${currentSlide}`}
-              className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none text-white uppercase font-sans"
+              className="my-[15px] font-serif text-[clamp(21.32px,5.576vw,24.6px)] font-[600] not-italic leading-[1.18] tracking-[-.02em] text-[#0F172A] [overflow-wrap:anywhere] md:my-4 md:text-[clamp(24.6px,2.706vw,27.88px)] lg:text-[clamp(29.52px,2.1648vw,32.8px)]"
               style={{ animation: 'heroFadeSlideIn 0.5s ease-out 0.1s both' }}
             >
               {isTa
@@ -236,19 +203,16 @@ export default function Hero() {
                 : isSi
                 ? current.titleLine1Si
                 : current.titleLine1En}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB800] via-amber-200 to-blue-200 block mt-1">
-                {isTa
-                  ? current.titleLine2Ta
-                  : isSi
-                  ? current.titleLine2Si
-                  : current.titleLine2En}
+              <span className="mt-1 block">
+                {secondLine.slice(0, highlightStart)}
+                <span className="text-[#0B5DBB]">{highlightedPhrase}</span>
               </span>
             </h1>
 
             {/* 3. Subtitle */}
             <p
               key={`sub-${currentSlide}`}
-              className="text-sm sm:text-base lg:text-lg text-blue-100 max-w-2xl font-medium leading-relaxed"
+              className={styles.description}
               style={{ animation: 'heroFadeSlideIn 0.5s ease-out 0.2s both' }}
             >
               {isTa
@@ -261,12 +225,12 @@ export default function Hero() {
             {/* 4. Action Buttons - Prominent, fully visible, never clipped */}
             <div
               key={`cta-${currentSlide}`}
-              className="pt-2 flex flex-wrap items-center gap-4"
+              className={styles.actions}
               style={{ animation: 'heroFadeSlideIn 0.5s ease-out 0.3s both' }}
             >
               <Link
                 href={current.ctaLink}
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#FFB800] hover:bg-[#FFA500] text-[#021430] font-black rounded-2xl text-xs sm:text-sm uppercase tracking-wider shadow-xl hover:shadow-[#FFB800]/25 transition-all transform hover:-translate-y-0.5 active:scale-95 group cursor-pointer"
+                className={styles.primary}
               >
                 <span>
                   {isTa
@@ -280,9 +244,9 @@ export default function Hero() {
 
               <Link
                 href="/virtual-shops"
-                className="inline-flex items-center gap-2 px-6 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl text-xs sm:text-sm backdrop-blur-md border border-white/20 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                className={styles.secondary}
               >
-                <Store className="w-4 h-4 text-[#FFB800]" />
+                <Store className="w-4 h-4" />
                 <span>
                   {isTa
                     ? 'கடைகளை ஆராய்க'
@@ -293,10 +257,39 @@ export default function Hero() {
               </Link>
             </div>
 
+
+          </div>
+          <div className={styles.visual}>
+            <div className={styles.imageFrame}>
+              {slides.map((slide, index) => (
+                <div key={slide.id} className={`${styles.imageSlide} ${slide.imageClass}`} aria-hidden={index !== currentSlide}
+                  style={{ opacity: index === currentSlide ? 1 : 0 }}>
+                  <Image src={slide.image} alt={slide.titleLine1En} fill loading={index === 0 ? 'eager' : 'lazy'}
+                    unoptimized={index === 0} fetchPriority={index === 0 ? 'high' : 'auto'}
+                    placeholder={index === 0 ? 'empty' : 'blur'} blurDataURL={slide.blurDataURL}
+                    sizes="(max-width: 767px) 100vw, 54vw" className={styles.artwork} />
+                </div>
+              ))}
+            </div>
+            <div className={styles.indicators} aria-label="Choose a slide">
+              {slides.map((_, idx) => (
+                <button key={idx} onClick={() => goToSlide(idx)}
+                  className={styles.indicator} aria-current={idx === currentSlide ? 'true' : undefined}
+                  aria-label={`Go to slide ${idx + 1}`} />
+              ))}
+            </div>
+          </div>
+          <button onClick={handlePrev} className={`${styles.arrow} ${styles.previous}`} aria-label="Previous Slide">
+            <ChevronLeft size={22} />
+          </button>
+          <button onClick={handleNext} className={`${styles.arrow} ${styles.next}`} aria-label="Next Slide">
+            <ChevronRight size={22} />
+          </button>
+        </div>
             {/* 5. Real Trust Features Row - NO FAKE RATINGS, only real platform values */}
-            <div className="pt-6 border-t border-white/15 flex flex-wrap gap-6 text-xs font-semibold text-blue-100">
+            <div className={styles.trustStrip}>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-[#FFB800] shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-[#073979] shrink-0" />
                 <span>
                   {isTa
                     ? 'சரிபார்க்கப்பட்ட இலங்கை வணிகர்கள்'
@@ -306,7 +299,7 @@ export default function Hero() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Truck className="w-5 h-5 text-[#FFB800] shrink-0" />
+                <Truck className="w-5 h-5 text-[#073979] shrink-0" />
                 <span>
                   {isTa
                     ? '25 மாவட்டங்களுக்கும் டெலிவரி'
@@ -316,7 +309,7 @@ export default function Hero() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Globe2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <Globe2 className="w-5 h-5 text-[#073979] shrink-0" />
                 <span>
                   {isTa
                     ? 'சர்வதேச நேரடி ஏற்றுமதி'
@@ -326,7 +319,7 @@ export default function Hero() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#FFB800] shrink-0" />
+                <ShieldCheck className="w-5 h-5 text-[#073979] shrink-0" />
                 <span>
                   {isTa
                     ? 'சமூக வவுச்சர்கள் & மொத்த விலை'
@@ -336,83 +329,7 @@ export default function Hero() {
                 </span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Carousel Arrow Navigation */}
-        <button
-          onClick={handlePrev}
-          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/40 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
-          aria-label="Previous Slide"
-        >
-          <ChevronLeft className="w-5 h-5 text-[#FFB800]" />
-        </button>
-        <button
-          onClick={handleNext}
-          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/40 hover:bg-[#0052CC] text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer hover:scale-110 shadow-xl"
-          aria-label="Next Slide"
-        >
-          <ChevronRight className="w-5 h-5 text-[#FFB800]" />
-        </button>
-
-        {/* Slide Indicators Centered at Bottom */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20 bg-black/30 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => goToSlide(idx)}
-              className={`h-2.5 rounded-full transition-all duration-500 cursor-pointer ${
-                idx === currentSlide
-                  ? 'bg-[#FFB800] w-8 shadow-md'
-                  : 'bg-white/40 hover:bg-white/70 w-2.5'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
       </section>
-
-      {/* Sithisha-Style Running Marquee Ticker Bar with Ventershop Real Value Props */}
-      <div className="w-full bg-[#011638] text-[#FFB800] py-3.5 overflow-hidden border-y border-blue-900/60 shadow-inner">
-        <div className="flex whitespace-nowrap animate-marquee">
-          {[1, 2].map((group) => (
-            <React.Fragment key={group}>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>CEYLON SPICES & TEA EXPORTS</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>FRESH DAILY GROCERIES</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>OFFICIAL RANI ANIMAL FEED</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>VERIFIED MERCHANT STORES</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>ISLANDWIDE DELIVERY (ALL 25 DISTRICTS)</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>DIRECT GLOBAL EXPORT SHIPPING</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>V2CC COMMUNITY VOUCHERS</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-              <div className="flex items-center gap-6 mx-4 text-xs font-black tracking-widest uppercase">
-                <span>WHOLESALE & BULK ORDERS</span>
-                <span className="text-[#FFB800]/50 text-base">•</span>
-              </div>
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
 
       {/* Animation keyframes */}
       <style jsx>{`

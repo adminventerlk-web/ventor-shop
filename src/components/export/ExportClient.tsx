@@ -13,8 +13,6 @@ import {
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
-  ArrowLeft,
-  ChevronRight,
   Send,
   TrendingUp,
 } from 'lucide-react';
@@ -95,131 +93,107 @@ export default function ExportClient() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans antialiased text-xs font-semibold">
+    <div className="flex flex-col min-h-screen bg-[#EAF5FF] [&>header]:bg-none! [&>header]:bg-inherit! [&_a]:focus-visible:outline-3 [&_a]:focus-visible:outline-offset-3 [&_a]:focus-visible:outline-[#0759D6] [&_button]:focus-visible:outline-3 [&_button]:focus-visible:outline-offset-3 [&_button]:focus-visible:outline-[#0759D6] motion-reduce:[&_*]:transition-none! font-sans antialiased text-xs font-semibold">
       
       {/* 1. Header */}
-      <Suspense fallback={<div className="h-24 bg-white border-b border-gray-100" />}>
+      <Suspense fallback={<div className="h-24 bg-inherit" />}>
         <Header />
       </Suspense>
 
-      {/* 2. Sub-Header Navigation & Breadcrumbs */}
-      <div className="bg-white border-b border-gray-200 py-3 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
-          <nav className="flex items-center gap-2 text-gray-500 font-bold uppercase tracking-wider">
-            <Link href="/" className="hover:text-black transition-colors">
-              {isTa ? 'முகப்பு' : 'Home'}
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            <span className="text-[#0055D4] font-black">
-              {isTa ? 'ஏற்றுமதி' : 'Export'}
-            </span>
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/shop"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#0055D4] font-bold transition-colors"
-            >
-              <span>{isTa ? 'ஷாப் செல்ல' : 'Go to Shop'}</span>
-            </Link>
-            <span className="text-gray-300">|</span>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-[#0055D4] font-bold transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>{isTa ? 'முகப்புக்குத் திரும்பு' : 'Back to Home'}</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. HERO BANNER */}
-      <section className="relative bg-gradient-to-r from-[#003B95] via-[#0055D4] to-[#0A2540] text-white py-16 sm:py-24 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <div className="lg:col-span-7 space-y-5">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-cyan-200 text-[11px] font-bold uppercase tracking-wider">
+      {/* Export portal hero */}
+      <section aria-labelledby="export-hero-heading" className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pt-4">
+        <div data-export-hero className="relative isolate overflow-hidden rounded-[36px] border border-[#4d80cc]/30 bg-linear-to-br from-[#071F50] via-[#082B68] to-[#0759D6] px-6 py-8 text-white shadow-[0_16px_40px_-22px_#071f5070] sm:p-9 lg:flex lg:h-[340px] lg:items-center lg:px-12 lg:py-6">
+          <div aria-hidden="true" className="pointer-events-none absolute -bottom-48 -right-32 -z-10 h-[520px] w-[620px] -rotate-12 rounded-[50%] border border-white/10 bg-linear-to-br from-[#247bec]/30 to-[#0759D6]/5" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-52 -top-64 -z-10 h-[540px] w-[640px] rounded-[50%] border border-white/5 bg-linear-to-b from-[#4d92f2]/15 to-transparent" />
+          <div className="grid w-full min-w-0 items-center gap-7 lg:grid-cols-[1.65fr_1fr] xl:grid-cols-[1.2fr_1fr] lg:gap-10">
+            <div className="min-w-0 space-y-3">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 text-[#dceaff] text-[11px] font-bold uppercase tracking-wider">
                 <Globe className="w-3.5 h-3.5" />
                 <span>{isTa ? 'இலங்கை ஏற்றுமதி மையம்' : 'Global Export Portal'}</span>
               </div>
               
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-tight">
+              <h1 id="export-hero-heading" className="text-[28px] sm:text-[34px] lg:text-[30px] xl:text-[38px] font-serif font-bold tracking-[-.025em] leading-[1.12]">
                 {isTa
                   ? 'இலங்கையிலிருந்து உலக நாடுகளுக்கு நேரடி ஏற்றுமதி'
-                  : 'Direct Global Export from Sri Lanka to the World'}
+                  : <>Direct Global Export from <span className="text-[#FFC400]">Sri Lanka</span> to the World</>}
               </h1>
               
-              <p className="text-xs sm:text-sm text-cyan-50 font-medium leading-relaxed max-w-xl">
+              <p className="text-xs sm:text-sm text-[#dceaff] font-medium leading-relaxed max-w-xl">
                 {isTa
                   ? 'இலங்கையின் தலைசிறந்த மளிகைப் பொருட்கள், மசாலாக்கள், ராணி கால்நடை தீவனங்கள் மற்றும் பாரம்பரிய உற்பத்திகளை உலகளாவிய பல்க் கொள்முதலுக்கு VENTERSHOP மூலம் பாதுகாப்பாகப் பெறுங்கள்.'
                   : 'Source authentic Sri Lankan Ceylon spices, fresh groceries, Rani animal feed, and manufactured goods directly from verified suppliers. Seamless bulk supply with international shipping.'}
               </p>
 
-              <div className="pt-2 flex flex-wrap gap-3">
+              <div className="pt-1 flex flex-wrap gap-3">
                 <a
                   href="#inquiry-form"
-                  className="px-6 py-3 bg-[#E53935] hover:bg-[#c62828] text-white rounded-xl font-bold uppercase tracking-wider shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#FFC400] px-5 py-3 font-bold text-[#071F50] transition-colors hover:bg-[#efb900]"
                 >
                   <span>{isTa ? 'ஏற்றுமதி விபரங்களை கோருங்கள்' : 'Request Export Quote'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </a>
                 <Link
                   href="/shop"
-                  className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold uppercase tracking-wider border border-white/20 transition-colors"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/35 bg-white/10 px-5 py-3 font-bold text-white transition-colors hover:bg-white/20"
                 >
                   {isTa ? 'பொருட்களைப் பார்க்க' : 'Browse Store Catalog'}
                 </Link>
               </div>
             </div>
 
-            {/* Right Showcase Card */}
-            <div className="lg:col-span-5">
-              <div className="bg-white/10 backdrop-blur-lg p-6 rounded-3xl border border-white/20 shadow-2xl space-y-4">
+
+            <div role="img" aria-label="International cargo ship, shipping containers and freight aircraft" className="relative mx-auto h-[220px] w-full max-w-[380px] text-white sm:h-[240px]">
+              <Globe aria-hidden="true" strokeWidth={.7} className="absolute right-8 top-0 h-48 w-48 text-[#82b8ff]/30" />
+              <Plane aria-hidden="true" className="absolute right-2 top-3 h-16 w-16 -rotate-12 text-[#FFC400] drop-shadow-lg" />
+              <div aria-hidden="true" className="absolute inset-x-8 bottom-10 flex items-end gap-2">
+                <div className="h-20 flex-1 rounded-lg border border-white/30 bg-[#0759D6] bg-[repeating-linear-gradient(90deg,transparent_0_12px,#ffffff20_12px_14px)] shadow-xl" />
+                <div className="h-28 flex-1 rounded-lg border border-[#ffe380] bg-[#FFC400] bg-[repeating-linear-gradient(90deg,transparent_0_12px,#082b6820_12px_14px)] shadow-xl"><Package className="mx-auto mt-5 h-10 w-10 text-[#082B68]" /></div>
+                <div className="h-16 flex-1 rounded-lg border border-white/30 bg-[#dceaff] bg-[repeating-linear-gradient(90deg,transparent_0_12px,#0759d620_12px_14px)] shadow-xl" />
+              </div>
+              <div aria-hidden="true" className="absolute inset-x-2 bottom-2 flex h-14 items-center justify-center rounded-b-[60px] border-t-4 border-[#dceaff] bg-[#071F50] shadow-xl"><Ship className="h-10 w-10 text-[#dceaff]" /></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section aria-label="Freight forwarding information" className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+              <div className="grid gap-5 rounded-3xl border border-[#c7def5] bg-white p-5 text-[#082B68] shadow-sm lg:grid-cols-[1fr_1.6fr] lg:items-center">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-cyan-400 text-[#003B95] flex items-center justify-center font-black">
+                  <div className="w-12 h-12 rounded-2xl bg-[#EAF5FF] text-[#0759D6] flex items-center justify-center font-black">
                     <Plane className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-white">
+                    <h3 className="text-base font-bold text-[#082B68]">
                       {isTa ? 'சர்வதேச சரக்கு விநியோகம்' : 'Worldwide Freight Forwarding'}
                     </h3>
-                    <p className="text-[10px] text-cyan-200">Door-to-Port & Door-to-Door Delivery</p>
+                    <p className="text-[11px] text-[#526681]">Door-to-Port & Door-to-Door Delivery</p>
                   </div>
                 </div>
 
-                <div className="space-y-2.5 pt-3 border-t border-white/15 text-xs text-cyan-50">
+                <div className="space-y-2.5 text-xs text-[#526681]">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#0759D6] shrink-0" />
                     <span>Serving Canada, UK, Europe, USA, UAE & Australia</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#0759D6] shrink-0" />
                     <span>Strict Quality Assurance & Phytosanitary Documentation</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#0759D6] shrink-0" />
                     <span>Dedicated Export Account Manager</span>
                   </div>
                 </div>
               </div>
-            </div>
-
-          </div>
-        </div>
       </section>
 
       {/* 2. EXPORT ADVANTAGES / HIGHLIGHTS */}
-      <section className="py-12 sm:py-16 bg-gray-50 border-b border-gray-200">
+      <section className="py-10 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-            <span className="text-[10px] font-extrabold text-[#0055D4] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+            <span className="text-[10px] font-extrabold text-[#0759D6] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
               {isTa ? 'ஏன் VENTERSHOP ஏற்றுமதி?' : 'Why Export With VENTERSHOP?'}
             </span>
-            <h2 className="text-xl sm:text-3xl font-black text-gray-900">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-[#082B68]">
               {isTa ? 'உங்கள் நம்பகமான சர்வதேச விநியோக கூட்டாளி' : 'Your Trusted International Supply Partner'}
             </h2>
           </div>
@@ -228,11 +202,11 @@ export default function ExportClient() {
             {highlights.map((h, idx) => {
               const Icon = h.icon;
               return (
-                <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs hover:shadow-md transition-all space-y-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0055D4] flex items-center justify-center">
+                <div key={idx} className="bg-white p-5 rounded-3xl border border-[#c7def5] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-[transform,box-shadow] duration-300 motion-reduce:hover:translate-y-0 space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0759D6] flex items-center justify-center">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-black text-gray-900">{h.title}</h3>
+                  <h3 className="text-sm font-black text-[#082B68]">{h.title}</h3>
                   <p className="text-xs text-gray-500 font-medium leading-relaxed">{h.desc}</p>
                 </div>
               );
@@ -242,31 +216,31 @@ export default function ExportClient() {
       </section>
 
       {/* 3. EXPORT PRODUCT CATEGORIES */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="pb-10 sm:pb-12 pt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-[10px] font-extrabold text-[#E53935] uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full border border-red-100">
+            <span className="text-[10px] font-extrabold text-[#0759D6] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
               {isTa ? 'ஏற்றுமதி பிரிவுகள்' : 'Export Ready Categories'}
             </span>
-            <h2 className="text-xl sm:text-3xl font-black text-gray-900">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-[#082B68]">
               {isTa ? 'முன்னணி இலங்கை ஏற்றுமதி தயாரிப்புகள்' : 'Key Sri Lankan Export Lines'}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {exportCategories.map((cat, idx) => (
-              <div key={idx} className="group bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col">
+              <div key={idx} className="group bg-white rounded-3xl border border-[#c7def5] overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-[transform,box-shadow] duration-300 motion-reduce:hover:translate-y-0 flex flex-col">
                 <div className="h-44 bg-cover bg-center overflow-hidden" style={{ backgroundImage: `url('${cat.image}')` }}>
                   <div className="w-full h-full bg-gradient-to-t from-black/50 via-transparent group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
                   <div className="space-y-1">
-                    <h3 className="text-sm font-black text-gray-900">{cat.title}</h3>
+                    <h3 className="text-sm font-black text-[#082B68]">{cat.title}</h3>
                     <p className="text-xs text-gray-500 font-medium leading-relaxed">{cat.desc}</p>
                   </div>
                   <a
                     href="#inquiry-form"
-                    className="pt-3 text-[#0055D4] font-bold text-xs hover:underline flex items-center gap-1"
+                    className="pt-3 text-[#0759D6] font-bold text-xs hover:underline flex items-center gap-1"
                   >
                     <span>Inquire for Bulk Order</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -279,15 +253,15 @@ export default function ExportClient() {
       </section>
 
       {/* 4. INQUIRY FORM SECTION */}
-      <section id="inquiry-form" className="py-12 sm:py-16 bg-gray-50 border-t border-gray-200 scroll-mt-20">
+      <section id="inquiry-form" className="pb-12 sm:pb-14 scroll-mt-48">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-xl p-6 sm:p-10 space-y-6">
+          <div className="bg-white rounded-3xl border border-[#c7def5] shadow-xl p-6 sm:p-10 space-y-6">
             
             <div className="text-center space-y-2 border-b border-gray-100 pb-6">
-              <span className="text-[10px] font-extrabold text-[#0055D4] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              <span className="text-[10px] font-extrabold text-[#0759D6] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
                 {isTa ? 'நேரடி தொடர்பு & மேற்கோள்' : 'Commercial Export Quote'}
               </span>
-              <h2 className="text-xl sm:text-2xl font-serif font-black text-gray-900">
+              <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#082B68]">
                 {isTa ? 'ஏற்றுமதி கொள்முதல் படிவம்' : 'Submit an Export / Bulk Supply Inquiry'}
               </h2>
               <p className="text-xs text-gray-500 font-medium max-w-lg mx-auto">
@@ -318,7 +292,7 @@ export default function ExportClient() {
                       message: '',
                     });
                   }}
-                  className="mt-4 px-6 py-2 bg-[#0055D4] text-white rounded-lg font-bold text-xs cursor-pointer"
+                  className="mt-4 px-6 py-2 bg-[#0759D6] text-white rounded-lg font-bold text-xs cursor-pointer"
                 >
                   Submit Another Inquiry
                 </button>
@@ -328,75 +302,75 @@ export default function ExportClient() {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Company / Business Name *</label>
+                    <label className="text-[#082B68] font-bold">Company / Business Name *</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Global Foods Trading Ltd"
                       value={form.businessName}
                       onChange={(e) => setForm({ ...form, businessName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0055D4] text-gray-900 font-bold"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Contact Person Name *</label>
+                    <label className="text-[#082B68] font-bold">Contact Person Name *</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. John Doe"
                       value={form.contactName}
                       onChange={(e) => setForm({ ...form, contactName: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0055D4] text-gray-900 font-bold"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Business Email *</label>
+                    <label className="text-[#082B68] font-bold">Business Email *</label>
                     <input
                       type="email"
                       required
                       placeholder="procurement@company.com"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0055D4] text-gray-900 font-bold"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Phone / WhatsApp *</label>
+                    <label className="text-[#082B68] font-bold">Phone / WhatsApp *</label>
                     <input
                       type="tel"
                       required
                       placeholder="+1 (555) 019-2834"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0055D4] text-gray-900 font-bold"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Destination Country *</label>
+                    <label className="text-[#082B68] font-bold">Destination Country *</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Canada, UK, Australia"
                       value={form.country}
                       onChange={(e) => setForm({ ...form, country: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0055D4] text-gray-900 font-bold"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-bold"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Product of Interest *</label>
+                    <label className="text-[#082B68] font-bold">Product of Interest *</label>
                     <select
                       value={form.productCategory}
                       onChange={(e) => setForm({ ...form, productCategory: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none cursor-pointer font-bold text-gray-900"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 cursor-pointer font-bold text-[#082B68]"
                     >
                       <option value="Groceries & Spices">Sri Lankan Spices & Ceylon Tea</option>
                       <option value="Rani Animal Feed">Rani Animal & Livestock Feed</option>
@@ -407,11 +381,11 @@ export default function ExportClient() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-gray-700 font-bold">Expected Order Volume *</label>
+                    <label className="text-[#082B68] font-bold">Expected Order Volume *</label>
                     <select
                       value={form.expectedVolume}
                       onChange={(e) => setForm({ ...form, expectedVolume: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none cursor-pointer font-bold text-gray-900"
+                      className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 cursor-pointer font-bold text-[#082B68]"
                     >
                       <option value="LCL Partial Container (500kg - 2 Tons)">LCL Partial Container (500kg - 2 Tons)</option>
                       <option value="1x 20ft FCL Container">1x 20ft FCL Container (~10-15 Tons)</option>
@@ -423,13 +397,13 @@ export default function ExportClient() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-gray-700 font-bold">Inquiry Details / Specific SKUs</label>
+                  <label className="text-[#082B68] font-bold">Inquiry Details / Specific SKUs</label>
                   <textarea
                     rows={4}
                     placeholder="Specify desired packaging sizes, target delivery dates, or special certification needs..."
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:bg-white focus:border-[#0055D4] text-gray-900 font-medium"
+                    className="w-full px-3.5 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg outline-none focus:bg-white focus:border-[#0759D6] focus:ring-2 focus:ring-[#0759D6]/15 text-[#082B68] font-medium"
                   />
                 </div>
 
@@ -437,7 +411,7 @@ export default function ExportClient() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-8 py-3.5 bg-[#0055D4] hover:bg-[#0040A8] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:bg-gray-400"
+                    className="px-8 py-3.5 bg-[#0759D6] hover:bg-[#082B68] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:bg-gray-400"
                   >
                     <Send className="w-4 h-4" />
                     <span>{submitting ? 'Submitting...' : 'Send Export Inquiry'}</span>

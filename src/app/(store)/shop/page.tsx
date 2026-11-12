@@ -30,7 +30,7 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F5F5]">
+    <div className="flex flex-col min-h-screen bg-[linear-gradient(115deg,#d7eaff,#e0efff_45%,#cce5fc)] [&>header]:bg-transparent! [&>header]:bg-none!">
       <JsonLd data={shopCatalogJsonLd} />
       <Header />
       <main className="flex-grow">

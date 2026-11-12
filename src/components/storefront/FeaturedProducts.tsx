@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n/LanguageContext';
 import { useCart } from '@/lib/cart/CartContext';
-import { ShoppingCart, Sparkles } from 'lucide-react';
+import { ShoppingCart, Star } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
+import { featuredProductStyles as styles } from './FeaturedProducts.styles';
 
 interface ProductItem {
   _id: string;
@@ -158,6 +159,23 @@ export default function FeaturedProducts() {
   const { language } = useTranslation();
   const { addToCart } = useCart();
   const [products] = useState<ProductItem[]>(DEFAULT_FEATURED);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    section.dataset.motion = 'ready';
+    const observer = new IntersectionObserver((entries) => {
+      entries.filter(entry => entry.isIntersecting).forEach((entry, index) => {
+        const card = entry.target as HTMLElement;
+        card.style.setProperty('--entrance-delay', index * 100 + 'ms');
+        card.dataset.entered = 'true';
+        observer.unobserve(card);
+      });
+    }, { threshold: 0.12 });
+    section.querySelectorAll('[data-product-card]').forEach(card => observer.observe(card));
+    return () => observer.disconnect();
+  }, []);
 
   const handleAddToCart = (e: React.MouseEvent, prod: ProductItem) => {
     e.preventDefault();
@@ -166,20 +184,17 @@ export default function FeaturedProducts() {
   };
 
   return (
-    <section id="featured-products" className="pt-6 pb-12 bg-[#F8FAFC] border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
+    <section ref={sectionRef} id="featured-products" aria-labelledby="featured-products-heading" className={styles.section}>
+      <div className={styles.container}>
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-gray-200 pb-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#0052CC] rounded-xl text-[#FFB800] shadow-sm">
-              <Sparkles className="w-5 h-5" />
-            </div>
+        <div className={styles.header}>
+          <div className={styles.headingGroup}>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-[#021838] tracking-tight">
+              <h2 id="featured-products-heading" className={styles.heading}>
                 {language === 'ta' ? 'சிறப்பு தயாரிப்புகள்' : language === 'si' ? 'විශේෂිත නිෂ්පාදන' : 'FEATURED PRODUCTS'}
               </h2>
-              <p className="text-xs font-semibold text-gray-500">
+              <p className={styles.subtitle}>
                 {language === 'ta' ? 'அதிகமாக விற்பனையாகும் மற்றும் சிறந்த சலுகைகள்' : 'Best selling products & top quality imports'}
               </p>
             </div>
@@ -187,82 +202,54 @@ export default function FeaturedProducts() {
 
           <Link
             href="/shop"
-            className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#0052CC] hover:text-[#003893] transition-colors bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg"
+            className={styles.viewAll}
           >
             <span>{language === 'ta' ? 'அனைத்து தயாரிப்புகளும்' : 'View All Products'} →</span>
           </Link>
         </div>
 
-        {/* 12 Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-5">
-          {products.map((prod) => {
+        <div className={styles.grid}>
+          {products.slice(0, 8).map((prod, index) => {
             const isBestSeller = prod.badge.type === 'best_seller';
             const isPopular = prod.badge.type === 'popular';
-
             return (
-              <div
-                key={prod._id}
-                className="bg-white rounded-2xl border border-gray-200 hover:border-[#0052CC] hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group p-3 relative"
-              >
-                {/* Badge top-left */}
-                <div className="absolute top-2.5 left-2.5 z-10">
-                  <span
-                    className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white shadow-sm ${
-                      isBestSeller ? 'bg-[#0052CC]' : isPopular ? 'bg-[#FF9900] text-[#021838]' : 'bg-[#10B981]'
-                    }`}
-                  >
-                    {prod.badge.label}
-                  </span>
-                </div>
-
-                {/* Image Container */}
-                <Link
-                  href={`/product/${prod.slug}`}
-                  className="w-full aspect-square flex items-center justify-center overflow-hidden rounded-xl bg-gray-50 relative"
-                >
-                  <img
-                    src={prod.image}
-                    alt={prod.name}
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
-                    }}
-                    className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                </Link>
-
-                {/* Details */}
-                <div className="pt-3 space-y-1.5 flex-1 flex flex-col justify-between text-left">
-                  <div>
-
-                    <Link
-                      href={`/product/${prod.slug}`}
-                      className="text-xs font-bold text-gray-900 group-hover:text-[#0052CC] transition-colors line-clamp-1 block leading-snug"
-                    >
-                      {prod.name}
-                    </Link>
-                    <p className="text-[10px] text-gray-500 line-clamp-1 font-medium mt-0.5">
-                      {prod.description}
-                    </p>
-                  </div>
-
-                  {/* Price */}
-                  <div className="pt-1">
-                    <p className="text-sm sm:text-base font-black text-[#0052CC]">
-                      {formatCurrency(prod.price)}
-                    </p>
-                  </div>
-
-                  {/* Add to Cart Solid Button */}
-                  <div className="pt-2">
-                    <button
-                      onClick={(e) => handleAddToCart(e, prod)}
-                      className="w-full py-2 px-2 bg-[#0052CC] hover:bg-[#003893] text-white transition-all rounded-lg text-[11px] font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Add to Cart</span>
-                    </button>
-                  </div>
+              <div key={prod._id} data-product-card className={styles.entrance}
+                style={{ '--product-index': index } as React.CSSProperties}>
+                <div className={styles.floating}>
+                  <article className={styles.card} aria-label={prod.name}>
+                    <div className={styles.media}>
+                      <Link href={`/product/${prod.slug}`} className={styles.imageLink}>
+                        {/* Preserve the existing remote images and fallback. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={prod.image} alt={prod.name} width={400} height={400}
+                          onError={(e) => {
+                            const fallback = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+                            if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
+                          }}
+                          className={styles.image} loading="lazy" />
+                      </Link>
+                      <span className={`${styles.badge} ${isBestSeller ? styles.bestSeller : isPopular ? styles.popular : styles.newArrival}`}>
+                        {prod.badge.label}
+                      </span>
+                    </div>
+                    <div className={styles.details}>
+                      <Link href={`/product/${prod.slug}`} className={styles.name}>{prod.name}</Link>
+                      <p className={styles.description}>{prod.description}</p>
+                      <div className={styles.rating} aria-label={`${prod.rating} out of 5 stars, ${prod.reviewsCount} reviews`}>
+                        <Star size={14} aria-hidden="true" />
+                        <span>{prod.rating.toFixed(1)}</span>
+                        <span className={styles.reviewCount}>({prod.reviewsCount})</span>
+                      </div>
+                      <div className={styles.purchase}>
+                        <p className={styles.price}>{formatCurrency(prod.price)}</p>
+                        <button type="button" onClick={(e) => handleAddToCart(e, prod)}
+                          className={styles.addButton} aria-label={`Add ${prod.name} to cart`}>
+                          <ShoppingCart size={16} aria-hidden="true" />
+                          <span>Add to Cart</span>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
                 </div>
               </div>
             );

@@ -1,0 +1,11 @@
+.homepage {
+  /* Paint the approved hero gradient once across the entire homepage. */
+  background: radial-gradient(ellipse at 24% 45%, #fff9 0, transparent 65%), linear-gradient(115deg, #e0f0ff, #eff7ff 45%, #d7ecff);
+}
+
+/* Share that backdrop across navbar, hero and sections without restarting it.
+   Nested announcement bars, the white navbar and cards keep their surfaces. */
+.homepage > header,
+.homepage > section {
+  background: transparent;
+}
