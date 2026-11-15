@@ -8,6 +8,8 @@ import { fallbackProducts } from '@/lib/data/fallbackData';
 export interface ICartItemInput {
   productId: string;
   quantity: number;
+  variantName?: string;
+  selectedPrice?: number;
 }
 
 export interface IItemPricingBreakdown {
@@ -15,6 +17,9 @@ export interface IItemPricingBreakdown {
   name: string;
   sku: string;
   image: string;
+  variantName?: string;
+  vendorId?: string;
+  shopName?: string;
   basePrice: number; // Customer role base price
   finalPrice: number; // Unit price after item-level offers
   quantity: number;
@@ -92,6 +97,21 @@ export class PricingService {
       const qty = cartItem.quantity;
 
       let basePrice = product.retailPrice || 0;
+      let productImage = product.images?.[0] || '';
+
+      // Support dynamic product variants (size/pack/count/weight)
+      if (cartItem.variantName && product.variants && product.variants.length > 0) {
+        const matchedVariant = product.variants.find((v: any) => v.name === cartItem.variantName);
+        if (matchedVariant) {
+          basePrice = matchedVariant.price;
+          if (matchedVariant.image) {
+            productImage = matchedVariant.image;
+          }
+        }
+      } else if (cartItem.selectedPrice && cartItem.selectedPrice > 0) {
+        basePrice = cartItem.selectedPrice;
+      }
+
       if (customerType === 'WHOLESALE') {
         basePrice = product.wholesalePrice || basePrice;
 
@@ -164,7 +184,10 @@ export class PricingService {
         productId: product._id.toString(),
         name: product.name,
         sku: product.sku,
-        image: product.images?.[0] || '',
+        image: productImage || product.images?.[0] || '',
+        variantName: cartItem.variantName,
+        vendorId: product.vendorId?.toString() || product.vendorId,
+        shopName: product.shopName,
         basePrice,
         finalPrice,
         quantity: qty,

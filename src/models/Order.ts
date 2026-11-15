@@ -4,6 +4,9 @@ export interface IOrderItem {
   productId: mongoose.Types.ObjectId;
   name: string;
   sku: string;
+  variantName?: string;
+  vendorId?: mongoose.Types.ObjectId | string;
+  shopName?: string;
   price: number; // Price per item paid by customer
   quantity: number;
   total: number; // price * quantity
@@ -43,6 +46,9 @@ const OrderItemSchema = new Schema<IOrderItem>({
   productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
   name: { type: String, required: true },
   sku: { type: String, required: true },
+  variantName: { type: String },
+  vendorId: { type: Schema.Types.Mixed },
+  shopName: { type: String },
   price: { type: Number, required: true, min: 0 },
   quantity: { type: Number, required: true, min: 1 },
   total: { type: Number, required: true, min: 0 },

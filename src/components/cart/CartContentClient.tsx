@@ -24,6 +24,7 @@ interface ICalculationItem {
   name: string;
   sku: string;
   image: string;
+  variantName?: string;
   basePrice: number;
   finalPrice: number;
   quantity: number;
@@ -160,9 +161,9 @@ export default function CartContentClient() {
   };
 
   // Instant Optimistic Quantity Adjuster (0ms response)
-  const handleQuantityChange = (productId: string, newQty: number) => {
+  const handleQuantityChange = (productId: string, newQty: number, variantName?: string) => {
     if (newQty <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, variantName);
       return;
     }
 
@@ -170,7 +171,7 @@ export default function CartContentClient() {
     setCalcResult((prev) => {
       if (!prev) return prev;
       const updatedItems = prev.items.map((i) => {
-        if (i.productId === productId) {
+        if (i.productId === productId && (i.variantName || '') === (variantName || '')) {
           const updatedSubtotal = Math.round(i.finalPrice * newQty * 100) / 100;
           return {
             ...i,
@@ -199,7 +200,7 @@ export default function CartContentClient() {
     });
 
     // 2. Sync React Context & Local Storage
-    updateQuantity(productId, newQty);
+    updateQuantity(productId, newQty, variantName);
   };
 
   const cartBanner = (
@@ -268,11 +269,12 @@ export default function CartContentClient() {
         
         {/* Left 2 Cols: Cart Items List */}
         <div className="lg:col-span-2 space-y-4">
-          {calcResult.items.map((item) => {
+          {calcResult.items.map((item, idx) => {
             const hasDiscount = item.basePrice > item.finalPrice;
+            const itemKey = `${item.productId}-${item.variantName || idx}`;
             return (
               <div
-                key={item.productId}
+                key={itemKey}
                 className="bg-white p-4 sm:p-5 rounded-2xl border border-[#c7def5] flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 shadow-sm"
               >
                 {/* Product Image & Info */}
@@ -285,6 +287,12 @@ export default function CartContentClient() {
                     <h3 className="text-xs sm:text-sm font-bold text-[#082B68] wrap-anywhere">
                       {item.name}
                     </h3>
+                    {item.variantName && (
+                      <div className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#0052CC] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
+                        <span>Option / Size:</span>
+                        <strong className="text-[#082B68]">{item.variantName}</strong>
+                      </div>
+                    )}
                     <div className="flex items-baseline gap-2">
                       <span className="text-sm font-black text-[#0759D6]">
                         {formatCurrency(item.finalPrice)}
@@ -307,7 +315,7 @@ export default function CartContentClient() {
                 {/* Quantity adjustments */}
                 <div className="flex items-center border border-[#c7def5] rounded-xl bg-[#EAF5FF] h-10 w-32 select-none shrink-0">
                   <button
-                    onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
+                    onClick={() => handleQuantityChange(item.productId, item.quantity - 1, item.variantName)}
                     className="w-8 h-full flex items-center justify-center text-[#082B68] hover:bg-[#dceaff] rounded-lg hover:text-[#0759D6] transition-colors cursor-pointer"
                     aria-label="Decrease quantity"
                   >
@@ -317,7 +325,7 @@ export default function CartContentClient() {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
+                    onClick={() => handleQuantityChange(item.productId, item.quantity + 1, item.variantName)}
                     className="w-8 h-full flex items-center justify-center text-[#082B68] hover:bg-[#dceaff] rounded-lg hover:text-[#0759D6] transition-colors cursor-pointer"
                     aria-label="Increase quantity"
                   >
@@ -331,8 +339,8 @@ export default function CartContentClient() {
                     {formatCurrency(item.total)}
                   </span>
                   <button
-                    onClick={() => removeFromCart(item.productId)}
-                    className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors shrink-0"
+                    onClick={() => removeFromCart(item.productId, item.variantName)}
+                    className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
                     aria-label="Remove item"
                   >
                     <Trash2 className="w-4 h-4" />

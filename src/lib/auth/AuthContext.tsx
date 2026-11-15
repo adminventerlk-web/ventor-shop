@@ -9,6 +9,11 @@ export interface IUserSession {
   lastName: string;
   role: 'CUSTOMER' | 'ADMIN' | 'SUPER_ADMIN';
   customerType: 'BUYER' | 'V2CC_PMS_MEMBER' | 'WHOLESALE_BUYER' | 'SELLER_SUPPLIER' | 'PARTNER_STORE' | 'NORMAL' | 'COMMUNITY' | 'WHOLESALE' | 'ADMIN' | string;
+  isVendor?: boolean;
+  vendorStatus?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  shopId?: string | null;
+  shopName?: string;
+  shopSlug?: string;
   communityId?: string | null;
   communityStatus?: string;
   preferredLanguage?: 'en' | 'ta' | 'si';

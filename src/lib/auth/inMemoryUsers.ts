@@ -9,6 +9,11 @@ export interface InMemoryUser {
   customerType: string;
   role: 'CUSTOMER' | 'ADMIN' | 'SUPER_ADMIN';
   status: 'ACTIVE' | 'SUSPENDED';
+  isVendor?: boolean;
+  vendorStatus?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  shopId?: string;
+  shopName?: string;
+  shopSlug?: string;
 }
 
 declare global {

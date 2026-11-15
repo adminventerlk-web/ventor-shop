@@ -10,6 +10,7 @@ import {
   Package,
   Layers,
   Users,
+  Store,
   Ticket,
   Settings,
   ArrowLeft,
@@ -29,6 +30,7 @@ export default function AdminSidebar() {
 
   const links = [
     { label: 'Overview', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Shop Approvals', href: '/admin/shops', icon: <Store className="w-4 h-4" /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag className="w-4 h-4" /> },
     { label: 'Products', href: '/admin/products', icon: <Package className="w-4 h-4" /> },
     { label: 'Categories', href: '/admin/categories', icon: <Layers className="w-4 h-4" /> },

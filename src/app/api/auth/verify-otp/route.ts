@@ -4,10 +4,13 @@ import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import OTP from '@/models/OTP';
 import User from '@/models/User';
 import Admin from '@/models/Admin';
+import Shop from '@/models/Shop';
 import { SignJWT } from 'jose';
 import { verifyPassword, hashPassword } from '@/lib/auth/password';
 import { verifyInMemoryOtp } from '@/lib/auth/inMemoryOtp';
 import { saveInMemoryUser, getInMemoryUser } from '@/lib/auth/inMemoryUsers';
+import { saveInMemoryShop } from '@/lib/shops/inMemoryShops';
+import { EmailService } from '@/lib/services/emailService';
 
 export async function POST(request: Request) {
   try {
@@ -20,6 +23,12 @@ export async function POST(request: Request) {
       phone,
       preferredLanguage,
       customerType: requestedCustomerType,
+      isVendor: requestedIsVendor,
+      shopName: requestedShopName,
+      shopCategory: requestedShopCategory,
+      shopCity: requestedShopCity,
+      shopDescription: requestedShopDescription,
+      shopPhone: requestedShopPhone,
     } = await request.json();
 
     if (!email || !otp) {
@@ -40,6 +49,11 @@ export async function POST(request: Request) {
       let userId = 'user_' + Date.now();
       let userFirstName = 'Valued';
       let userLastName = 'Customer';
+      let isVendor = false;
+      let vendorStatus = 'NONE';
+      let shopId = '';
+      let shopName = '';
+      let shopSlug = '';
       let authenticated = false;
 
       // Check for default admin credentials
@@ -81,6 +95,11 @@ export async function POST(request: Request) {
               customerType = user.customerType;
               userFirstName = user.firstName;
               userLastName = user.lastName;
+              isVendor = user.isVendor || user.customerType === 'SELLER_SUPPLIER';
+              vendorStatus = user.vendorStatus || (isVendor ? 'APPROVED' : 'NONE');
+              shopId = user.shopId?.toString() || '';
+              shopName = user.shopName || '';
+              shopSlug = user.shopSlug || '';
               authenticated = true;
             }
           }
@@ -99,6 +118,11 @@ export async function POST(request: Request) {
             customerType = memUser.customerType;
             userFirstName = memUser.firstName;
             userLastName = memUser.lastName;
+            isVendor = memUser.isVendor || memUser.customerType === 'SELLER_SUPPLIER';
+            vendorStatus = memUser.vendorStatus || (isVendor ? 'APPROVED' : 'NONE');
+            shopId = memUser.shopId || '';
+            shopName = memUser.shopName || '';
+            shopSlug = memUser.shopSlug || '';
             authenticated = true;
           }
         }
@@ -118,6 +142,11 @@ export async function POST(request: Request) {
         customerType,
         firstName: userFirstName,
         lastName: userLastName,
+        isVendor,
+        vendorStatus,
+        shopId,
+        shopName,
+        shopSlug,
       })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -156,6 +185,11 @@ export async function POST(request: Request) {
           customerType,
           firstName: userFirstName,
           lastName: userLastName,
+          isVendor,
+          vendorStatus,
+          shopId,
+          shopName,
+          shopSlug,
         },
       });
     }
@@ -192,12 +226,46 @@ export async function POST(request: Request) {
         : 'BUYER';
 
     let userRole: 'CUSTOMER' | 'ADMIN' | 'SUPER_ADMIN' = 'CUSTOMER';
-    let customerType: string = validatedCustomerType;
+    const isVendor = Boolean(requestedIsVendor || requestedCustomerType === 'SELLER_SUPPLIER');
+    const vendorStatus = isVendor ? 'PENDING' : 'NONE';
+    let customerType: any = isVendor ? 'SELLER_SUPPLIER' : validatedCustomerType;
     let userId = 'usr_' + Date.now();
     const userFirstName = firstName?.trim() || 'Valued';
     const userLastName = lastName?.trim() || 'Customer';
     const rawPassword = password || 'VenterShop2026!';
     const hashedPassword = hashPassword(rawPassword);
+
+    let shopId = '';
+    let shopName = requestedShopName?.trim() || (isVendor ? `${userFirstName}'s Store` : '');
+    let shopSlug = '';
+
+    if (isVendor) {
+      const rawSlug = (shopName || 'shop')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      shopSlug = `${rawSlug || 'store'}-${Math.floor(100 + Math.random() * 900)}`;
+      shopId = 'shop_' + Date.now();
+
+      // Save shop to in-memory store
+      saveInMemoryShop({
+        _id: shopId,
+        ownerId: userId,
+        ownerEmail: normalizedEmail,
+        ownerName: `${userFirstName} ${userLastName}`.trim(),
+        ownerPhone: requestedShopPhone?.trim() || phone?.trim() || '',
+        shopName: shopName,
+        slug: shopSlug,
+        description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERSHOP.',
+        category: requestedShopCategory?.trim() || 'General Store',
+        city: requestedShopCity?.trim() || 'Colombo',
+        status: 'PENDING',
+        rating: 5.0,
+        totalProducts: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
 
     // Save to memory registry immediately
     saveInMemoryUser({
@@ -207,9 +275,14 @@ export async function POST(request: Request) {
       firstName: userFirstName,
       lastName: userLastName,
       phone: phone?.trim() || '',
-      customerType: validatedCustomerType,
+      customerType,
       role: 'CUSTOMER',
       status: 'ACTIVE',
+      isVendor,
+      vendorStatus,
+      shopId: shopId || undefined,
+      shopName: shopName || undefined,
+      shopSlug: shopSlug || undefined,
     });
 
     // Save to MongoDB if connected
@@ -229,15 +302,23 @@ export async function POST(request: Request) {
             firstName: userFirstName,
             lastName: userLastName,
             phone: phone?.trim() || '',
-            customerType: validatedCustomerType,
+            customerType: customerType as any,
             status: 'ACTIVE',
-            communityStatus: validatedCustomerType === 'COMMUNITY' ? 'APPROVED' : 'NONE',
+            communityStatus: customerType === 'COMMUNITY' ? 'APPROVED' : 'NONE',
             preferredLanguage: preferredLanguage || 'en',
+            isVendor,
+            vendorStatus,
+            shopName: shopName || undefined,
+            shopSlug: shopSlug || undefined,
             addresses: [],
           });
         } else {
           user.password = hashedPassword;
-          user.customerType = validatedCustomerType;
+          user.customerType = customerType as any;
+          user.isVendor = isVendor;
+          user.vendorStatus = vendorStatus;
+          if (shopName) user.shopName = shopName;
+          if (shopSlug) user.shopSlug = shopSlug;
           if (firstName?.trim()) user.firstName = userFirstName;
           if (lastName?.trim()) user.lastName = userLastName;
           if (phone?.trim()) user.phone = phone.trim();
@@ -246,10 +327,45 @@ export async function POST(request: Request) {
         if (user) {
           userId = user._id.toString();
           customerType = user.customerType;
+
+          if (isVendor) {
+            try {
+              const createdShop = await Shop.create({
+                ownerId: user._id,
+                ownerEmail: normalizedEmail,
+                ownerName: `${userFirstName} ${userLastName}`.trim(),
+                ownerPhone: requestedShopPhone?.trim() || phone?.trim() || '',
+                shopName: shopName,
+                slug: shopSlug,
+                description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERSHOP.',
+                category: requestedShopCategory?.trim() || 'General Store',
+                city: requestedShopCity?.trim() || 'Colombo',
+                status: 'PENDING',
+              });
+              shopId = createdShop._id.toString();
+              user.shopId = createdShop._id;
+              await user.save();
+            } catch (shopCreateErr) {
+              console.warn('Could not create Mongo Shop document, kept in-memory shop:', shopCreateErr);
+            }
+          }
         }
       }
     } catch (dbSaveErr) {
       console.warn('Database save skipped during registration, saved in-memory user:', dbSaveErr);
+    }
+
+    // Send email notification for vendor registration
+    if (isVendor) {
+      try {
+        await EmailService.sendShopRegistrationPendingEmail(
+          normalizedEmail,
+          `${userFirstName} ${userLastName}`.trim(),
+          shopName
+        );
+      } catch (mailErr) {
+        console.warn('Failed to send vendor registration pending email:', mailErr);
+      }
     }
 
     const jwtSecretValue = process.env.JWT_SECRET || 'ventershop_development_secret_key_change_me_in_production';
@@ -262,6 +378,11 @@ export async function POST(request: Request) {
       customerType,
       firstName: userFirstName,
       lastName: userLastName,
+      isVendor,
+      vendorStatus,
+      shopId: shopId || undefined,
+      shopName: shopName || undefined,
+      shopSlug: shopSlug || undefined,
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
@@ -279,7 +400,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({
-      message: 'Logged in successfully',
+      message: isVendor
+        ? 'Shop registered successfully! Application is pending Super Admin approval.'
+        : 'Logged in successfully',
       user: {
         id: userId,
         email: normalizedEmail,
@@ -287,6 +410,11 @@ export async function POST(request: Request) {
         customerType,
         firstName: userFirstName,
         lastName: userLastName,
+        isVendor,
+        vendorStatus,
+        shopId: shopId || undefined,
+        shopName: shopName || undefined,
+        shopSlug: shopSlug || undefined,
       },
     });
   } catch (error: any) {

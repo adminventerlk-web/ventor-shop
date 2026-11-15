@@ -5,14 +5,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 export interface ICartItem {
   productId: string;
   quantity: number;
+  variantName?: string;
+  selectedPrice?: number;
 }
 
 interface CartContextType {
   cart: ICartItem[];
   cartCount: number;
-  addToCart: (productId: string, quantity?: number) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  addToCart: (productId: string, quantity?: number, variantName?: string, selectedPrice?: number) => void;
+  updateQuantity: (productId: string, quantity: number, variantName?: string) => void;
+  removeFromCart: (productId: string, variantName?: string) => void;
   clearCart: () => void;
   appliedVoucherCode: string | null;
   setAppliedVoucherCode: (code: string | null) => void;
@@ -66,34 +68,45 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [appliedVoucherCode, isLoaded]);
 
-  const addToCart = useCallback((productId: string, quantity = 1) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.productId === productId);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
+  const addToCart = useCallback(
+    (productId: string, quantity = 1, variantName?: string, selectedPrice?: number) => {
+      setCart((prevCart) => {
+        const existingItem = prevCart.find(
+          (item) => item.productId === productId && (item.variantName || '') === (variantName || '')
         );
-      }
-      return [...prevCart, { productId, quantity }];
-    });
-  }, []);
+        if (existingItem) {
+          return prevCart.map((item) =>
+            item.productId === productId && (item.variantName || '') === (variantName || '')
+              ? { ...item, quantity: item.quantity + quantity, selectedPrice: selectedPrice || item.selectedPrice }
+              : item
+          );
+        }
+        return [...prevCart, { productId, quantity, variantName, selectedPrice }];
+      });
+    },
+    []
+  );
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, quantity: number, variantName?: string) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, variantName);
       return;
     }
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.productId === productId ? { ...item, quantity } : item
+        item.productId === productId && (item.variantName || '') === (variantName || '')
+          ? { ...item, quantity }
+          : item
       )
     );
   }, []);
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.productId !== productId));
+  const removeFromCart = useCallback((productId: string, variantName?: string) => {
+    setCart((prevCart) =>
+      prevCart.filter(
+        (item) => !(item.productId === productId && (variantName === undefined || (item.variantName || '') === (variantName || '')))
+      )
+    );
   }, []);
 
   const clearCart = useCallback(() => {

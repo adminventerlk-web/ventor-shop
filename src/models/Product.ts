@@ -5,6 +5,14 @@ export interface IBulkPricing {
   discountPercent: number;
 }
 
+export interface IProductVariant {
+  name: string; // e.g. "500g", "1kg", "Pack of 6", "Small"
+  price: number;
+  stock?: number;
+  image?: string;
+  sku?: string;
+}
+
 export interface IProduct extends Document {
   name: string;
   slug: string;
@@ -24,6 +32,10 @@ export interface IProduct extends Document {
   isNewArrival: boolean;
   wholesaleMinQty: number;
   bulkPricing: IBulkPricing[];
+  variants?: IProductVariant[];
+  vendorId?: any;
+  shopName?: string;
+  shopSlug?: string;
   eligibleCustomerTypes: ('NORMAL' | 'COMMUNITY' | 'WHOLESALE')[];
   createdAt: Date;
   updatedAt: Date;
@@ -32,6 +44,14 @@ export interface IProduct extends Document {
 const BulkPricingSchema = new Schema<IBulkPricing>({
   minQty: { type: Number, required: true, min: 1 },
   discountPercent: { type: Number, required: true, min: 0, max: 100 },
+});
+
+const VariantSchema = new Schema<IProductVariant>({
+  name: { type: String, required: true, trim: true },
+  price: { type: Number, required: true, min: 0 },
+  stock: { type: Number, default: 0 },
+  image: { type: String },
+  sku: { type: String },
 });
 
 const ProductSchema = new Schema<IProduct>(
@@ -54,6 +74,10 @@ const ProductSchema = new Schema<IProduct>(
     isNewArrival: { type: Boolean, default: false },
     wholesaleMinQty: { type: Number, default: 1, min: 1 },
     bulkPricing: [BulkPricingSchema],
+    variants: [VariantSchema],
+    vendorId: { type: Schema.Types.Mixed, default: null, index: true },
+    shopName: { type: String, trim: true },
+    shopSlug: { type: String, trim: true, index: true },
     eligibleCustomerTypes: {
       type: [String],
       enum: ['NORMAL', 'COMMUNITY', 'WHOLESALE'],

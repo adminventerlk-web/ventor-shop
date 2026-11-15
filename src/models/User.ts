@@ -27,6 +27,11 @@ export interface IUser extends Document {
   communityStatus: 'NONE' | 'PENDING' | 'APPROVED';
   communityJoinDate?: Date;
   preferredLanguage: 'en' | 'ta' | 'si';
+  isVendor?: boolean;
+  vendorStatus?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  shopId?: mongoose.Types.ObjectId | string | null;
+  shopName?: string;
+  shopSlug?: string;
   addresses: IAddress[];
   createdAt: Date;
   updatedAt: Date;
@@ -63,6 +68,11 @@ const UserSchema = new Schema<IUser>(
     communityStatus: { type: String, enum: ['NONE', 'PENDING', 'APPROVED'], default: 'NONE' },
     communityJoinDate: { type: Date },
     preferredLanguage: { type: String, enum: ['en', 'ta', 'si'], default: 'en' },
+    isVendor: { type: Boolean, default: false },
+    vendorStatus: { type: String, enum: ['NONE', 'PENDING', 'APPROVED', 'REJECTED'], default: 'NONE' },
+    shopId: { type: Schema.Types.Mixed, default: null },
+    shopName: { type: String },
+    shopSlug: { type: String },
     addresses: [AddressSchema],
   },
   { timestamps: true }

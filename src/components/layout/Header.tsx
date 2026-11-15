@@ -148,12 +148,26 @@ export default function Header() {
                     <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
                     <span>Admin Control Panel</span>
                   </Link>
+                ) : user.isVendor || user.customerType === 'SELLER_SUPPLIER' ? (
+                  <Link href="/vendor" className="hover:text-amber-200 transition-colors flex items-center gap-1 font-bold text-[#FFB800]">
+                    <Store className="w-3.5 h-3.5 text-[#FFB800]" />
+                    <span>Vendor Dashboard</span>
+                  </Link>
                 ) : (
                   <Link href="/dashboard" className="hover:text-amber-200 transition-colors flex items-center gap-1 font-bold text-amber-200">
                     <User className="w-3.5 h-3.5" />
                     <span>Dashboard</span>
                   </Link>
                 )}
+                <span className="text-white/40">|</span>
+              </>
+            )}
+            {!user && (
+              <>
+                <Link href="/login" className="hover:text-amber-200 transition-colors flex items-center gap-1 text-amber-300 font-bold">
+                  <Store className="w-3.5 h-3.5" />
+                  <span>Sell on VentorShop</span>
+                </Link>
                 <span className="text-white/40">|</span>
               </>
             )}
@@ -293,6 +307,16 @@ export default function Header() {
                         </>
                       ) : (
                         <>
+                          {(user.isVendor || user.customerType === 'SELLER_SUPPLIER') && (
+                            <Link
+                              href="/vendor"
+                              onClick={() => setAccountDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-[#0052CC] hover:bg-blue-50 font-bold border-b border-gray-100"
+                            >
+                              <Store className="w-4 h-4 text-[#FFB800]" />
+                              <span>Vendor Dashboard</span>
+                            </Link>
+                          )}
                           <Link
                             href="/dashboard"
                             onClick={() => setAccountDropdownOpen(false)}

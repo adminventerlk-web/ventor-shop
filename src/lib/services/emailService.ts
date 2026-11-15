@@ -276,4 +276,148 @@ export class EmailService {
       html: getEmailWrapper(title, bodyContent),
     });
   }
+
+  /**
+   * Sends confirmation when a new shop registers and is pending Super Admin review
+   */
+  static async sendShopRegistrationPendingEmail(to: string, ownerName: string, shopName: string) {
+    const title = `Shop Application Received: ${shopName}`;
+    const bodyContent = `
+      <p style="color: #333333; font-size: 16px;">Hello <strong>${ownerName}</strong>,</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for registering <strong>${shopName}</strong> on the VENTERSHOP multi-vendor marketplace!</p>
+      <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #92400e; font-weight: bold; font-size: 14px;">Status: Pending Super Admin Approval</p>
+        <p style="margin: 5px 0 0; color: #78350f; font-size: 13px;">Our marketplace operations team is reviewing your shop information. You will receive an email as soon as your store is verified and approved.</p>
+      </div>
+      <p style="color: #6b7280; font-size: 14px;">Once approved, you will be able to access your Vendor Dashboard to upload products with custom sizes/variants and start receiving customer orders.</p>
+    `;
+
+    await sendEmail({
+      to,
+      subject: `[VENTERSHOP] Shop Application Received - ${shopName}`,
+      html: getEmailWrapper(title, bodyContent),
+    });
+  }
+
+  /**
+   * Sends approval email to vendor when Super Admin approves the store
+   */
+  static async sendShopApprovalEmail(to: string, ownerName: string, shopName: string, shopSlug: string) {
+    const title = `🎉 Congratulations! Your Shop ${shopName} is Approved!`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ventershop.vercel.app';
+    const bodyContent = `
+      <p style="color: #333333; font-size: 16px;">Hello <strong>${ownerName}</strong>,</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Great news! Your shop <strong>${shopName}</strong> has been officially approved by the VENTERSHOP Super Admin team.</p>
+      
+      <div style="background-color: #ecfdf5; border-left: 4px solid #10b981; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #065f46; font-weight: bold; font-size: 14px;">Status: APPROVED & ACTIVE</p>
+        <p style="margin: 5px 0 0; color: #047857; font-size: 13px;">Your store is now featured on the VENTERSHOP home page and marketplace.</p>
+      </div>
+
+      <div style="text-align: center; margin: 25px 0;">
+        <a href="${appUrl}/vendor" style="background-color: #021838; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block; margin-right: 10px;">Go to Vendor Dashboard</a>
+        <a href="${appUrl}/shops/${shopSlug}" style="background-color: #0052CC; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">View Live Store</a>
+      </div>
+    `;
+
+    await sendEmail({
+      to,
+      subject: `[APPROVED] Your Shop "${shopName}" is Live on VENTERSHOP!`,
+      html: getEmailWrapper(title, bodyContent),
+    });
+  }
+
+  /**
+   * Sends rejection email to vendor if Super Admin rejects the application
+   */
+  static async sendShopRejectionEmail(to: string, ownerName: string, shopName: string, reason?: string) {
+    const title = `Update Regarding Your Shop Application - ${shopName}`;
+    const bodyContent = `
+      <p style="color: #333333; font-size: 16px;">Hello <strong>${ownerName}</strong>,</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for your interest in selling on VENTERSHOP. After reviewing your store application for <strong>${shopName}</strong>, our administrative team was unable to approve your application at this time.</p>
+      
+      <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #991b1b; font-weight: bold; font-size: 14px;">Decision: Application Rejected</p>
+        ${reason ? `<p style="margin: 5px 0 0; color: #7f1d1d; font-size: 13px;">Reason: ${reason}</p>` : ''}
+      </div>
+
+      <p style="color: #6b7280; font-size: 14px;">If you have any questions or wish to provide updated documentation, please contact our support team at <a href="mailto:support@ventershop.ca" style="color: #0052CC;">support@ventershop.ca</a>.</p>
+    `;
+
+    await sendEmail({
+      to,
+      subject: `[VENTERSHOP] Shop Application Status Update - ${shopName}`,
+      html: getEmailWrapper(title, bodyContent),
+    });
+  }
+
+  /**
+   * Sends new order notification to a Vendor / Shop Owner
+   */
+  static async sendVendorOrderNotification(
+    vendorEmail: string,
+    shopName: string,
+    order: any,
+    vendorItems: any[]
+  ) {
+    const title = `🛍️ New Order #${order.orderNumber} for ${shopName}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ventershop.vercel.app';
+
+    let itemsHtml = '';
+    let vendorTotal = 0;
+    for (const item of vendorItems) {
+      vendorTotal += item.total || item.price * item.quantity;
+      itemsHtml += `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #E5E7EB; color: #333333;">
+            <strong>${item.name}</strong>
+            ${item.variantName ? `<br/><span style="font-size: 12px; color: #0052CC; background: #e0f2fe; padding: 2px 6px; border-radius: 4px;">Variant: ${item.variantName}</span>` : ''}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #E5E7EB; color: #333333; text-align: center;">${item.quantity}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #E5E7EB; color: #333333; text-align: right;">LKR ${item.price.toFixed(2)}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #E5E7EB; color: #333333; text-align: right; font-weight: bold;">LKR ${((item.total || item.price * item.quantity)).toFixed(2)}</td>
+        </tr>
+      `;
+    }
+
+    const bodyContent = `
+      <p style="color: #333333; font-size: 16px;">Hello <strong>${shopName}</strong>,</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">You have received a new customer order on VENTERSHOP! Please prepare the items below for dispatch.</p>
+      
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin: 15px 0;">
+        <h3 style="margin: 0 0 10px; color: #021838; font-size: 14px; text-transform: uppercase;">Customer & Delivery Details:</h3>
+        <p style="margin: 4px 0; color: #334155; font-size: 14px;"><strong>Customer:</strong> ${order.deliveryAddress?.fullName || 'Customer'}</p>
+        <p style="margin: 4px 0; color: #334155; font-size: 14px;"><strong>Phone / WhatsApp:</strong> <a href="tel:${order.deliveryAddress?.phone}" style="color: #0052CC; font-weight: bold;">${order.deliveryAddress?.phone}</a></p>
+        <p style="margin: 4px 0; color: #334155; font-size: 14px;"><strong>Delivery Address:</strong> ${order.deliveryAddress?.addressLine1}, ${order.deliveryAddress?.city}, ${order.deliveryAddress?.postalCode}</p>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px;">
+        <thead>
+          <tr style="background-color: #f1f5f9;">
+            <th style="padding: 10px; text-align: left; color: #021838;">Item & Variant</th>
+            <th style="padding: 10px; text-align: center; color: #021838; width: 60px;">Qty</th>
+            <th style="padding: 10px; text-align: right; color: #021838; width: 80px;">Unit Price</th>
+            <th style="padding: 10px; text-align: right; color: #021838; width: 90px;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHtml}
+        </tbody>
+      </table>
+
+      <div style="text-align: right; margin-bottom: 20px;">
+        <p style="font-size: 16px; color: #021838; font-weight: bold;">Shop Items Total: LKR ${vendorTotal.toFixed(2)}</p>
+      </div>
+
+      <div style="text-align: center; margin-top: 25px;">
+        <a href="${appUrl}/vendor/orders" style="background-color: #021838; color: #ffffff; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">View Order in Vendor Dashboard</a>
+      </div>
+    `;
+
+    await sendEmail({
+      to: vendorEmail,
+      subject: `[NEW ORDER] #${order.orderNumber} for ${shopName}`,
+      html: getEmailWrapper(title, bodyContent),
+    });
+  }
 }

@@ -4,12 +4,16 @@ import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
+import Shop from '@/models/Shop';
+import User from '@/models/User';
 import { Voucher, VoucherUsage } from '@/models/Voucher';
 import { PricingService } from '@/lib/services/pricingService';
 import { VoucherService } from '@/lib/services/voucherService';
 import { EmailService } from '@/lib/services/emailService';
 import Setting from '@/models/Setting';
 import { fallbackProducts } from '@/lib/data/fallbackData';
+import { saveInMemoryVendorOrder } from '@/app/api/vendor/orders/route';
+import { getAllInMemoryShops } from '@/lib/shops/inMemoryShops';
 
 export async function POST(request: Request) {
   try {
@@ -91,6 +95,9 @@ export async function POST(request: Request) {
       productId: item.productId,
       name: item.name,
       sku: item.sku,
+      variantName: item.variantName,
+      vendorId: item.vendorId,
+      shopName: item.shopName,
       price: item.finalPrice,
       quantity: item.quantity,
       total: item.total,
@@ -161,6 +168,95 @@ export async function POST(request: Request) {
       });
     } catch (emailErr) {
       console.warn('[ORDER MAIL ERROR] Failed to send customer confirmation email:', emailErr);
+    }
+
+    // 8. Route order details to each Shop Owner / Vendor via Email, Message alert, and Vendor Dashboard
+    try {
+      const vendorItemsMap = new Map<string, any[]>();
+      for (const item of orderItems) {
+        const key = item.vendorId ? String(item.vendorId) : (item.shopName || '');
+        if (key) {
+          const list = vendorItemsMap.get(key) || [];
+          list.push(item);
+          vendorItemsMap.set(key, list);
+        }
+      }
+
+      if (vendorItemsMap.size > 0) {
+        const allShops = getAllInMemoryShops();
+        for (const [vendorKey, vItems] of vendorItemsMap.entries()) {
+          try {
+            let vendorEmail = '';
+            let shopName = vItems[0]?.shopName || 'Partner Store';
+
+            const matchedMemShop = allShops.find(
+              (s) => s.ownerId === vendorKey || s.slug === vendorKey || s.shopName === vendorKey
+            );
+            if (matchedMemShop) {
+              vendorEmail = matchedMemShop.ownerEmail;
+              shopName = matchedMemShop.shopName;
+            }
+
+            if (!vendorEmail) {
+              try {
+                await connectToDatabase();
+                const dbShop = await Shop.findOne({
+                  $or: [
+                    { ownerId: vendorKey },
+                    { slug: vendorKey },
+                    { shopName: vendorKey },
+                  ],
+                });
+                if (dbShop) {
+                  vendorEmail = dbShop.ownerEmail;
+                  shopName = dbShop.shopName;
+                } else if (mongoose.Types.ObjectId.isValid(vendorKey)) {
+                  const dbUser = await User.findById(vendorKey);
+                  if (dbUser && dbUser.email) {
+                    vendorEmail = dbUser.email;
+                    shopName = dbUser.shopName || shopName;
+                  }
+                }
+              } catch {
+                // Fallback
+              }
+            }
+
+            if (vendorEmail) {
+              const vTotal = vItems.reduce(
+                (acc, curr) => acc + (curr.total || curr.price * curr.quantity),
+                0
+              );
+
+              // 1. Record in vendor's dashboard orders
+              saveInMemoryVendorOrder(vendorEmail, {
+                _id: createdOrderId,
+                orderNumber,
+                customerName,
+                customerPhone: deliveryAddress.phone,
+                deliveryAddress,
+                orderStatus: 'CONFIRMED',
+                paymentStatus: 'PENDING',
+                createdAt: new Date().toISOString(),
+                items: vItems,
+                vendorTotal: vTotal,
+              });
+
+              // 2. Dispatch real-time Email Notification to Shop Owner
+              await EmailService.sendVendorOrderNotification(
+                vendorEmail,
+                shopName,
+                { orderNumber, deliveryAddress },
+                vItems
+              );
+            }
+          } catch (vErr) {
+            console.warn('[VENDOR NOTIFICATION DISPATCH ERROR]:', vErr);
+          }
+        }
+      }
+    } catch (routeErr) {
+      console.warn('[ORDER VENDOR ROUTING FAILED]:', routeErr);
     }
 
     return NextResponse.json({

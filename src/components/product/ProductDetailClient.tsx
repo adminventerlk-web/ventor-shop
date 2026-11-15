@@ -19,8 +19,18 @@ import {
   Info,
   Zap,
   CheckCircle2,
+  Store,
+  ExternalLink,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
+
+interface IProductVariantItem {
+  name: string;
+  price: number;
+  stock?: number;
+  image?: string;
+  sku?: string;
+}
 
 interface IProductDetail {
   _id: string;
@@ -37,6 +47,10 @@ interface IProductDetail {
   lowStockThreshold: number;
   wholesaleMinQty?: number;
   bulkPricing?: { minQty: number; discountPercent: number }[];
+  variants?: IProductVariantItem[];
+  vendorId?: any;
+  shopName?: string;
+  shopSlug?: string;
   categoryId: { _id: string; name: string; slug: string };
 }
 
@@ -50,7 +64,12 @@ export default function ProductDetailClient({ product }: { product: IProductDeta
   const minQuantity = isWholesale && product.wholesaleMinQty ? product.wholesaleMinQty : 1;
   
   const [quantity, setQuantity] = useState(minQuantity);
-  const [activeImage, setActiveImage] = useState(product.images[0] || '/images/hero_banner.png');
+  const [selectedVariant, setSelectedVariant] = useState<IProductVariantItem | null>(
+    product.variants && product.variants.length > 0 ? product.variants[0] : null
+  );
+  const [activeImage, setActiveImage] = useState(
+    (product.variants && product.variants[0]?.image) || product.images[0] || '/images/hero_banner.png'
+  );
   const [added, setAdded] = useState(false);
   const [wishlistAdded, setWishlistAdded] = useState(false);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs'>('desc');
@@ -59,47 +78,49 @@ export default function ProductDetailClient({ product }: { product: IProductDeta
     setQuantity(minQuantity);
   }, [minQuantity]);
 
-  // Pricing Calculations
-  let price = product.retailPrice;
+  // Pricing Calculations with Dynamic Variant
+  const baseRetailPrice = selectedVariant ? selectedVariant.price : product.retailPrice;
+  let price = baseRetailPrice;
   let crossedOutPrice: number | null = null;
   let priceBadge: string | null = null;
 
   if (user) {
     if (user.customerType === 'WHOLESALE_BUYER' || user.customerType === 'WHOLESALE') {
-      price = product.wholesalePrice;
+      price = selectedVariant ? Math.round(selectedVariant.price * 0.85) : product.wholesalePrice;
       priceBadge = language === 'ta' ? 'மொத்த விலை (B2B)' : 'Wholesale Price';
-      if (product.retailPrice > product.wholesalePrice) {
-        crossedOutPrice = product.retailPrice;
+      if (baseRetailPrice > price) {
+        crossedOutPrice = baseRetailPrice;
       }
     } else if (user.customerType === 'V2CC_PMS_MEMBER' || user.customerType === 'COMMUNITY') {
-      price = product.communityPrice;
+      price = selectedVariant ? Math.round(selectedVariant.price * 0.95) : product.communityPrice;
       priceBadge = language === 'ta' ? 'V2CC-PMS விலை' : 'Member Price';
-      if (product.retailPrice > product.communityPrice) {
-        crossedOutPrice = product.retailPrice;
+      if (baseRetailPrice > price) {
+        crossedOutPrice = baseRetailPrice;
       }
     }
   }
 
   // Stock Checks
-  const isOutOfStock = product.stock <= 0;
-  const isLowStock = !isOutOfStock && product.stock <= product.lowStockThreshold;
+  const currentStock = selectedVariant?.stock !== undefined ? selectedVariant.stock : product.stock;
+  const isOutOfStock = currentStock <= 0;
+  const isLowStock = !isOutOfStock && currentStock <= product.lowStockThreshold;
 
   const handleQtyChange = (val: number) => {
     if (val < minQuantity) return;
-    if (val > product.stock) return;
+    if (val > currentStock) return;
     setQuantity(val);
   };
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
-    addToCart(product._id, quantity);
+    addToCart(product._id, quantity, selectedVariant?.name, price);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   const handleBuyNow = () => {
     if (isOutOfStock) return;
-    addToCart(product._id, quantity);
+    addToCart(product._id, quantity, selectedVariant?.name, price);
     router.push('/checkout');
   };
 
@@ -203,6 +224,67 @@ export default function ProductDetailClient({ product }: { product: IProductDeta
                 </span>
               )}
             </div>
+
+            {/* Vendor / Storefront Badge */}
+            {product.shopName && (
+              <div className="flex items-center gap-2 p-2.5 bg-amber-50/80 border border-amber-200/80 rounded-xl text-xs">
+                <Store className="w-4 h-4 text-amber-600 shrink-0" />
+                <span className="text-gray-600 font-semibold">Verified Partner Store:</span>
+                <Link
+                  href={`/shops/${product.shopSlug || 'store'}`}
+                  className="font-bold text-[#0052CC] hover:underline flex items-center gap-1"
+                >
+                  <span>{product.shopName}</span>
+                  <ExternalLink className="w-3 h-3" />
+                </Link>
+              </div>
+            )}
+
+            {/* DYNAMIC VARIANT SELECTOR (Size / Count / Weight) */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="space-y-2.5 pt-2 pb-3 border-y border-gray-150">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-extrabold text-[#101A2D] uppercase tracking-wider">
+                    {language === 'ta' ? 'அளவு / பொதி தெரிவு (Select Option):' : 'Select Size / Variant:'}
+                  </span>
+                  {selectedVariant && (
+                    <span className="text-[#0052CC] font-black text-xs">
+                      Selected: {selectedVariant.name}
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {product.variants.map((v, idx) => {
+                    const isSelected = selectedVariant?.name === v.name;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setSelectedVariant(v);
+                          if (v.image) setActiveImage(v.image);
+                        }}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                          isSelected
+                            ? 'bg-[#0052CC] border-[#0052CC] text-white shadow-md ring-2 ring-[#0052CC]/30'
+                            : 'bg-white border-gray-200 text-gray-800 hover:border-[#0052CC]/50 hover:bg-blue-50/30'
+                        }`}
+                      >
+                        <span className="font-extrabold text-xs leading-tight">{v.name}</span>
+                        <span
+                          className={`text-xs font-black ${
+                            isSelected ? 'text-[#FFB800]' : 'text-[#0052CC]'
+                          }`}
+                        >
+                          {formatCurrency(v.price)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <p className="text-sm text-gray-600 leading-relaxed font-medium">
               {product.shortDescription || product.description.substring(0, 180) + '...'}

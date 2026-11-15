@@ -7,6 +7,7 @@ import VirtualShops from '@/components/storefront/VirtualShops';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import PromoBanners from '@/components/storefront/PromoBanners';
 import FeaturedProducts from '@/components/storefront/FeaturedProducts';
+import ApprovedShopsSection from '@/components/storefront/ApprovedShopsSection';
 import WhyShopBanner from '@/components/storefront/WhyShopBanner';
 import InternationalBuyers from '@/components/storefront/InternationalBuyers';
 import TrustBadges from '@/components/storefront/TrustBadges';
@@ -52,6 +53,11 @@ export default function HomePage() {
       {/* 4. Featured Products Showcase */}
       <Suspense fallback={<div className="h-96 bg-transparent animate-pulse" />}>
         <FeaturedProducts />
+      </Suspense>
+
+      {/* 4b. Verified Partner Stores (Super Admin Approved Shops with "Shop Now") */}
+      <Suspense fallback={<div className="h-64 bg-transparent animate-pulse" />}>
+        <ApprovedShopsSection />
       </Suspense>
 
       {/* 5. Community Gift Vouchers */}

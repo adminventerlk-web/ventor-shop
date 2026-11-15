@@ -20,6 +20,10 @@ import {
   ShieldCheck,
   Sparkles,
   CheckCircle2,
+  Store,
+  Building2,
+  MapPin,
+  Tag,
 } from 'lucide-react';
 
 function LoginContent() {
@@ -53,6 +57,14 @@ function LoginContent() {
   const [phone, setPhone] = useState('');
   const [customerType, setCustomerType] = useState('BUYER');
   const [prefLang, setPrefLang] = useState<'en' | 'ta' | 'si'>('en');
+
+  // Shop Owner / Vendor Registration fields
+  const [isVendorRegistration, setIsVendorRegistration] = useState(false);
+  const [shopName, setShopName] = useState('');
+  const [shopCategory, setShopCategory] = useState('Ceylon Spices');
+  const [shopCity, setShopCity] = useState('Colombo');
+  const [shopDescription, setShopDescription] = useState('');
+  const [shopPhone, setShopPhone] = useState('');
 
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -122,6 +134,12 @@ function LoginContent() {
       // 2. REGISTRATION FLOW (Requires OTP verification)
       if (!firstName.trim() || !lastName.trim() || !phone.trim() || !password) {
         setErrorMsg(isTa ? 'அனைத்து தேவையான விவரங்களையும் பூர்த்தி செய்யவும்.' : 'Please fill in all required registration fields.');
+        setLoading(false);
+        return;
+      }
+
+      if (isVendorRegistration && !shopName.trim()) {
+        setErrorMsg(isTa ? 'தயவுசெய்து உங்கள் கடை பெயரை உள்ளிடவும்.' : 'Please enter your shop/store name.');
         setLoading(false);
         return;
       }
@@ -204,15 +222,25 @@ function LoginContent() {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           phone: phone.trim(),
-          customerType: customerType,
+          customerType: isVendorRegistration ? 'SELLER_SUPPLIER' : customerType,
           preferredLanguage: prefLang,
+          isVendor: isVendorRegistration,
+          shopName: isVendorRegistration ? shopName.trim() : undefined,
+          shopCategory: isVendorRegistration ? shopCategory : undefined,
+          shopCity: isVendorRegistration ? shopCity : undefined,
+          shopDescription: isVendorRegistration ? shopDescription.trim() : undefined,
+          shopPhone: isVendorRegistration ? (shopPhone.trim() || phone.trim()) : undefined,
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
         await refreshSession();
-        router.push(callbackUrl);
+        if (data.user?.isVendor) {
+          router.push('/vendor');
+        } else {
+          router.push(callbackUrl);
+        }
       } else {
         setErrorMsg(data.error || (isTa ? 'தவறான சரிபார்ப்புக் குறியீடு.' : 'Invalid verification code.'));
       }
@@ -389,33 +417,180 @@ function LoginContent() {
           
           {/* Account Type Selection (Only for Register) */}
           {activeTab === 'register' && (
-            <div className="space-y-1.5 pt-1 pb-1">
+            <div className="space-y-3 pt-1 pb-2">
               <label className="text-blue-100 font-extrabold block text-xs">
-                {isTa ? 'கணக்கு வகை (Account Type) *' : 'Account Type *'}
+                {isTa ? 'நான் பதிவு செய்வது (Register As) *' : 'I am registering as *'}
               </label>
-              <div className="relative">
-                <select
-                  value={customerType}
-                  onChange={(e) => setCustomerType(e.target.value)}
-                  className="w-full px-4 py-3 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] focus:ring-2 focus:ring-[#FFB800]/20 text-white font-bold text-xs appearance-none cursor-pointer"
+
+              {/* Role Toggle Grid */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsVendorRegistration(false);
+                    setCustomerType('BUYER');
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                    !isVendorRegistration
+                      ? 'bg-[#0052CC]/20 border-[#FFB800] ring-1 ring-[#FFB800]/40 text-white'
+                      : 'bg-[#01142F] border-blue-900/60 text-blue-200/70 hover:border-blue-700'
+                  }`}
                 >
-                  <option value="BUYER" className="bg-[#021A3E] text-white">{isTa ? 'Buyer (வாங்குபவர்)' : 'Buyer (Retail Consumer)'}</option>
-                  <option value="V2CC_PMS_MEMBER" className="bg-[#021A3E] text-white">V2CC-PMS Member (Community Member Pricing)</option>
-                  <option value="WHOLESALE_BUYER" className="bg-[#021A3E] text-white">Wholesale Buyer (Bulk B2B Pricing)</option>
-                  <option value="SELLER_SUPPLIER" className="bg-[#021A3E] text-white">Seller / Supplier (விற்பனையாளர் / சப்ளையர்)</option>
-                  <option value="PARTNER_STORE" className="bg-[#021A3E] text-white">Partner Store (பங்குதாரர் கடை)</option>
-                </select>
-                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#FFB800] text-xs">
-                  ▼
-                </div>
+                  <div className="flex items-center justify-between">
+                    <User className={`w-4 h-4 ${!isVendorRegistration ? 'text-[#FFB800]' : 'text-blue-300'}`} />
+                    {!isVendorRegistration && <span className="w-2 h-2 rounded-full bg-[#FFB800]" />}
+                  </div>
+                  <span className="font-bold text-xs">{isTa ? 'வாடிக்கையாளர்' : 'Customer'}</span>
+                  <span className="text-[10px] text-blue-300/70">{isTa ? 'பொருட்கள் வாங்க' : 'Shop & buy products'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsVendorRegistration(true);
+                    setCustomerType('SELLER_SUPPLIER');
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                    isVendorRegistration
+                      ? 'bg-[#0052CC]/20 border-[#FFB800] ring-1 ring-[#FFB800]/40 text-white'
+                      : 'bg-[#01142F] border-blue-900/60 text-blue-200/70 hover:border-blue-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <Store className={`w-4 h-4 ${isVendorRegistration ? 'text-[#FFB800]' : 'text-blue-300'}`} />
+                    {isVendorRegistration && <span className="w-2 h-2 rounded-full bg-[#FFB800]" />}
+                  </div>
+                  <span className="font-bold text-xs">{isTa ? 'கடை உரிமையாளர்' : 'Shop Owner / Vendor'}</span>
+                  <span className="text-[10px] text-blue-300/70">{isTa ? 'பொருட்கள் விற்க' : 'Sell products on store'}</span>
+                </button>
               </div>
-              <p className="text-[10px] text-blue-300/70 font-medium pt-0.5">
-                {customerType === 'BUYER' && 'Standard consumer retail ordering and islandwide doorstep delivery.'}
-                {customerType === 'V2CC_PMS_MEMBER' && 'Exclusive community member benefits & discounted tier pricing.'}
-                {customerType === 'WHOLESALE_BUYER' && 'High-volume wholesale catalog & bulk commercial rates.'}
-                {customerType === 'SELLER_SUPPLIER' && 'Register as merchant/supplier to distribute products.'}
-                {customerType === 'PARTNER_STORE' && 'Partner store franchise & integrated inventory point.'}
-              </p>
+
+              {/* Vendor Approval Notice & Details Fields */}
+              {isVendorRegistration && (
+                <div className="bg-[#021F4A] border border-[#0052CC] rounded-2xl p-4 space-y-3 mt-3 shadow-inner">
+                  <div className="flex items-start gap-2.5 bg-[#FFB800]/10 border border-[#FFB800]/30 rounded-xl p-2.5 text-[#FFB800] text-[11px] font-bold">
+                    <Sparkles className="w-4 h-4 shrink-0 mt-0.5" />
+                    <div>
+                      <span>{isTa ? 'சூப்பர் அட்மின் ஒப்புதல் தேவை:' : 'Super Admin Approval Required:'}</span>
+                      <p className="text-[10px] text-blue-100 font-medium mt-0.5">
+                        {isTa
+                          ? 'பதிவு செய்தவுடன், உங்கள் கடை சூப்பர் அட்மினால் சரிபார்க்கப்பட்டு அங்கீகரிக்கப்படும் (Approved). அதன் பின் நீங்கள் உங்கள் பொருட்களை விற்கலாம்!'
+                          : 'Upon registration, your shop will be reviewed by Super Admin. Once approved, you can access your dashboard to add products with custom sizes/variants and receive customer orders.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Shop Name */}
+                  <div className="space-y-1">
+                    <label className="text-blue-100 font-bold block text-[11px]">
+                      {isTa ? 'கடை பெயர் (Shop / Store Name) *' : 'Shop / Store Name *'}
+                    </label>
+                    <div className="relative flex items-center">
+                      <Store className="absolute left-3 w-4 h-4 text-blue-300/60" />
+                      <input
+                        type="text"
+                        required={isVendorRegistration}
+                        placeholder="e.g. Royal Ceylon Spices"
+                        value={shopName}
+                        onChange={(e) => setShopName(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-bold text-xs placeholder-blue-300/30"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Category & City */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-blue-100 font-bold block text-[11px]">
+                        {isTa ? 'கடை பிரிவு (Category) *' : 'Category *'}
+                      </label>
+                      <select
+                        value={shopCategory}
+                        onChange={(e) => setShopCategory(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-bold text-xs appearance-none cursor-pointer"
+                      >
+                        <option value="Ceylon Spices" className="bg-[#021A3E]">Ceylon Spices</option>
+                        <option value="Groceries & Organics" className="bg-[#021A3E]">Groceries & Organics</option>
+                        <option value="Books & Stationery" className="bg-[#021A3E]">Books & Stationery</option>
+                        <option value="Clothing & Fashion" className="bg-[#021A3E]">Clothing & Fashion</option>
+                        <option value="Mobiles & Electronics" className="bg-[#021A3E]">Mobiles & Electronics</option>
+                        <option value="Handicrafts & Decor" className="bg-[#021A3E]">Handicrafts & Decor</option>
+                        <option value="Pet Supplies" className="bg-[#021A3E]">Pet Supplies</option>
+                        <option value="General Store" className="bg-[#021A3E]">General Store</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-blue-100 font-bold block text-[11px]">
+                        {isTa ? 'நகரம் / பகுதி (City) *' : 'City / Location *'}
+                      </label>
+                      <select
+                        value={shopCity}
+                        onChange={(e) => setShopCity(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-bold text-xs appearance-none cursor-pointer"
+                      >
+                        <option value="Colombo" className="bg-[#021A3E]">Colombo</option>
+                        <option value="Kandy" className="bg-[#021A3E]">Kandy</option>
+                        <option value="Jaffna" className="bg-[#021A3E]">Jaffna</option>
+                        <option value="Galle" className="bg-[#021A3E]">Galle</option>
+                        <option value="Batticaloa" className="bg-[#021A3E]">Batticaloa</option>
+                        <option value="Gampaha" className="bg-[#021A3E]">Gampaha</option>
+                        <option value="Kurunegala" className="bg-[#021A3E]">Kurunegala</option>
+                        <option value="Anuradhapura" className="bg-[#021A3E]">Anuradhapura</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Shop WhatsApp / Order Phone */}
+                  <div className="space-y-1">
+                    <label className="text-blue-100 font-bold block text-[11px]">
+                      {isTa ? 'ஆர்டர் பெறும் WhatsApp / போன் எண் *' : 'Shop Order WhatsApp / Phone *'}
+                    </label>
+                    <div className="relative flex items-center">
+                      <Phone className="absolute left-3 w-4 h-4 text-blue-300/60" />
+                      <input
+                        type="tel"
+                        placeholder="e.g. +94 77 123 4567"
+                        value={shopPhone}
+                        onChange={(e) => setShopPhone(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-bold text-xs placeholder-blue-300/30"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Shop Description */}
+                  <div className="space-y-1">
+                    <label className="text-blue-100 font-bold block text-[11px]">
+                      {isTa ? 'கடை பற்றிய சுருக்கம் (Description)' : 'Shop Description'}
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="e.g. High quality organic spices directly sourced from farmers..."
+                      value={shopDescription}
+                      onChange={(e) => setShopDescription(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-medium text-xs placeholder-blue-300/30 resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* If Normal Customer, option to select customer discount tier */}
+              {!isVendorRegistration && (
+                <div className="space-y-1.5 pt-1">
+                  <label className="text-blue-100 font-semibold block text-[11px]">
+                    {isTa ? 'வாடிக்கையாளர் பிரிவு' : 'Customer Category'}
+                  </label>
+                  <select
+                    value={customerType}
+                    onChange={(e) => setCustomerType(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-bold text-xs appearance-none cursor-pointer"
+                  >
+                    <option value="BUYER" className="bg-[#021A3E] text-white">{isTa ? 'Buyer (வாங்குபவர்)' : 'Buyer (Retail Consumer)'}</option>
+                    <option value="V2CC_PMS_MEMBER" className="bg-[#021A3E] text-white">V2CC-PMS Member (Community Member Pricing)</option>
+                    <option value="WHOLESALE_BUYER" className="bg-[#021A3E] text-white">Wholesale Buyer (Bulk B2B Pricing)</option>
+                  </select>
+                </div>
+              )}
             </div>
           )}
 
@@ -568,7 +743,9 @@ function LoginContent() {
               : activeTab === 'login'
               ? (isTa ? 'பாதுகாப்பாக உள்நுழைக' : 'Secure Sign In')
               : activeTab === 'register'
-              ? (isTa ? 'பதிவு OTP அனுப்புக' : 'Send Registration OTP')
+              ? (isVendorRegistration
+                  ? (isTa ? 'கடையை பதிவு செய்க (OTP அனுப்புக)' : 'Register Shop (Send OTP)')
+                  : (isTa ? 'பதிவு OTP அனுப்புக' : 'Send Registration OTP'))
               : (isTa ? 'மீட்டமைப்பு OTP அனுப்புக' : 'Send Reset OTP')}
           </button>
 

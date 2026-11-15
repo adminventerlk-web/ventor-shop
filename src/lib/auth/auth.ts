@@ -14,6 +14,11 @@ export interface SessionPayload {
   customerType: 'BUYER' | 'V2CC_PMS_MEMBER' | 'WHOLESALE_BUYER' | 'SELLER_SUPPLIER' | 'PARTNER_STORE' | 'NORMAL' | 'COMMUNITY' | 'WHOLESALE' | 'ADMIN' | string;
   firstName: string;
   lastName: string;
+  isVendor?: boolean;
+  vendorStatus?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  shopId?: string;
+  shopName?: string;
+  shopSlug?: string;
 }
 
 export async function getSessionPayload(): Promise<SessionPayload | null> {
@@ -97,6 +102,11 @@ export async function getCurrentUser() {
         preferredLanguage: dbRecord?.preferredLanguage || 'en',
         phone: dbRecord?.phone || '',
         addresses: dbRecord?.addresses || [],
+        isVendor: dbRecord?.isVendor || session.isVendor || false,
+        vendorStatus: dbRecord?.vendorStatus || session.vendorStatus || 'NONE',
+        shopId: dbRecord?.shopId?.toString() || session.shopId || null,
+        shopName: dbRecord?.shopName || session.shopName || '',
+        shopSlug: dbRecord?.shopSlug || session.shopSlug || '',
       };
     }
   } catch (error) {
@@ -136,6 +146,11 @@ export async function getCurrentCustomer() {
       preferredLanguage: user?.preferredLanguage || 'en',
       phone: user?.phone || '',
       addresses: user?.addresses || [],
+      isVendor: user?.isVendor || session.isVendor || false,
+      vendorStatus: user?.vendorStatus || session.vendorStatus || 'NONE',
+      shopId: user?.shopId?.toString() || session.shopId || null,
+      shopName: user?.shopName || session.shopName || '',
+      shopSlug: user?.shopSlug || session.shopSlug || '',
     };
   } catch (error) {
     console.error('Error fetching current customer:', error);
@@ -205,4 +220,15 @@ export async function requireAdmin() {
     throw new Error('Forbidden');
   }
   return admin;
+}
+
+export async function requireVendor() {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+  if (!user.isVendor && user.customerType !== 'SELLER_SUPPLIER') {
+    throw new Error('Forbidden');
+  }
+  return user;
 }
