@@ -3,7 +3,6 @@ import styles from './page.module.css';
 import { Metadata } from 'next';
 import Header from '@/components/layout/Header';
 import Hero from '@/components/storefront/Hero';
-import MarketplaceDemoShowcase from '@/components/storefront/MarketplaceDemoShowcase';
 import VirtualShops from '@/components/storefront/VirtualShops';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import PromoBanners from '@/components/storefront/PromoBanners';
@@ -46,11 +45,6 @@ export default function HomePage() {
 
       {/* 2. Hero Banner Section + Location Strip - Direct Render with Priority Image */}
       <Hero />
-
-      {/* 2b. Interactive Live Feature Demo Showcase */}
-      <Suspense fallback={<div className="h-64 bg-transparent animate-pulse" />}>
-        <MarketplaceDemoShowcase />
-      </Suspense>
 
       {/* 3. Shop By Category (8 Categories Grid) */}
       <Suspense fallback={<div className="h-48 bg-transparent animate-pulse" />}>
