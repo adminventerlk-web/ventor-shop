@@ -98,3 +98,53 @@ export async function GET() {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const user = await requireVendor();
+    const body = await request.json();
+    const { orderId, orderStatus } = body;
+
+    const validStatuses = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
+    if (!orderId || !orderStatus || !validStatuses.includes(orderStatus)) {
+      return NextResponse.json({ error: 'Valid orderId and orderStatus are required' }, { status: 400 });
+    }
+
+    let updated = false;
+
+    // 1. Try DB update
+    try {
+      await connectToDatabase();
+      const updatedOrder = await Order.findByIdAndUpdate(
+        orderId,
+        { $set: { orderStatus } },
+        { new: true }
+      );
+      if (updatedOrder) {
+        updated = true;
+      }
+    } catch (dbErr) {
+      console.warn('DB error in /api/vendor/orders PATCH:', dbErr);
+    }
+
+    // 2. Also update in-memory vendor orders store
+    const userKey = user.email.toLowerCase().trim();
+    const memOrders = vendorOrdersStore.get(userKey) || [];
+    const targetIdx = memOrders.findIndex((o) => o._id === orderId || o.orderNumber === orderId);
+    if (targetIdx !== -1) {
+      memOrders[targetIdx].orderStatus = orderStatus;
+      vendorOrdersStore.set(userKey, memOrders);
+      updated = true;
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Order status updated to ${orderStatus}`,
+      orderStatus,
+    });
+  } catch (error: any) {
+    console.error('Error updating vendor order status:', error);
+    return NextResponse.json({ error: error.message || 'Unauthorized' }, { status: 403 });
+  }
+}
+
+

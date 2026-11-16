@@ -22,6 +22,7 @@ export default function VendorOrdersPage() {
   const { user } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -35,6 +36,28 @@ export default function VendorOrdersPage() {
       console.error('Failed to load orders:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    setUpdatingId(orderId);
+    try {
+      const res = await fetch('/api/vendor/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, orderStatus: newStatus }),
+      });
+      if (res.ok) {
+        setOrders((prev) =>
+          prev.map((o) => (o._id === orderId ? { ...o, orderStatus: newStatus } : o))
+        );
+      } else {
+        alert('Failed to update status');
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -134,9 +157,29 @@ export default function VendorOrdersPage() {
                       <span className="font-mono font-black text-sm text-white">
                         Order #{order.orderNumber}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                        {order.orderStatus || 'CONFIRMED'}
-                      </span>
+                      
+                      <div className="flex items-center gap-1.5">
+                        <label htmlFor={`status-${order._id}`} className="text-[10px] uppercase font-bold text-blue-300">Status:</label>
+                        <select
+                          id={`status-${order._id}`}
+                          value={order.orderStatus || 'CONFIRMED'}
+                          disabled={updatingId === order._id}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                          className="px-2 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-[#01142F] border border-[#0052CC]/60 text-[#FFB800] focus:outline-none focus:border-[#FFB800] cursor-pointer transition-colors"
+                        >
+                          <option value="PENDING" className="bg-[#021838] text-yellow-300">PENDING</option>
+                          <option value="CONFIRMED" className="bg-[#021838] text-blue-300">CONFIRMED</option>
+                          <option value="PROCESSING" className="bg-[#021838] text-purple-300">PROCESSING</option>
+                          <option value="SHIPPED" className="bg-[#021838] text-cyan-300">SHIPPED</option>
+                          <option value="OUT_FOR_DELIVERY" className="bg-[#021838] text-orange-300">OUT FOR DELIVERY</option>
+                          <option value="DELIVERED" className="bg-[#021838] text-emerald-300">DELIVERED</option>
+                          <option value="CANCELLED" className="bg-[#021838] text-rose-300">CANCELLED</option>
+                        </select>
+                        {updatingId === order._id && (
+                          <RefreshCw className="w-3 h-3 text-[#FFB800] animate-spin" />
+                        )}
+                      </div>
+
                       <span className="text-xs text-gray-400 flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
                         {new Date(order.createdAt).toLocaleDateString()} at{' '}
