@@ -249,12 +249,6 @@ export default function VendorProductsPage() {
       setErrorMsg('Product name is required');
       return;
     }
-    if (!retailPrice || Number(retailPrice) <= 0) {
-      setErrorMsg('Please enter a valid base price (LKR)');
-      return;
-    }
-
-    setSubmitting(true);
 
     const allImages = [
       mainImage.trim() || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80',
@@ -262,27 +256,39 @@ export default function VendorProductsPage() {
     ];
 
     const validVariants = variants
-      .filter((v) => v.name.trim() && v.price !== '')
+      .filter((v) => v.name.trim() && v.price !== '' && Number(v.price) > 0)
       .map((v) => ({
         name: v.name.trim(),
         price: Number(v.price),
-        stock: Number(v.stock || stock || 10),
+        stock: Number(v.stock || 10),
         image: v.image.trim() || allImages[0],
       }));
+
+    if (validVariants.length === 0) {
+      setErrorMsg('Please specify at least one size/variation with a valid price (e.g. 250g - LKR 850)');
+      return;
+    }
+
+    setSubmitting(true);
+
+    const calculatedBasePrice = Math.min(...validVariants.map((v) => v.price));
+    const calculatedTotalStock = validVariants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0);
 
     try {
       const isEdit = Boolean(editingProduct);
       const method = isEdit ? 'PATCH' : 'POST';
       const payload: any = {
         name: name.trim(),
-        sku: sku.trim() || undefined,
         categoryId,
-        retailPrice: Number(retailPrice),
-        stock: Number(stock || 10),
+        retailPrice: calculatedBasePrice,
+        stock: calculatedTotalStock > 0 ? calculatedTotalStock : 25,
         description: description.trim() || name.trim(),
         images: allImages,
         variants: validVariants,
       };
+      if (sku.trim()) {
+        payload.sku = sku.trim();
+      }
       if (isEdit) {
         payload.productId = editingProduct._id;
       }
@@ -502,7 +508,9 @@ export default function VendorProductsPage() {
                       {editingProduct ? `Edit: ${editingProduct.name}` : 'Add New Store Product'}
                     </h2>
                     <p className="text-xs text-blue-200/70">
-                      {editingProduct ? 'Update product details, pricing, and variants.' : 'Configure product information, base price, and custom size/count variations.'}
+                      {editingProduct
+                        ? 'Update product details, photos, sizes, and dynamic prices.'
+                        : 'Configure product title, category, photos from device, and custom sizes with dynamic prices.'}
                     </p>
                   </div>
                 </div>
@@ -538,63 +546,21 @@ export default function VendorProductsPage() {
                   />
                 </div>
 
-                {/* Category & SKU */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-blue-100 block">Category *</label>
-                    <select
-                      value={categoryId}
-                      onChange={(e) => setCategoryId(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#01142F] border border-blue-800 rounded-xl text-white text-xs font-bold outline-none focus:border-[#FFB800] cursor-pointer"
-                    >
-                      <option value="cat_groceries_01">Fruits & Vegetables / Groceries</option>
-                      <option value="cat_home_02">Kitchen & Cookware</option>
-                      <option value="cat_books_03">Books & Stationery</option>
-                      <option value="cat_clothing_04">Clothing & Fashion</option>
-                      <option value="cat_electronics_05">Mobiles & Electronics</option>
-                      <option value="cat_animal_feed_06">Pet Supplies & Animal Feed</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-blue-100 block">SKU / Code</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. CIN-ALBA-01"
-                      value={sku}
-                      onChange={(e) => setSku(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[#01142F] border border-blue-800 rounded-xl text-white text-xs font-bold placeholder-blue-300/30 outline-none focus:border-[#FFB800]"
-                    />
-                  </div>
-                </div>
-
-                {/* Base Retail Price & Stock */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-blue-100 block">Base Price (LKR) *</label>
-                    <input
-                      type="number"
-                      required
-                      min={1}
-                      placeholder="e.g. 1250"
-                      value={retailPrice}
-                      onChange={(e) => setRetailPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[#01142F] border border-blue-800 rounded-xl text-white text-xs font-bold placeholder-blue-300/30 outline-none focus:border-[#FFB800]"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-blue-100 block">Available Stock *</label>
-                    <input
-                      type="number"
-                      required
-                      min={0}
-                      placeholder="e.g. 50"
-                      value={stock}
-                      onChange={(e) => setStock(e.target.value === '' ? '' : Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[#01142F] border border-blue-800 rounded-xl text-white text-xs font-bold placeholder-blue-300/30 outline-none focus:border-[#FFB800]"
-                    />
-                  </div>
+                {/* Category Selection */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-blue-100 block">Category *</label>
+                  <select
+                    value={categoryId}
+                    onChange={(e) => setCategoryId(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-[#01142F] border border-blue-800 rounded-xl text-white text-xs font-bold outline-none focus:border-[#FFB800] cursor-pointer"
+                  >
+                    <option value="cat_groceries_01">Fruits & Vegetables / Groceries</option>
+                    <option value="cat_home_02">Kitchen & Cookware</option>
+                    <option value="cat_books_03">Books & Stationery</option>
+                    <option value="cat_clothing_04">Clothing & Fashion</option>
+                    <option value="cat_electronics_05">Mobiles & Electronics</option>
+                    <option value="cat_animal_feed_06">Pet Supplies & Animal Feed</option>
+                  </select>
                 </div>
 
                 {/* Product Images (Device Upload) */}

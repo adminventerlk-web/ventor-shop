@@ -75,14 +75,12 @@ export async function POST(request: Request) {
       variants,
     } = body;
 
-    if (!name || !retailPrice || Number(retailPrice) <= 0) {
-      return NextResponse.json({ error: 'Product name and valid price are required' }, { status: 400 });
-    }
-
-    const priceNum = Number(retailPrice);
-    const stockNum = Number(stock || 10);
-    const generatedSku = (sku || 'SKU-' + Date.now()).toUpperCase().trim();
-    const rawSlug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const cleanPrefix = (name || 'PROD')
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .slice(0, 4)
+      .toUpperCase() || 'PROD';
+    const generatedSku = (sku || `${cleanPrefix}-${Date.now().toString().slice(-6)}`).toUpperCase().trim();
+    const rawSlug = (name || 'product').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const slug = `${rawSlug}-${Math.floor(100 + Math.random() * 900)}`;
 
     const productImages = Array.isArray(images) && images.length > 0
@@ -91,15 +89,31 @@ export async function POST(request: Request) {
 
     const formattedVariants = Array.isArray(variants)
       ? variants
-          .filter((v: any) => v && v.name && v.price)
+          .filter((v: any) => v && v.name && Number(v.price) > 0)
           .map((v: any) => ({
             name: String(v.name).trim(),
             price: Number(v.price),
-            stock: Number(v.stock || stockNum),
+            stock: Number(v.stock || stock || 10),
             image: v.image?.trim() || productImages[0],
-            sku: v.sku?.trim() || `${generatedSku}-${v.name.toUpperCase().replace(/\s+/g, '')}`,
+            sku: v.sku?.trim() || `${generatedSku}-${v.name.toUpperCase().replace(/[^A-Z0-9]/g, '')}`,
           }))
       : [];
+
+    // Automatically derive price from variants if not manually passed
+    let priceNum = Number(retailPrice);
+    if ((!priceNum || priceNum <= 0) && formattedVariants.length > 0) {
+      priceNum = Math.min(...formattedVariants.map((v) => v.price));
+    }
+
+    if (!name || priceNum <= 0) {
+      return NextResponse.json(
+        { error: 'Product name and at least one size/variant with a valid price are required' },
+        { status: 400 }
+      );
+    }
+
+    const totalVariantStock = formattedVariants.reduce((sum, v) => sum + (v.stock || 0), 0);
+    const stockNum = Number(stock) > 0 ? Number(stock) : (totalVariantStock > 0 ? totalVariantStock : 25);
 
     const newProductData: any = {
       _id: 'prod_' + Date.now(),
@@ -212,15 +226,22 @@ export async function PATCH(request: Request) {
     if (variants !== undefined) {
       updateData.variants = Array.isArray(variants)
         ? variants
-            .filter((v: any) => v && v.name && v.price)
+            .filter((v: any) => v && v.name && Number(v.price) > 0)
             .map((v: any) => ({
               name: String(v.name).trim(),
               price: Number(v.price),
               stock: Number(v.stock || stock || 10),
               image: v.image?.trim() || (images?.[0] || ''),
-              sku: v.sku?.trim() || `${updateData.sku || 'VAR'}-${v.name.toUpperCase().replace(/\s+/g, '')}`,
+              sku: v.sku?.trim() || `VAR-${v.name.toUpperCase().replace(/[^A-Z0-9]/g, '')}`,
             }))
         : [];
+
+      if (updateData.variants.length > 0 && (retailPrice === undefined || Number(retailPrice) <= 0)) {
+        const p = Math.min(...updateData.variants.map((v: any) => v.price));
+        updateData.retailPrice = p;
+        updateData.communityPrice = Math.round(p * 0.95);
+        updateData.wholesalePrice = Math.round(p * 0.85);
+      }
     }
 
     // 1. Try DB update
