@@ -174,6 +174,89 @@ export async function POST(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const user = await requireVendor();
+    const body = await request.json();
+    const {
+      productId,
+      name,
+      sku,
+      description,
+      shortDescription,
+      retailPrice,
+      stock,
+      images,
+      variants,
+      isActive,
+    } = body;
+
+    if (!productId) {
+      return NextResponse.json({ error: 'Product ID is required for update' }, { status: 400 });
+    }
+
+    const updateData: any = { updatedAt: new Date() };
+    if (name !== undefined) updateData.name = name.trim();
+    if (sku !== undefined) updateData.sku = sku.trim().toUpperCase();
+    if (description !== undefined) updateData.description = description.trim();
+    if (shortDescription !== undefined) updateData.shortDescription = shortDescription.trim();
+    if (retailPrice !== undefined) {
+      const p = Number(retailPrice);
+      updateData.retailPrice = p;
+      updateData.communityPrice = Math.round(p * 0.95);
+      updateData.wholesalePrice = Math.round(p * 0.85);
+    }
+    if (stock !== undefined) updateData.stock = Number(stock);
+    if (images !== undefined) updateData.images = Array.isArray(images) ? images.filter(Boolean) : [];
+    if (isActive !== undefined) updateData.isActive = Boolean(isActive);
+    if (variants !== undefined) {
+      updateData.variants = Array.isArray(variants)
+        ? variants
+            .filter((v: any) => v && v.name && v.price)
+            .map((v: any) => ({
+              name: String(v.name).trim(),
+              price: Number(v.price),
+              stock: Number(v.stock || stock || 10),
+              image: v.image?.trim() || (images?.[0] || ''),
+              sku: v.sku?.trim() || `${updateData.sku || 'VAR'}-${v.name.toUpperCase().replace(/\s+/g, '')}`,
+            }))
+        : [];
+    }
+
+    // 1. Try DB update
+    try {
+      await connectToDatabase();
+      if (mongoose.Types.ObjectId.isValid(productId)) {
+        await Product.findOneAndUpdate(
+          { _id: productId, $or: [{ vendorId: user.id }, ...(user.shopSlug ? [{ shopSlug: user.shopSlug }] : [])] },
+          { $set: updateData }
+        );
+      }
+    } catch (dbErr) {
+      console.warn('DB update failed for vendor product, updating memory:', dbErr);
+    }
+
+    // 2. Update in-memory vendor products store
+    const currentList = vendorProductsStore.get(user.email) || [];
+    const idx = currentList.findIndex((p) => p._id === productId);
+    if (idx !== -1) {
+      currentList[idx] = { ...currentList[idx], ...updateData };
+      vendorProductsStore.set(user.email, currentList);
+    }
+
+    // 3. Update fallback if present
+    const fbIdx = fallbackProducts.findIndex((p: any) => p._id === productId || p._id?.toString() === productId);
+    if (fbIdx !== -1) {
+      Object.assign(fallbackProducts[fbIdx], updateData);
+    }
+
+    return NextResponse.json({ success: true, message: 'Product updated successfully' });
+  } catch (error: any) {
+    console.error('Error updating vendor product:', error);
+    return NextResponse.json({ error: error.message || 'Unauthorized' }, { status: 403 });
+  }
+}
+
 export async function DELETE(request: Request) {
   try {
     const user = await requireVendor();

@@ -70,7 +70,7 @@ export default function ProductCard({ product, variant = 'default' }: { product:
     e.preventDefault();
     if (isOutOfStock) return;
 
-    addToCart(product._id, 1);
+    addToCart(product._id, 1, undefined, price, { name: product.name, image: imgSrc, price: price });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

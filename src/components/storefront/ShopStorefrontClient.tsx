@@ -49,11 +49,17 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
 
   const handleQuickAdd = (product: any) => {
     const defaultVariant = product.variants?.[0];
+    const itemPrice = defaultVariant ? defaultVariant.price : product.retailPrice;
     addToCart(
       product._id,
       1,
       defaultVariant?.name,
-      defaultVariant ? defaultVariant.price : product.retailPrice
+      itemPrice,
+      {
+        name: product.name,
+        image: defaultVariant?.image || product.images?.[0],
+        price: itemPrice,
+      }
     );
     setAddedMap((prev) => ({ ...prev, [product._id]: true }));
     setTimeout(() => {

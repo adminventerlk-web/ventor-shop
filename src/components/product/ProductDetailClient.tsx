@@ -113,7 +113,11 @@ export default function ProductDetailClient({ product }: { product: IProductDeta
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
-    addToCart(product._id, quantity, selectedVariant?.name, price);
+    addToCart(product._id, quantity, selectedVariant?.name, price, {
+      name: product.name,
+      image: activeImage,
+      price: price,
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

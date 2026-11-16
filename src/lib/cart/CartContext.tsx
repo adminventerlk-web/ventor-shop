@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import AddToCartModal, { IAddedItemNotification } from '@/components/cart/AddToCartModal';
+import { fallbackProducts } from '@/lib/data/fallbackData';
 
 export interface ICartItem {
   productId: string;
@@ -12,12 +14,20 @@ export interface ICartItem {
 interface CartContextType {
   cart: ICartItem[];
   cartCount: number;
-  addToCart: (productId: string, quantity?: number, variantName?: string, selectedPrice?: number) => void;
+  addToCart: (
+    productId: string,
+    quantity?: number,
+    variantName?: string,
+    selectedPrice?: number,
+    meta?: { name?: string; image?: string; price?: number }
+  ) => void;
   updateQuantity: (productId: string, quantity: number, variantName?: string) => void;
   removeFromCart: (productId: string, variantName?: string) => void;
   clearCart: () => void;
   appliedVoucherCode: string | null;
   setAppliedVoucherCode: (code: string | null) => void;
+  addedItemNotification: IAddedItemNotification | null;
+  closeNotification: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -68,8 +78,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [appliedVoucherCode, isLoaded]);
 
+  const [addedItemNotification, setAddedItemNotification] = useState<IAddedItemNotification | null>(null);
+
+  const closeNotification = useCallback(() => {
+    setAddedItemNotification(null);
+  }, []);
+
   const addToCart = useCallback(
-    (productId: string, quantity = 1, variantName?: string, selectedPrice?: number) => {
+    (
+      productId: string,
+      quantity = 1,
+      variantName?: string,
+      selectedPrice?: number,
+      meta?: { name?: string; image?: string; price?: number }
+    ) => {
       setCart((prevCart) => {
         const existingItem = prevCart.find(
           (item) => item.productId === productId && (item.variantName || '') === (variantName || '')
@@ -82,6 +104,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           );
         }
         return [...prevCart, { productId, quantity, variantName, selectedPrice }];
+      });
+
+      // Trigger Add to Cart Pop-up Modal
+      let name = meta?.name;
+      let image = meta?.image;
+      let price = selectedPrice || meta?.price;
+
+      if (!name || !image) {
+        const found = fallbackProducts.find((p) => p._id === productId || p.slug === productId);
+        if (found) {
+          if (!name) name = found.name;
+          if (!image) image = found.images?.[0];
+          if (!price) price = found.retailPrice;
+        }
+      }
+
+      setAddedItemNotification({
+        productId,
+        quantity,
+        variantName,
+        selectedPrice: price,
+        productName: name || 'Product Item',
+        productImage: image,
       });
     },
     []
@@ -127,9 +172,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         appliedVoucherCode,
         setAppliedVoucherCode,
+        addedItemNotification,
+        closeNotification,
       }}
     >
       {children}
+      <AddToCartModal
+        item={addedItemNotification}
+        onClose={closeNotification}
+        cartCount={cartCount}
+      />
     </CartContext.Provider>
   );
 }

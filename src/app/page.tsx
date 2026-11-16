@@ -6,6 +6,7 @@ import Hero from '@/components/storefront/Hero';
 import VirtualShops from '@/components/storefront/VirtualShops';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import PromoBanners from '@/components/storefront/PromoBanners';
+import RevenueDonationSection from '@/components/storefront/RevenueDonationSection';
 import FeaturedProducts from '@/components/storefront/FeaturedProducts';
 import ApprovedShopsSection from '@/components/storefront/ApprovedShopsSection';
 import WhyShopBanner from '@/components/storefront/WhyShopBanner';
@@ -63,6 +64,11 @@ export default function HomePage() {
       {/* 5. Community Gift Vouchers */}
       <Suspense fallback={<div className="h-44 bg-transparent animate-pulse" />}>
         <PromoBanners />
+      </Suspense>
+
+      {/* 5b. Super Admin Revenue Donation & Community Impact Aid Section */}
+      <Suspense fallback={<div className="h-64 bg-transparent animate-pulse" />}>
+        <RevenueDonationSection />
       </Suspense>
 
       {/* 6. Virtual Shops / Shop Categories */}

@@ -71,11 +71,15 @@ function LoginContent() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // If already logged in, redirect to dashboard or callbackUrl immediately
+  // If already logged in, redirect appropriately
   useEffect(() => {
     if (user) {
       if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
         router.push('/admin');
+      } else if (user.isVendor && user.vendorStatus === 'APPROVED') {
+        router.push('/vendor');
+      } else if (user.isVendor && user.vendorStatus === 'PENDING') {
+        router.push('/vendor/pending');
       } else {
         router.push(callbackUrl);
       }
@@ -119,6 +123,10 @@ function LoginContent() {
           await refreshSession();
           if (data.user?.role === 'ADMIN' || data.user?.role === 'SUPER_ADMIN') {
             router.push('/admin');
+          } else if (data.user?.isVendor && data.user?.vendorStatus === 'APPROVED') {
+            router.push('/vendor');
+          } else if (data.user?.isVendor && data.user?.vendorStatus === 'PENDING') {
+            router.push('/vendor/pending');
           } else {
             router.push(callbackUrl);
           }

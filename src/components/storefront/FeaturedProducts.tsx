@@ -180,7 +180,11 @@ export default function FeaturedProducts() {
   const handleAddToCart = (e: React.MouseEvent, prod: ProductItem) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(prod._id, 1);
+    addToCart(prod._id, 1, undefined, prod.price, {
+      name: prod.name,
+      image: prod.image,
+      price: prod.price,
+    });
   };
 
   return (

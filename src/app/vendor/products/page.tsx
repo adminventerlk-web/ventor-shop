@@ -17,6 +17,8 @@ import {
   DollarSign,
   X,
   Sparkles,
+  Pencil,
+  RefreshCw,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -37,6 +39,7 @@ export default function VendorProductsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
   // Form Fields
   const [name, setName] = useState('');
@@ -110,6 +113,35 @@ export default function VendorProductsPage() {
       { name: '500g', price: '', stock: 15, image: '' },
       { name: '1kg', price: '', stock: 10, image: '' },
     ]);
+    setEditingProduct(null);
+  };
+
+  const handleEditOpen = (product: any) => {
+    setEditingProduct(product);
+    setName(product.name || '');
+    setSku(product.sku || '');
+    setDescription(product.description || '');
+    setRetailPrice(product.retailPrice || '');
+    setStock(product.stock || 10);
+    setMainImage(product.images?.[0] || '');
+    setGalleryImages([
+      product.images?.[1] || '',
+      product.images?.[2] || '',
+      product.images?.[3] || '',
+    ]);
+    setVariants(
+      (product.variants || []).length > 0
+        ? product.variants.map((v: any) => ({
+            name: v.name || '',
+            price: v.price || '',
+            stock: v.stock || 10,
+            image: v.image || '',
+          }))
+        : [{ name: '', price: '', stock: 10, image: '' }]
+    );
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -143,32 +175,39 @@ export default function VendorProductsPage() {
       }));
 
     try {
+      const isEdit = Boolean(editingProduct);
+      const method = isEdit ? 'PATCH' : 'POST';
+      const payload: any = {
+        name: name.trim(),
+        sku: sku.trim() || undefined,
+        categoryId,
+        retailPrice: Number(retailPrice),
+        stock: Number(stock || 10),
+        description: description.trim() || name.trim(),
+        images: allImages,
+        variants: validVariants,
+      };
+      if (isEdit) {
+        payload.productId = editingProduct._id;
+      }
+
       const res = await fetch('/api/vendor/products', {
-        method: 'POST',
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          sku: sku.trim() || undefined,
-          categoryId,
-          retailPrice: Number(retailPrice),
-          stock: Number(stock || 10),
-          description: description.trim() || name.trim(),
-          images: allImages,
-          variants: validVariants,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
       if (res.ok) {
-        setSuccessMsg('Product added successfully with variants!');
+        setSuccessMsg(isEdit ? 'Product updated successfully!' : 'Product added successfully with variants!');
         resetForm();
         setModalOpen(false);
         await fetchProducts();
       } else {
-        setErrorMsg(data.error || 'Failed to create product');
+        setErrorMsg(data.error || (isEdit ? 'Failed to update product' : 'Failed to create product'));
       }
     } catch (err) {
-      setErrorMsg('Network error. Failed to add product.');
+      setErrorMsg('Network error. Failed to save product.');
     } finally {
       setSubmitting(false);
     }
@@ -330,13 +369,22 @@ export default function VendorProductsPage() {
                       <span>View in Store</span>
                     </Link>
 
-                    <button
-                      onClick={() => handleDelete(product._id)}
-                      className="p-1.5 hover:bg-red-500/20 text-red-400 hover:text-red-200 rounded-lg transition-colors cursor-pointer"
-                      title="Remove Product"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleEditOpen(product)}
+                        className="p-1.5 hover:bg-[#0052CC]/30 text-blue-300 hover:text-white rounded-lg transition-colors cursor-pointer"
+                        title="Edit Product"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product._id)}
+                        className="p-1.5 hover:bg-red-500/20 text-red-400 hover:text-red-200 rounded-lg transition-colors cursor-pointer"
+                        title="Remove Product"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -344,19 +392,21 @@ export default function VendorProductsPage() {
           </div>
         )}
 
-        {/* ADD PRODUCT MODAL (WITH VARIANTS BUILDER) */}
+        {/* ADD / EDIT PRODUCT MODAL */}
         {modalOpen && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
             <div className="bg-[#021838] border border-[#0052CC] rounded-3xl max-w-2xl w-full my-8 p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-blue-900/50">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-xl bg-[#FFB800]/20 text-[#FFB800]">
-                    <Plus className="w-5 h-5" />
+                  <div className={`p-2 rounded-xl ${editingProduct ? 'bg-blue-500/20 text-blue-300' : 'bg-[#FFB800]/20 text-[#FFB800]'}`}>
+                    {editingProduct ? <Pencil className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                   </div>
                   <div>
-                    <h2 className="text-lg font-black text-white">Add New Store Product</h2>
+                    <h2 className="text-lg font-black text-white">
+                      {editingProduct ? `Edit: ${editingProduct.name}` : 'Add New Store Product'}
+                    </h2>
                     <p className="text-xs text-blue-200/70">
-                      Configure product information, base price, and custom size/count variations.
+                      {editingProduct ? 'Update product details, pricing, and variants.' : 'Configure product information, base price, and custom size/count variations.'}
                     </p>
                   </div>
                 </div>
@@ -587,7 +637,7 @@ export default function VendorProductsPage() {
                 <div className="flex items-center justify-end gap-3 pt-3 border-t border-blue-900/50">
                   <button
                     type="button"
-                    onClick={() => setModalOpen(false)}
+                    onClick={() => { setModalOpen(false); resetForm(); }}
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl text-xs font-bold text-white cursor-pointer"
                   >
                     Cancel
@@ -597,7 +647,10 @@ export default function VendorProductsPage() {
                     disabled={submitting}
                     className="px-5 py-2.5 bg-[#FFB800] hover:bg-[#FFA500] disabled:bg-gray-700 text-[#021430] font-black rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg"
                   >
-                    {submitting ? 'Publishing...' : 'Publish Product to Store'}
+                    {submitting
+                      ? (editingProduct ? 'Saving Changes...' : 'Publishing...')
+                      : (editingProduct ? 'Save Changes' : 'Publish Product to Store')
+                    }
                   </button>
                 </div>
               </form>
