@@ -305,14 +305,14 @@ export default function MarketplaceDemoShowcase() {
                   <HeartHandshake className="w-5 h-5" />
                 </span>
                 <div>
-                  <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400">
-                    Feature 4 • Social Impact Program
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-300">
+                    Feature 4 • Community Welfare Grants
                   </span>
-                  <h4 className="font-bold text-xs text-white">
-                    Super Admin Revenue Donations & Community Grants
+                  <h4 className="font-bold text-sm text-white">
+                    Financial Assistance & Welfare Grants
                   </h4>
-                  <p className="text-[11px] text-blue-200/70 mt-0.5">
-                    Platform revenue dedicated to student education, spice cultivators, and medical assistance.
+                  <p className="text-xs text-slate-200 mt-1">
+                    Direct financial assistance for higher education students, organic spice farmers, and families needing emergency medical relief.
                   </p>
                 </div>
               </div>
@@ -327,9 +327,9 @@ export default function MarketplaceDemoShowcase() {
                 <button
                   type="button"
                   onClick={scrollToDonations}
-                  className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer transition-colors"
+                  className="inline-flex items-center gap-1 font-bold text-[#FFB800] hover:text-yellow-300 cursor-pointer transition-colors"
                 >
-                  <span>Apply for Aid (Scroll Down)</span>
+                  <span>Apply for Grants (View Ad)</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
