@@ -19,6 +19,9 @@ import {
   Sparkles,
   Pencil,
   RefreshCw,
+  Camera,
+  UploadCloud,
+  Upload,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -50,6 +53,99 @@ export default function VendorProductsPage() {
   const [description, setDescription] = useState('');
   const [mainImage, setMainImage] = useState('');
   const [galleryImages, setGalleryImages] = useState<string[]>(['', '', '']);
+  const [uploadingMain, setUploadingMain] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState<{ [key: number]: boolean }>({});
+  const [uploadingVariant, setUploadingVariant] = useState<{ [key: number]: boolean }>({});
+
+  // Helper to compress device images into high quality, lightweight data URLs
+  const compressImageFile = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.82): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(event.target?.result as string);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedBase64);
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
+  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingMain(true);
+    try {
+      const compressed = await compressImageFile(file);
+      setMainImage(compressed);
+    } catch (err) {
+      console.error('Failed to process image:', err);
+      setErrorMsg('Failed to process device image. Please select another image file.');
+    } finally {
+      setUploadingMain(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleGalleryImageUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingGallery((prev) => ({ ...prev, [index]: true }));
+    try {
+      const compressed = await compressImageFile(file);
+      setGalleryImages((prev) => {
+        const updated = [...prev];
+        updated[index] = compressed;
+        return updated;
+      });
+    } catch (err) {
+      console.error('Failed to process gallery image:', err);
+    } finally {
+      setUploadingGallery((prev) => ({ ...prev, [index]: false }));
+      e.target.value = '';
+    }
+  };
+
+  const handleVariantImageUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingVariant((prev) => ({ ...prev, [index]: true }));
+    try {
+      const compressed = await compressImageFile(file);
+      handleVariantChange(index, 'image', compressed);
+    } catch (err) {
+      console.error('Failed to process variant image:', err);
+    } finally {
+      setUploadingVariant((prev) => ({ ...prev, [index]: false }));
+      e.target.value = '';
+    }
+  };
 
   // Dynamic Variants (Sizes / Counts / Weights)
   const [variants, setVariants] = useState<IVariantInput[]>([
@@ -501,33 +597,131 @@ export default function VendorProductsPage() {
                   </div>
                 </div>
 
-                {/* Images */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-blue-100 block">
-                    Product Images (Main image + up to 3 gallery photos)
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="Main Image URL (e.g. https://...)"
-                    value={mainImage}
-                    onChange={(e) => setMainImage(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-[#01142F] border border-blue-800 rounded-xl text-white text-xs font-medium placeholder-blue-300/30 outline-none focus:border-[#FFB800]"
-                  />
-                  <div className="grid grid-cols-3 gap-2">
-                    {galleryImages.map((img, idx) => (
-                      <input
-                        key={idx}
-                        type="url"
-                        placeholder={`Gallery Image #${idx + 1}`}
-                        value={img}
-                        onChange={(e) => {
-                          const updated = [...galleryImages];
-                          updated[idx] = e.target.value;
-                          setGalleryImages(updated);
-                        }}
-                        className="w-full px-3 py-2 bg-[#01142F] border border-blue-900 rounded-xl text-white text-xs font-medium placeholder-blue-300/30 outline-none focus:border-[#FFB800]"
-                      />
-                    ))}
+                {/* Product Images (Device Upload) */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-bold text-blue-100 flex items-center justify-between">
+                      <span>Primary Product Photo *</span>
+                      <span className="text-[10px] text-emerald-400 font-medium">Add from Phone / Computer</span>
+                    </label>
+                    <p className="text-[11px] text-blue-200/60 mt-0.5">
+                      Select photo directly from your device. Camera & gallery supported.
+                    </p>
+                  </div>
+
+                  {/* Main Image Upload Box */}
+                  <div className="relative border-2 border-dashed border-[#0052CC]/60 hover:border-[#FFB800] rounded-2xl p-4 bg-[#01142F]/80 transition-all text-center">
+                    {mainImage ? (
+                      <div className="relative flex flex-col sm:flex-row items-center gap-4">
+                        <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-black/40 border border-[#0052CC]/50 shrink-0 shadow-md">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={mainImage} alt="Main Preview" className="w-full h-full object-cover" />
+                          <span className="absolute bottom-1 left-1 right-1 bg-emerald-600/90 text-white text-[9px] font-black uppercase rounded py-0.5 text-center">
+                            Main Photo
+                          </span>
+                        </div>
+
+                        <div className="text-left space-y-2 flex-1">
+                          <p className="text-xs font-bold text-white flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                            <span>Photo loaded from your device</span>
+                          </p>
+                          <p className="text-[11px] text-gray-400">
+                            This will appear as the cover image on your storefront.
+                          </p>
+
+                          <div className="flex items-center gap-2 pt-1">
+                            <label className="px-3 py-1.5 bg-[#0052CC] hover:bg-[#003893] text-white rounded-xl text-xs font-bold cursor-pointer transition-all inline-flex items-center gap-1.5">
+                              <Camera className="w-3.5 h-3.5" />
+                              <span>{uploadingMain ? 'Loading...' : 'Change Photo'}</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleMainImageUpload}
+                                className="hidden"
+                              />
+                            </label>
+
+                            <button
+                              type="button"
+                              onClick={() => setMainImage('')}
+                              className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center py-6 cursor-pointer group">
+                        <div className="w-14 h-14 rounded-2xl bg-[#0052CC]/20 group-hover:bg-[#FFB800]/20 border border-[#0052CC] group-hover:border-[#FFB800] text-[#FFB800] flex items-center justify-center mb-2 transition-all">
+                          {uploadingMain ? (
+                            <RefreshCw className="w-6 h-6 animate-spin text-[#FFB800]" />
+                          ) : (
+                            <UploadCloud className="w-7 h-7" />
+                          )}
+                        </div>
+                        <span className="text-xs font-black text-white group-hover:text-[#FFB800] transition-colors">
+                          {uploadingMain ? 'Processing Photo...' : 'Click to Upload Product Photo from Device'}
+                        </span>
+                        <span className="text-[11px] text-blue-200/60 mt-1">
+                          Camera Capture & Gallery Photos (JPG, PNG, WebP)
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleMainImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Gallery Photos Upload */}
+                  <div>
+                    <label className="text-[11px] font-bold text-blue-200 block mb-1.5">
+                      Additional Photos (Optional - Up to 3 angles from device):
+                    </label>
+                    <div className="grid grid-cols-3 gap-2.5">
+                      {galleryImages.map((img, idx) => (
+                        <div
+                          key={idx}
+                          className="relative border border-dashed border-blue-900/80 rounded-xl p-2 bg-[#01142F] text-center min-h-[90px] flex flex-col items-center justify-center"
+                        >
+                          {img ? (
+                            <div className="relative w-full h-20 rounded-lg overflow-hidden group">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = [...galleryImages];
+                                  updated[idx] = '';
+                                  setGalleryImages(updated);
+                                }}
+                                className="absolute top-1 right-1 p-1 bg-black/70 hover:bg-rose-600 rounded-full text-white transition-colors cursor-pointer"
+                                title="Remove photo"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ) : (
+                            <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer group py-2">
+                              <Camera className="w-5 h-5 text-blue-400 group-hover:text-[#FFB800] transition-colors mb-1" />
+                              <span className="text-[10px] font-bold text-gray-300 group-hover:text-white">
+                                {uploadingGallery[idx] ? 'Loading...' : `+ Photo #${idx + 1}`}
+                              </span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleGalleryImageUpload(idx, e)}
+                                className="hidden"
+                              />
+                            </label>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -605,15 +799,35 @@ export default function VendorProductsPage() {
 
                       <div>
                         <label className="text-[10px] font-bold text-blue-300 block mb-0.5">
-                          Variant Image (Optional)
+                          Variant Photo (Device)
                         </label>
-                        <input
-                          type="url"
-                          placeholder="https://..."
-                          value={v.image}
-                          onChange={(e) => handleVariantChange(idx, 'image', e.target.value)}
-                          className="w-full px-2.5 py-1.5 bg-[#010e24] border border-blue-900 rounded-lg text-xs text-white placeholder-blue-300/30 outline-none focus:border-[#FFB800]"
-                        />
+                        <div className="flex items-center gap-1.5">
+                          {v.image ? (
+                            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-[#0052CC] shrink-0 bg-black">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={() => handleVariantChange(idx, 'image', '')}
+                                className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 flex items-center justify-center text-white transition-opacity"
+                                title="Remove photo"
+                              >
+                                <X className="w-3 h-3 text-rose-400" />
+                              </button>
+                            </div>
+                          ) : null}
+
+                          <label className="flex-1 px-2.5 py-1.5 bg-[#010e24] hover:bg-[#0052CC]/30 border border-blue-900 hover:border-[#0052CC] rounded-lg text-[10px] text-blue-200 hover:text-white font-bold cursor-pointer transition-all flex items-center justify-center gap-1.5">
+                            <Camera className="w-3 h-3 text-[#FFB800]" />
+                            <span>{uploadingVariant[idx] ? 'Loading...' : v.image ? 'Change Photo' : 'Device Photo'}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleVariantImageUpload(idx, e)}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
                       </div>
 
                       <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-4">
