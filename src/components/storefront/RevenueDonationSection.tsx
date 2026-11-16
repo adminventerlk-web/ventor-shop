@@ -140,7 +140,7 @@ export default function RevenueDonationSection() {
   };
 
   return (
-    <section className="relative w-full py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#010e24] via-[#021838] to-[#010e24] text-white border-y border-[#0052CC]/30 overflow-hidden">
+    <section id="revenue-donations-section" className="relative w-full py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#010e24] via-[#021838] to-[#010e24] text-white border-y border-[#0052CC]/30 overflow-hidden">
       {/* Background Decorative Glow */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#0052CC]/15 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#FFB800]/10 rounded-full blur-3xl pointer-events-none translate-y-1/2" />
