@@ -24,6 +24,7 @@ export default function Footer() {
     { label: language === 'ta' ? 'மளிகை' : 'Groceries', href: '/shop?category=groceries' },
     { label: language === 'ta' ? 'கால்நடை தீவனம்' : 'Rani Animal Feed', href: '/shop?category=animal-feed' },
     { label: language === 'ta' ? 'ஏற்றுமதி' : 'Ceylon Export Hub', href: '/export' },
+    { label: language === 'ta' ? 'விளம்பரம் செய்ய' : 'Advertise With Us', href: '/advertise-with-us' },
     { label: language === 'ta' ? 'எங்களைப் பற்றி' : 'About Us', href: '/about' },
     { label: language === 'ta' ? 'தொடர்பு கொள்ள' : 'Contact Us', href: '/contact' },
   ];

@@ -186,9 +186,14 @@ def generate_pdf(output_paths):
             Paragraph("<b>PASSED</b><br/>Multi-Device", pass_badge)
         ],
         [
-            Paragraph("<b>Responsive Modal Form</b><br/>Fixed Header & Footer", table_cell_bold),
-            Paragraph("Restructured the Ad Creation modal with fixed header, internal smooth scrolling, and pinned footer. Form fields never get cut off and Cancel/Save buttons are always visible on all screen sizes.", table_cell),
-            Paragraph("<b>PASSED</b><br/>Scrollable", pass_badge)
+            Paragraph("<b>Premium Ad Management System</b><br/>Collaborator Marketplace", table_cell_bold),
+            Paragraph("Full-scale professional advertisement marketplace. Includes /advertise-with-us 4-step collaborator request portal, dynamic multi-image layout engine (1, 2, 3, 4, 5+ photos), 6 analytics cards, request review & 1-click live publishing, and placement scheduling.", table_cell),
+            Paragraph("<b>PASSED</b><br/>Full Suite", pass_badge)
+        ],
+        [
+            Paragraph("<b>Dynamic Multi-Image Engine</b><br/>1, 2, 3, 4, 5+ Layouts", table_cell_bold),
+            Paragraph("Frontend dynamically adapts: 1 image = Large Hero Banner, 2 images = Balanced 2-Column Split, 3 images = Asymmetric 3-Card Showcase, 4 images = 2x2 Grid, 5+ images = Interactive Carousel with thumbnail strip. No distortion or text crop.", table_cell),
+            Paragraph("<b>PASSED</b><br/>Auto-Layout", pass_badge)
         ],
     ]
     t1 = Table(tasks_today, colWidths=[130, 335, 75])
