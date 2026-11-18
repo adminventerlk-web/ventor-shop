@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import AdminSidebar from '@/components/admin/AdminSidebar';
 import {
   HeartHandshake,
   Search,
@@ -196,10 +195,8 @@ export default function AdminDonationsPage() {
   const approvedCount = requests.filter((r) => r.status === 'APPROVED' || r.status === 'DISBURSED').length;
 
   return (
-    <div className="flex min-h-screen bg-[#010e24] text-white">
-      <AdminSidebar />
-
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full text-white" style={{ backgroundColor: '#010e24' }}>
+      <div className="w-full">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#0052CC]/30 mb-6">
           <div>
@@ -589,7 +586,7 @@ export default function AdminDonationsPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* ── CREATE INITIATIVE MODAL ── */}
       {createModalOpen && (

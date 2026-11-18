@@ -204,9 +204,7 @@ export default function ProductDetailClient({ product }: { product: IProductDeta
         <div className="flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="bg-gray-100 text-[#101A2D] font-bold px-2.5 py-1 rounded-md">SKU: {product.sku}</span>
-              <span className="text-gray-400 font-semibold">•</span>
-              <span className="text-gray-500 font-bold uppercase">Category: {product.categoryId.name}</span>
+              <span className="bg-gray-100 text-[#101A2D] font-bold px-2.5 py-1 rounded-md uppercase">Category: {product.categoryId.name}</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-black text-[#101A2D] tracking-tight leading-snug">

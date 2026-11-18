@@ -11,19 +11,19 @@ import {
   Store,
   TrendingUp,
   CheckCircle2,
-  Users,
-  Eye,
   Mail,
   X,
   Send,
+  ExternalLink,
+  Layers,
 } from 'lucide-react';
 
-interface ICollabSlide {
+export interface IAdSlide {
   id: string;
   badge: string;
   title: string;
   tagline: string;
-  image: string;
+  images: string[];
   shopName: string;
   shopCategory: string;
   highlightStat: string;
@@ -32,13 +32,17 @@ interface ICollabSlide {
   accentColor: string;
 }
 
-const COLLAB_SLIDES: ICollabSlide[] = [
+const DEFAULT_COLLAB_SLIDES: IAdSlide[] = [
   {
     id: 'slide-1',
     badge: 'Verified Merchant Spotlight',
     title: 'Ceylon Organic Spice Merchants',
-    tagline: 'Premium Alba Ceylon Cinnamon & Pure Highland Cardamom delivered island-wide & globally.',
-    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80',
+    tagline: 'Premium Alba Ceylon Cinnamon, Pure Highland Cardamom & Handpicked Cloves delivered island-wide & globally.',
+    images: [
+      'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=800&q=80',
+    ],
     shopName: 'Ruhunu Organic Spice Co.',
     shopCategory: 'Ceylon Spices & Agri Export',
     highlightStat: '50K+ Monthly Shoppers Reached',
@@ -50,8 +54,11 @@ const COLLAB_SLIDES: ICollabSlide[] = [
     id: 'slide-2',
     badge: 'Partner Store Showcase',
     title: 'Highland Dairy & Fresh Farm Produce',
-    tagline: 'Farm-fresh dairy, pure virgin coconut oils, and authentic rural provisions directly to your doorstep.',
-    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80',
+    tagline: 'Farm-fresh dairy, pure virgin coconut oils, and authentic rural provisions delivered fresh directly to your doorstep.',
+    images: [
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1528750997573-59b89d56f4f7?auto=format&fit=crop&w=800&q=80',
+    ],
     shopName: 'Kandy Green Fields Farm',
     shopCategory: 'Fresh Grocery & Farm Supplies',
     highlightStat: '100% Verified Quality Vendor',
@@ -63,8 +70,11 @@ const COLLAB_SLIDES: ICollabSlide[] = [
     id: 'slide-3',
     badge: 'Artisan Commercial Partner',
     title: 'Authentic Handloom & Ceylon Crafts',
-    tagline: 'Pure cotton handcrafted apparel, heritage home furnishings & traditional Ceylon handicraft exports.',
-    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80',
+    tagline: 'Pure cotton handcrafted apparel, heritage home furnishings & traditional Ceylon handicraft exports direct from master weavers.',
+    images: [
+      'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=800&q=80',
+    ],
     shopName: 'Lanka Heritage Handlooms',
     shopCategory: 'Handloom, Textile & Exports',
     highlightStat: 'Zero Setup Cost • Verified Seller',
@@ -75,7 +85,9 @@ const COLLAB_SLIDES: ICollabSlide[] = [
 ];
 
 export default function PartnerCollabAdBanner() {
+  const [slides, setSlides] = useState<IAdSlide[]>(DEFAULT_COLLAB_SLIDES);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
   const [shopNameInput, setShopNameInput] = useState('');
@@ -83,16 +95,67 @@ export default function PartnerCollabAdBanner() {
   const [categoryInput, setCategoryInput] = useState('Groceries');
   const [submitted, setSubmitted] = useState(false);
 
-  // Auto-rotate every 4 seconds unless paused
+  // Fetch dynamic ads from DB
   useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % COLLAB_SLIDES.length);
-    }, 4200);
-    return () => clearInterval(interval);
-  }, [isPaused]);
+    async function loadDynamicAds() {
+      try {
+        const res = await fetch('/api/ads');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ads && data.ads.length > 0) {
+            const formatted: IAdSlide[] = data.ads.map((ad: any) => ({
+              id: ad._id,
+              badge: ad.badge || 'Verified Partner Spotlight',
+              title: ad.title,
+              tagline: ad.tagline,
+              images: Array.isArray(ad.images) && ad.images.length > 0
+                ? ad.images
+                : ['https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80'],
+              shopName: ad.shopName,
+              shopCategory: ad.shopCategory || 'Partner Merchant',
+              highlightStat: ad.highlightStat || 'Featured Merchant',
+              ctaText: ad.ctaText || 'Visit Partner Store',
+              ctaLink: ad.ctaLink || '/virtual-shops',
+              accentColor: ad.accentColor || '#FFB800',
+            }));
+            setSlides(formatted);
+          }
+        }
+      } catch (err) {
+        console.warn('Using default collab slides (offline/db fallback):', err);
+      }
+    }
+    loadDynamicAds();
+  }, []);
 
-  const activeSlide = COLLAB_SLIDES[currentSlide];
+  // Reset internal image index when slide changes
+  useEffect(() => {
+    setCurrentImageIdx(0);
+  }, [currentSlide]);
+
+  // Slide rotation (every 5.5s)
+  useEffect(() => {
+    if (isPaused || slides.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5500);
+    return () => clearInterval(interval);
+  }, [isPaused, slides.length]);
+
+  // Multi-image rotation inside the active slide (every 2.5s)
+  useEffect(() => {
+    const activeSlide = slides[currentSlide];
+    if (!activeSlide || !activeSlide.images || activeSlide.images.length <= 1 || isPaused) return;
+
+    const imgInterval = setInterval(() => {
+      setCurrentImageIdx((prev) => (prev + 1) % activeSlide.images.length);
+    }, 2500);
+
+    return () => clearInterval(imgInterval);
+  }, [currentSlide, slides, isPaused]);
+
+  const activeSlide = slides[currentSlide] || slides[0] || DEFAULT_COLLAB_SLIDES[0];
+  const activeImage = activeSlide.images?.[currentImageIdx] || activeSlide.images?.[0] || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80';
 
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,26 +173,36 @@ export default function PartnerCollabAdBanner() {
         <div
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="relative overflow-hidden rounded-3xl border-2 border-[#FFB800] shadow-2xl transition-all"
+          className="relative overflow-hidden rounded-3xl border-2 shadow-2xl transition-all"
           style={{
             backgroundColor: '#021838',
+            borderColor: activeSlide.accentColor || '#FFB800',
             backgroundImage: 'linear-gradient(135deg, #021838 0%, #062660 55%, #011129 100%)',
             color: '#ffffff',
           }}
         >
-          {/* Ambient Glows */}
-          <div className="absolute -top-24 -left-24 w-80 h-80 bg-[#FFB800]/15 rounded-full blur-3xl pointer-events-none" />
+          {/* Ambient Glowing Orbs */}
+          <div
+            className="absolute -top-24 -left-24 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-20 transition-all duration-700"
+            style={{ backgroundColor: activeSlide.accentColor || '#FFB800' }}
+          />
           <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-[#0052CC]/30 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Top Bar: Ad Label + Sponsor Pitch */}
-          <div className="relative z-10 px-5 pt-5 sm:px-8 sm:pt-6 flex flex-wrap items-center justify-between gap-3 border-b border-blue-900/60 pb-3">
-            <div className="flex items-center gap-2">
+          {/* Top Bar: Live Ad Label + Sponsor Pitch */}
+          <div className="relative z-10 px-5 pt-4 sm:px-8 sm:pt-5 flex flex-wrap items-center justify-between gap-3 border-b border-blue-900/60 pb-3">
+            <div className="flex items-center gap-2.5">
               <span className="p-1.5 rounded-lg bg-[#FFB800] text-[#021838] shadow-sm">
                 <Megaphone className="w-4 h-4 text-[#021838]" />
               </span>
-              <span className="text-[11px] font-black uppercase tracking-widest text-[#FFB800]">
-                FEATURED PARTNER STORES • வணிக கூட்டாண்மை விளம்பரம்
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-black uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>LIVE AD</span>
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-widest text-white/90">
+                  PARTNER STORE SPOTLIGHT • வணிக கூட்டாண்மை விளம்பரம்
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -138,7 +211,7 @@ export default function PartnerCollabAdBanner() {
                   setSubmitted(false);
                   setInquiryModalOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-[#FFB800] hover:text-[#021838] text-white text-[11px] font-bold border border-white/20 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-[#FFB800] hover:text-[#021838] text-white text-[11px] font-black border border-white/20 transition-all cursor-pointer shadow-sm group"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#FFB800] group-hover:text-[#021838]" />
                 <span>Advertise Your Shop Here</span>
@@ -148,15 +221,15 @@ export default function PartnerCollabAdBanner() {
 
           {/* Animated Carousel Body */}
           <div className="relative z-10 p-5 sm:p-8 lg:p-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column: Merchant Details */}
               <div className="lg:col-span-7 space-y-4">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#01142F] border border-blue-500/50 text-xs font-black uppercase tracking-wider text-emerald-300">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#01142F]/90 border border-blue-500/50 text-xs font-black uppercase tracking-wider text-emerald-300">
                   <Store className="w-3.5 h-3.5 text-emerald-400" />
                   <span>{activeSlide.badge}</span>
                   <span className="text-white/40">•</span>
-                  <span className="text-white font-medium">{activeSlide.shopCategory}</span>
+                  <span className="text-[#FFB800] font-bold">{activeSlide.shopCategory}</span>
                 </div>
 
                 {/* Title */}
@@ -180,7 +253,7 @@ export default function PartnerCollabAdBanner() {
                   </div>
                   <div className="flex items-center gap-1.5 text-xs font-bold text-white/90 bg-[#01142F] px-3 py-1.5 rounded-xl border border-blue-800">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>Verified Shop Partner</span>
+                    <span>Official Verified Partner</span>
                   </div>
                 </div>
 
@@ -188,7 +261,7 @@ export default function PartnerCollabAdBanner() {
                 <div className="pt-3 flex flex-wrap items-center gap-3">
                   <Link
                     href={activeSlide.ctaLink}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0052CC] to-[#003893] hover:from-[#FFB800] hover:to-amber-500 hover:text-[#021838] text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0052CC] to-[#003893] hover:from-[#FFB800] hover:to-amber-500 hover:text-[#021838] text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg cursor-pointer transform hover:-translate-y-0.5"
                   >
                     <span>{activeSlide.ctaText}</span>
                     <ArrowRight className="w-4 h-4" />
@@ -207,19 +280,42 @@ export default function PartnerCollabAdBanner() {
                 </div>
               </div>
 
-              {/* Right Column: Visual Showcase Card */}
+              {/* Right Column: Visual Showcase Card with Multi-Image Animation */}
               <div className="lg:col-span-5 relative">
-                <div className="relative rounded-2xl overflow-hidden border-2 border-[#FFB800]/80 shadow-2xl group aspect-[4/3] bg-gray-900">
+                <div
+                  className="relative rounded-2xl overflow-hidden border-2 shadow-2xl group aspect-[4/3] bg-gray-950 transition-all duration-500"
+                  style={{ borderColor: `${activeSlide.accentColor || '#FFB800'}` }}
+                >
+                  {/* Active Animated Image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={activeSlide.image}
+                    key={activeImage}
+                    src={activeImage}
                     alt={activeSlide.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-all duration-700 transform group-hover:scale-105 animate-fadeIn"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#021838] via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#021838] via-black/25 to-transparent pointer-events-none" />
+
+                  {/* Multi-image indicators on top of image */}
+                  {activeSlide.images && activeSlide.images.length > 1 && (
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
+                      <span className="text-[10px] font-bold text-white/80 mr-1">
+                        {currentImageIdx + 1}/{activeSlide.images.length}
+                      </span>
+                      {activeSlide.images.map((_, imgI) => (
+                        <button
+                          key={imgI}
+                          onClick={() => setCurrentImageIdx(imgI)}
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            currentImageIdx === imgI ? 'bg-[#FFB800] w-4' : 'bg-white/40'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
 
                   {/* Floating Merchant Info Card on Image */}
-                  <div className="absolute bottom-3 left-3 right-3 p-3 bg-[#021838]/90 backdrop-blur-md rounded-xl border border-blue-500/50 flex items-center justify-between">
+                  <div className="absolute bottom-3 left-3 right-3 p-3.5 bg-[#021838]/95 backdrop-blur-md rounded-xl border border-blue-500/50 flex items-center justify-between shadow-xl">
                     <div>
                       <p className="text-[10px] uppercase font-black text-[#FFB800] tracking-wider">
                         {activeSlide.shopCategory}
@@ -227,25 +323,26 @@ export default function PartnerCollabAdBanner() {
                       <h4 className="text-sm font-black text-white">{activeSlide.shopName}</h4>
                     </div>
                     <Link
-                      href="/virtual-shops"
-                      className="px-3 py-1.5 bg-[#0052CC] hover:bg-[#FFB800] hover:text-[#021838] text-white rounded-lg text-xs font-black transition-colors"
+                      href={activeSlide.ctaLink}
+                      className="px-3.5 py-1.5 bg-[#0052CC] hover:bg-[#FFB800] hover:text-[#021838] text-white rounded-lg text-xs font-black transition-colors flex items-center gap-1 shadow-sm"
                     >
-                      Shop Now
+                      <span>Shop Now</span>
+                      <ExternalLink className="w-3 h-3" />
                     </Link>
                   </div>
                 </div>
 
-                {/* Carousel Controls */}
+                {/* Carousel Controls Strip */}
                 <div className="flex items-center justify-between mt-3 px-1">
-                  {/* Dots */}
+                  {/* Dots for Slides */}
                   <div className="flex items-center gap-1.5">
-                    {COLLAB_SLIDES.map((_, idx) => (
+                    {slides.map((_, idx) => (
                       <button
                         key={idx}
                         onClick={() => setCurrentSlide(idx)}
                         aria-label={`Go to slide ${idx + 1}`}
                         className={`h-2 transition-all rounded-full cursor-pointer ${
-                          currentSlide === idx ? 'w-6 bg-[#FFB800]' : 'w-2 bg-white/30 hover:bg-white/60'
+                          currentSlide === idx ? 'w-7 bg-[#FFB800]' : 'w-2 bg-white/30 hover:bg-white/60'
                         }`}
                       />
                     ))}
@@ -256,7 +353,7 @@ export default function PartnerCollabAdBanner() {
                     <button
                       onClick={() =>
                         setCurrentSlide(
-                          (prev) => (prev - 1 + COLLAB_SLIDES.length) % COLLAB_SLIDES.length
+                          (prev) => (prev - 1 + slides.length) % slides.length
                         )
                       }
                       aria-label="Previous slide"
@@ -265,7 +362,7 @@ export default function PartnerCollabAdBanner() {
                       <ChevronLeft className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => setCurrentSlide((prev) => (prev + 1) % COLLAB_SLIDES.length)}
+                      onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
                       aria-label="Next slide"
                       className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
                     >

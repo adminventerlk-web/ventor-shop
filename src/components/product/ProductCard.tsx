@@ -157,9 +157,6 @@ export default function ProductCard({ product, variant = 'default' }: { product:
       {/* Content Info */}
       <div className="flex-1 flex flex-col justify-between space-y-2">
         <div className="space-y-1">
-          <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
-            SKU: {product.sku}
-          </span>
           <Link href={`/product/${product.slug}`} className="block">
             <h3 className="font-bold text-gray-900 hover:text-[#0052CC] text-xs sm:text-sm leading-snug line-clamp-2 transition-colors">
               {product.name}

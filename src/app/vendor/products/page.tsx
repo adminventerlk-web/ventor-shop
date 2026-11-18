@@ -415,14 +415,13 @@ export default function VendorProductsPage() {
 
                     {/* Product Content */}
                     <div className="p-4 space-y-2">
-                      <div className="flex items-center justify-between text-[10px] text-blue-300/80 font-bold uppercase">
-                        <span>SKU: {product.sku}</span>
-                        {variantsList.length > 0 && (
-                          <span className="text-[#FFB800] bg-[#FFB800]/10 px-1.5 py-0.5 rounded">
-                            {variantsList.length} Variations
+                      {variantsList.length > 0 && (
+                        <div className="flex items-center justify-end text-[10px] font-bold uppercase">
+                          <span className="text-[#FFB800] bg-[#FFB800]/10 px-2 py-0.5 rounded font-black">
+                            {variantsList.length} Variations / Sizes
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       <h3 className="font-bold text-sm text-white line-clamp-1">{product.name}</h3>
 

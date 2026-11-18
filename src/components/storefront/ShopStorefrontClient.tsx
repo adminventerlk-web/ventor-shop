@@ -228,9 +228,6 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
                     </div>
 
                     <div className="p-4 space-y-1.5">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                        SKU: {product.sku}
-                      </span>
                       <h3 className="font-bold text-sm text-[#021838] group-hover:text-[#0052CC] transition-colors line-clamp-2 leading-snug">
                         {product.name}
                       </h3>

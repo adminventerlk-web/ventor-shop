@@ -704,7 +704,7 @@ export default function AdminProductsPage() {
               <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search products by Name or SKU..."
+                placeholder="Search products by Name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-1.5 bg-gray-50 border border-gray-255 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
@@ -770,17 +770,12 @@ export default function AdminProductsPage() {
                             <div className="space-y-1 max-w-xs sm:max-w-sm">
                               <p className="text-[#101A2D] font-extrabold text-sm line-clamp-1">{prod.name}</p>
                               
-                              {/* SKU & Short Description */}
-                              <div className="flex flex-wrap items-center gap-2">
-                                <span className="font-mono text-[10px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded border border-gray-200 font-bold">
-                                  SKU: {prod.sku}
-                                </span>
-                                {prod.shortDescription && (
-                                  <span className="text-[11px] text-gray-500 line-clamp-1">
-                                    {prod.shortDescription}
-                                  </span>
-                                )}
-                              </div>
+                              {/* Short Description */}
+                              {prod.shortDescription && (
+                                <p className="text-[11px] text-gray-500 line-clamp-1">
+                                  {prod.shortDescription}
+                                </p>
+                              )}
 
                               {/* Badges: Active / Featured / Best Seller / New */}
                               <div className="flex flex-wrap items-center gap-1.5 pt-0.5">

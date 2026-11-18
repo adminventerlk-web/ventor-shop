@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import AdminSidebar from '@/components/admin/AdminSidebar';
 import {
   Sparkles,
   Package,
@@ -173,12 +172,7 @@ export default function FeaturedProductsAdminPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-[#F4F7FC] flex">
-      {/* Admin Sidebar */}
-      <AdminSidebar />
-
-      {/* Main Content Area */}
-      <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="space-y-6">
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
           <div className="flex items-center gap-3">
@@ -336,7 +330,7 @@ export default function FeaturedProductsAdminPage() {
               <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search products by Name, SKU, or Shop..."
+                placeholder="Search products by Name or Shop..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-semibold text-gray-900 focus:bg-white focus:border-[#0052CC] focus:outline-none"
@@ -433,9 +427,6 @@ export default function FeaturedProductsAdminPage() {
                             />
                             <div>
                               <p className="font-bold text-gray-900 line-clamp-1">{prod.name}</p>
-                              <span className="font-mono text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200 font-bold">
-                                SKU: {prod.sku}
-                              </span>
                             </div>
                           </div>
                         </td>
@@ -519,6 +510,5 @@ export default function FeaturedProductsAdminPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
