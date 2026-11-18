@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Package, Plus, Search, Edit, Trash2, CheckCircle, AlertTriangle } from 'lucide-react';
+import Link from 'next/link';
+import { Package, Plus, Search, Edit, Trash2, CheckCircle, AlertTriangle, Sparkles, Store, ShieldCheck } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 import { compressImageFile } from '@/lib/utils/imageCompressor';
 
@@ -30,6 +31,9 @@ interface IProduct {
   isBestSeller: boolean;
   isNewArrival: boolean;
   bulkPricing?: { minQty: number; discountPercent: number }[];
+  vendorId?: string | null;
+  shopName?: string;
+  source?: 'vendor' | 'admin';
 }
 
 export default function AdminProductsPage() {
@@ -695,7 +699,7 @@ export default function AdminProductsPage() {
       {!formOpen && (
         <div className="space-y-4">
           {/* Controls Bar */}
-          <div className="bg-white p-4 rounded-xl border border-gray-150 shadow-2xs flex justify-between items-center gap-4">
+          <div className="bg-white p-4 rounded-xl border border-gray-150 shadow-2xs flex flex-wrap justify-between items-center gap-4">
             <div className="relative w-80">
               <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -706,8 +710,17 @@ export default function AdminProductsPage() {
                 className="w-full pl-9 pr-4 py-1.5 bg-gray-50 border border-gray-255 rounded-lg outline-none focus:bg-white focus:border-[#1A2A4A] text-gray-900 font-bold"
               />
             </div>
-            <div className="text-gray-400">
-              {filteredProducts.length} items loaded
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/featured"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 border border-amber-400/60 font-bold text-xs transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                <span>Manage Featured (Max 10 / Cat)</span>
+              </Link>
+              <div className="text-gray-400 text-xs">
+                {filteredProducts.length} items loaded
+              </div>
             </div>
           </div>
 
@@ -787,6 +800,15 @@ export default function AdminProductsPage() {
                                 {prod.isNewArrival && (
                                   <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-sm bg-blue-50 text-blue-700 border border-blue-200">
                                     ✨ New
+                                  </span>
+                                )}
+                                {(prod.vendorId || prod.source === 'vendor') ? (
+                                  <span className="text-[10px] font-black px-1.5 py-0.5 rounded-sm bg-amber-50 text-amber-900 border border-amber-300">
+                                    🏬 Shop: {prod.shopName || 'Vendor Partner'}
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-600 border border-gray-200">
+                                    🛡️ Admin Direct
                                   </span>
                                 )}
                               </div>

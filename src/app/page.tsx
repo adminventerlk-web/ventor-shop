@@ -6,6 +6,7 @@ import Hero from '@/components/storefront/Hero';
 import VirtualShops from '@/components/storefront/VirtualShops';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import PromoBanners from '@/components/storefront/PromoBanners';
+import PartnerCollabAdBanner from '@/components/storefront/PartnerCollabAdBanner';
 import RevenueDonationSection from '@/components/storefront/RevenueDonationSection';
 import FeaturedProducts from '@/components/storefront/FeaturedProducts';
 import ApprovedShopsSection from '@/components/storefront/ApprovedShopsSection';
@@ -66,14 +67,19 @@ export default function HomePage() {
         <PromoBanners />
       </Suspense>
 
-      {/* 5b. Super Admin Revenue Donation & Community Impact Aid Section */}
-      <Suspense fallback={<div className="h-64 bg-transparent animate-pulse" />}>
-        <RevenueDonationSection />
+      {/* 5b. Partner & Shop Collaboration Animated Ad Banner */}
+      <Suspense fallback={<div className="h-56 bg-transparent animate-pulse" />}>
+        <PartnerCollabAdBanner />
       </Suspense>
 
-      {/* 6. Virtual Shops / Shop Categories */}
+      {/* 6. Virtual Shops / Explore Shops */}
       <Suspense fallback={<div className="h-96 bg-transparent animate-pulse" />}>
         <VirtualShops />
+      </Suspense>
+
+      {/* 6b. Community Welfare Aid Grants Section (Compact, Below Explore Shops) */}
+      <Suspense fallback={<div className="h-28 bg-transparent animate-pulse" />}>
+        <RevenueDonationSection />
       </Suspense>
 
       {/* 8. Why Shop With VenterShop? Banner */}

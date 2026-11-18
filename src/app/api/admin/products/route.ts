@@ -88,6 +88,8 @@ export async function GET() {
           slug: p.categoryId.slug,
         };
       }
+      // Add source field so admin UI can distinguish vendor vs admin products
+      p.source = p.vendorId ? 'vendor' : 'admin';
       return p;
     });
 

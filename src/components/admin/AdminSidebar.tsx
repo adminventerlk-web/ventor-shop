@@ -32,6 +32,7 @@ export default function AdminSidebar() {
   const links = [
     { label: 'Overview', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
     { label: 'Shop Approvals', href: '/admin/shops', icon: <Store className="w-4 h-4" /> },
+    { label: 'Featured Products', href: '/admin/featured', icon: <Sparkles className="w-4 h-4 text-[#FFB800]" /> },
     { label: 'Revenue Donations', href: '/admin/donations', icon: <HeartHandshake className="w-4 h-4" /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag className="w-4 h-4" /> },
     { label: 'Products', href: '/admin/products', icon: <Package className="w-4 h-4" /> },
