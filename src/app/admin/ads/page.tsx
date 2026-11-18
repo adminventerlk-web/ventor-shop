@@ -19,6 +19,8 @@ import {
   X,
   Layers,
   RefreshCw,
+  UploadCloud,
+  Award,
 } from 'lucide-react';
 
 interface IAdItem {
@@ -33,6 +35,8 @@ interface IAdItem {
   ctaText: string;
   ctaLink: string;
   accentColor: string;
+  offerPill?: string;
+  rating?: string;
   isActive: boolean;
   displayOrder: number;
   createdAt: string;
@@ -44,6 +48,7 @@ export default function AdminAdsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAd, setEditingAd] = useState<IAdItem | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // Form fields
@@ -51,17 +56,58 @@ export default function AdminAdsPage() {
   const [shopName, setShopName] = useState('');
   const [shopCategory, setShopCategory] = useState('Partner Merchant');
   const [tagline, setTagline] = useState('');
-  const [badge, setBadge] = useState('Verified Merchant Spotlight');
+  const [badge, setBadge] = useState('Official Partner Spotlight');
   const [highlightStat, setHighlightStat] = useState('50K+ Monthly Shoppers');
-  const [images, setImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80',
-  ]);
+  const [offerPill, setOfferPill] = useState('🔥 15% OFF On First Order');
+  const [rating, setRating] = useState('4.9 ★ Verified Partner');
+  const [images, setImages] = useState<string[]>([]);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [ctaText, setCtaText] = useState('Visit Partner Store');
   const [ctaLink, setCtaLink] = useState('/virtual-shops');
   const [accentColor, setAccentColor] = useState('#FFB800');
   const [isActive, setIsActive] = useState(true);
   const [displayOrder, setDisplayOrder] = useState(0);
+
+  // Compress device images into clean, lightweight data URLs
+  const compressImageFile = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.85): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(img.src);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
 
   const fetchAds = async () => {
     setLoading(true);
@@ -86,10 +132,13 @@ export default function AdminAdsPage() {
     setEditingAd(null);
     setTitle('');
     setShopName('');
-    setShopCategory('Grocery & Provisions');
+    setShopCategory('Groceries & Provisions');
     setTagline('');
-    setBadge('Verified Partner Spotlight');
-    setHighlightStat('50K+ Monthly Shoppers');
+    setBadge('Official Partner Spotlight');
+    setHighlightStat('50K+ Monthly Shoppers Reached');
+    setOfferPill('🔥 Special Partner Deal');
+    setRating('4.9 ★ Verified Partner');
+    // Default image if none provided yet
     setImages(['https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80']);
     setNewImageUrl('');
     setCtaText('Visit Partner Store');
@@ -106,9 +155,15 @@ export default function AdminAdsPage() {
     setShopName(ad.shopName);
     setShopCategory(ad.shopCategory || 'Partner Merchant');
     setTagline(ad.tagline);
-    setBadge(ad.badge || 'Verified Partner Spotlight');
+    setBadge(ad.badge || 'Official Partner Spotlight');
     setHighlightStat(ad.highlightStat || 'Featured Merchant');
-    setImages(ad.images && ad.images.length > 0 ? ad.images : ['https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80']);
+    setOfferPill(ad.offerPill || '🔥 Verified Partner Store');
+    setRating(ad.rating || '4.9 ★ Verified Partner');
+    setImages(
+      ad.images && ad.images.length > 0
+        ? ad.images
+        : ['https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80']
+    );
     setNewImageUrl('');
     setCtaText(ad.ctaText || 'Visit Partner Store');
     setCtaLink(ad.ctaLink || '/virtual-shops');
@@ -118,53 +173,73 @@ export default function AdminAdsPage() {
     setIsModalOpen(true);
   };
 
-  const handleAddImage = () => {
+  // Device file upload with multi-select and canvas compression
+  const handleDeviceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImages(true);
+    try {
+      const promises = Array.from(files).map((file) => compressImageFile(file));
+      const compressedList = await Promise.all(promises);
+
+      setImages((prev) => {
+        // If previous only contained the placeholder unsplash photo, replace it
+        const hasPlaceholder = prev.some((url) => url.includes('unsplash.com/photo-1596040033229'));
+        if (hasPlaceholder && prev.length === 1) {
+          return compressedList;
+        }
+        return [...prev, ...compressedList];
+      });
+    } catch (err) {
+      console.error('Error processing device images:', err);
+      alert('Failed to process image files from device.');
+    } finally {
+      setUploadingImages(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleAddImageUrl = () => {
     if (!newImageUrl.trim()) return;
-    setImages([...images, newImageUrl.trim()]);
+    setImages((prev) => [...prev, newImageUrl.trim()]);
     setNewImageUrl('');
   };
 
   const handleRemoveImage = (index: number) => {
     if (images.length <= 1) {
-      alert('At least one image is required for the ad showcase.');
+      alert('At least 1 image is required for the ad billboard.');
       return;
     }
-    setImages(images.filter((_, i) => i !== index));
-  };
-
-  const handleDeviceImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      if (base64) {
-        setImages([...images, base64]);
-      }
-    };
-    reader.readAsDataURL(file);
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !shopName || !tagline) {
-      alert('Title, Shop Name, and Tagline are required.');
+    if (!title.trim() || !shopName.trim() || !tagline.trim()) {
+      alert('Please fill in Ad Title, Shop Name, and Tagline.');
+      return;
+    }
+
+    if (images.length === 0) {
+      alert('Please upload at least one image from your device.');
       return;
     }
 
     setSaving(true);
     try {
       const payload = {
-        title,
-        shopName,
-        shopCategory,
-        tagline,
-        badge,
-        highlightStat,
+        title: title.trim(),
+        shopName: shopName.trim(),
+        shopCategory: shopCategory.trim(),
+        tagline: tagline.trim(),
+        badge: badge.trim(),
+        highlightStat: highlightStat.trim(),
+        offerPill: offerPill.trim(),
+        rating: rating.trim(),
         images,
-        ctaText,
-        ctaLink,
+        ctaText: ctaText.trim(),
+        ctaLink: ctaLink.trim(),
         accentColor,
         isActive,
         displayOrder: Number(displayOrder) || 0,
@@ -188,7 +263,7 @@ export default function AdminAdsPage() {
       if (res.ok) {
         setNotification({
           type: 'success',
-          message: editingAd ? 'Ad banner updated successfully!' : 'New Partner Ad created successfully!',
+          message: editingAd ? 'Ad billboard updated successfully!' : 'New Partner Ad published successfully!',
         });
         setIsModalOpen(false);
         await fetchAds();
@@ -254,7 +329,7 @@ export default function AdminAdsPage() {
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
-              Manage promotional partner ads, shop collaborations & interactive multi-image billboards on the homepage.
+              Manage multi-image partner billboards, shop collaborations, and live promotions displayed on the homepage.
             </p>
           </div>
         </div>
@@ -263,7 +338,7 @@ export default function AdminAdsPage() {
           <button
             onClick={fetchAds}
             disabled={loading}
-            className="p-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors"
+            className="p-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors cursor-pointer"
             title="Refresh ads"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -316,13 +391,13 @@ export default function AdminAdsPage() {
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>{notification.message}</span>
           </div>
-          <button onClick={() => setNotification(null)} className="text-emerald-700 hover:text-emerald-950">
+          <button onClick={() => setNotification(null)} className="text-emerald-700 hover:text-emerald-950 cursor-pointer">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Ads List */}
+      {/* Ads List Grid */}
       {loading ? (
         <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
           <div className="w-8 h-8 border-4 border-[#0052CC] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -334,9 +409,9 @@ export default function AdminAdsPage() {
             <Megaphone className="w-8 h-8" />
           </div>
           <div>
-            <h3 className="text-base font-black text-[#021838]">No Custom Ads Configured Yet</h3>
+            <h3 className="text-base font-black text-[#021838]">No Custom Ads Created Yet</h3>
             <p className="text-xs text-gray-500 max-w-md mx-auto mt-1">
-              Homepage is currently showing default verified merchant spotlights. Click &quot;Create New Ad&quot; to add custom shop ads.
+              Homepage is currently showing default verified partner spotlights. Click &quot;Create New Ad&quot; below to upload shop photos from your device.
             </p>
           </div>
           <button
@@ -358,16 +433,16 @@ export default function AdminAdsPage() {
             >
               {/* Ad Card Top Preview */}
               <div>
-                <div className="relative h-48 bg-gray-900 overflow-hidden">
+                <div className="relative h-48 bg-gray-950 overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={ad.images?.[0] || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80'}
                     alt={ad.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-                  {/* Badge & Status Strip */}
+                  {/* Top Badges */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                     <span
                       className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg backdrop-blur-md text-white border"
@@ -412,9 +487,14 @@ export default function AdminAdsPage() {
                       <TrendingUp className="w-3.5 h-3.5 text-[#0052CC]" />
                       <span>{ad.highlightStat}</span>
                     </span>
-                    <span className="text-[11px] font-bold text-gray-600 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
-                      {ad.images?.length || 1} Image{ad.images?.length > 1 ? 's' : ''} (Animated)
+                    <span className="text-[11px] font-bold text-gray-700 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
+                      {ad.images?.length || 1} Photo{ad.images?.length > 1 ? 's' : ''} (Multi-Animation)
                     </span>
+                    {ad.offerPill && (
+                      <span className="text-[11px] font-black text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                        {ad.offerPill}
+                      </span>
+                    )}
                     <span className="text-[11px] font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
                       Order: {ad.displayOrder}
                     </span>
@@ -455,116 +535,255 @@ export default function AdminAdsPage() {
         </div>
       )}
 
-      {/* CREATE / EDIT MODAL */}
+      {/* ── CREATE / EDIT MODAL (RESPONSIVE WITH FIXED HEADER & FOOTER) ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl border border-gray-200 max-w-2xl w-full p-6 shadow-2xl space-y-4 my-8">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="p-2 bg-blue-50 text-[#0052CC] rounded-xl">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-hidden">
+          <div className="bg-white rounded-3xl border border-gray-200 max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* 1. Modal Fixed Header */}
+            <div className="p-5 border-b border-gray-200 shrink-0 flex items-center justify-between bg-white">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 bg-blue-50 text-[#0052CC] rounded-xl border border-blue-100">
                   <Megaphone className="w-5 h-5" />
                 </span>
-                <h3 className="font-black text-lg text-[#021838]">
-                  {editingAd ? 'Edit Partner Ad Campaign' : 'Create New Partner Ad'}
-                </h3>
+                <div>
+                  <h3 className="font-black text-lg text-[#021838]">
+                    {editingAd ? 'Edit Partner Ad Campaign' : 'Create New Partner Ad'}
+                  </h3>
+                  <p className="text-xs text-gray-500 font-medium">
+                    Upload photos directly from your phone/PC & publish to the homepage billboard.
+                  </p>
+                </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+                aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
+            {/* 2. Scrollable Form Body */}
+            <form id="ad-campaign-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs font-sans">
+              {/* Headline & Shop Name */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Headline / Ad Title *</label>
+                  <label className="block font-black text-gray-800 mb-1">
+                    Headline / Ad Title <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Ceylon Organic Spice Merchants"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Shop Name *</label>
+                  <label className="block font-black text-gray-800 mb-1">
+                    Shop / Brand Name <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
                     value={shopName}
                     onChange={(e) => setShopName(e.target.value)}
                     placeholder="e.g. Ruhunu Organic Spice Co."
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
               </div>
 
+              {/* Category & Badge */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Shop Category</label>
+                  <label className="block font-black text-gray-800 mb-1">Shop Category</label>
                   <input
                     type="text"
                     value={shopCategory}
                     onChange={(e) => setShopCategory(e.target.value)}
                     placeholder="e.g. Ceylon Spices & Agri Export"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Badge Tag</label>
+                  <label className="block font-black text-gray-800 mb-1">Badge Tag</label>
                   <input
                     type="text"
                     value={badge}
                     onChange={(e) => setBadge(e.target.value)}
-                    placeholder="e.g. Verified Merchant Spotlight"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    placeholder="e.g. Official Partner Spotlight"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
               </div>
 
+              {/* Tagline / Copy */}
               <div>
-                <label className="block font-black text-gray-700 mb-1">Tagline / Description *</label>
+                <label className="block font-black text-gray-800 mb-1">
+                  Tagline / Description <span className="text-red-500">*</span>
+                </label>
                 <textarea
                   rows={2}
                   required
                   value={tagline}
                   onChange={(e) => setTagline(e.target.value)}
-                  placeholder="e.g. Premium Alba Ceylon Cinnamon & Cardamom delivered island-wide."
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                  placeholder="e.g. Export-grade Alba Ceylon Cinnamon & Cardamom delivered fresh across the island and worldwide."
+                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                 />
               </div>
 
+              {/* Offer Pill & Rating */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Highlight Stat / Bullet</label>
+                  <label className="block font-black text-gray-800 mb-1">Special Offer Pill (Optional)</label>
+                  <input
+                    type="text"
+                    value={offerPill}
+                    onChange={(e) => setOfferPill(e.target.value)}
+                    placeholder="e.g. 🔥 15% OFF On Bulk Spices"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block font-black text-gray-800 mb-1">Trust Rating / Stat</label>
+                  <input
+                    type="text"
+                    value={rating}
+                    onChange={(e) => setRating(e.target.value)}
+                    placeholder="e.g. 4.9 ★ (1,840+ Orders)"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              {/* ── DEVICE IMAGE UPLOAD SECTION (HERO FEATURE) ── */}
+              <div className="border-2 border-dashed border-[#0052CC]/40 rounded-2xl p-4 bg-blue-50/30 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <label className="font-black text-sm text-[#021838] flex items-center gap-1.5">
+                      <UploadCloud className="w-4 h-4 text-[#0052CC]" />
+                      <span>Upload Photos From Your Device (Phone / PC)</span>
+                    </label>
+                    <p className="text-[11px] text-gray-500 font-medium">
+                      Select 1 to 4 photos. Multiple images will automatically crossfade and animate on the homepage!
+                    </p>
+                  </div>
+
+                  {/* Device Upload Trigger Button */}
+                  <label className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#0052CC] hover:bg-[#003893] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0">
+                    <ImageIcon className="w-4 h-4" />
+                    <span>{uploadingImages ? 'Compressing...' : 'Choose Photos'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleDeviceImageUpload}
+                      disabled={uploadingImages}
+                    />
+                  </label>
+                </div>
+
+                {/* Uploading indicator */}
+                {uploadingImages && (
+                  <div className="p-3 bg-blue-100 rounded-xl text-center text-xs font-bold text-blue-900 flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin" />
+                    <span>Compressing device photos for high-speed loading...</span>
+                  </div>
+                )}
+
+                {/* Previews Grid */}
+                {images.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    <p className="text-[11px] font-bold text-gray-700">
+                      Uploaded Photos ({images.length}) — Click (X) to remove:
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      {images.map((img, idx) => (
+                        <div key={idx} className="relative rounded-xl overflow-hidden border-2 border-gray-300 h-24 group bg-black shadow-xs">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                          
+                          {/* Photo Number Pill */}
+                          <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-[10px] font-black text-white">
+                            #{idx + 1} {idx === 0 ? '(Hero)' : ''}
+                          </span>
+
+                          {/* Delete Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors shadow-md cursor-pointer"
+                            title="Remove image"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Fallback Image URL Input */}
+                <div className="pt-2 border-t border-blue-100 flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="Or paste an image URL (Unsplash / CDN)..."
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium outline-none text-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddImageUrl}
+                    className="px-3.5 py-1.5 bg-gray-800 hover:bg-black text-white rounded-lg font-bold cursor-pointer"
+                  >
+                    Add URL
+                  </button>
+                </div>
+              </div>
+
+              {/* Accent Theme Color & Highlight Stat */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-black text-gray-800 mb-1">Highlight Bullet</label>
                   <input
                     type="text"
                     value={highlightStat}
                     onChange={(e) => setHighlightStat(e.target.value)}
                     placeholder="e.g. 50K+ Monthly Shoppers Reached"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Accent Theme Color</label>
-                  <div className="flex items-center gap-2">
+                  <label className="block font-black text-gray-800 mb-1">Accent Theme Color</label>
+                  <div className="flex items-center gap-2 pt-1">
                     <input
                       type="color"
                       value={accentColor}
                       onChange={(e) => setAccentColor(e.target.value)}
                       className="w-10 h-9 p-0.5 rounded-lg border border-gray-300 cursor-pointer"
                     />
-                    <div className="flex items-center gap-1">
-                      {['#FFB800', '#10B981', '#0052CC', '#F43F5E', '#8B5CF6'].map((color) => (
+                    <div className="flex items-center gap-1.5">
+                      {[
+                        { color: '#FFB800', label: 'Gold' },
+                        { color: '#10B981', label: 'Emerald' },
+                        { color: '#38BDF8', label: 'Sky' },
+                        { color: '#0052CC', label: 'Navy' },
+                        { color: '#F43F5E', label: 'Rose' },
+                      ].map((c) => (
                         <button
-                          key={color}
+                          key={c.color}
                           type="button"
-                          onClick={() => setAccentColor(color)}
-                          className="w-6 h-6 rounded-full border border-gray-300 transition-transform hover:scale-110"
-                          style={{ backgroundColor: color }}
+                          onClick={() => setAccentColor(c.color)}
+                          className={`w-6 h-6 rounded-full border transition-all ${
+                            accentColor === c.color ? 'scale-125 ring-2 ring-[#0052CC]' : 'border-gray-300 hover:scale-110'
+                          }`}
+                          style={{ backgroundColor: c.color }}
+                          title={c.label}
                         />
                       ))}
                     </div>
@@ -572,92 +791,39 @@ export default function AdminAdsPage() {
                 </div>
               </div>
 
-              {/* Multi-Image Management (Animates on Homepage) */}
-              <div className="border border-gray-200 rounded-xl p-3 bg-gray-50 space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="font-black text-gray-800">
-                    Ad Images ({images.length}) • Multiple images will auto-crossfade
-                  </label>
-                  <label className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-[11px] font-bold text-gray-700 cursor-pointer hover:bg-gray-100">
-                    <ImageIcon className="w-3.5 h-3.5" />
-                    <span>Upload Device Image</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleDeviceImageUpload}
-                    />
-                  </label>
-                </div>
-
-                {/* Image Previews */}
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {images.map((img, idx) => (
-                    <div key={idx} className="relative rounded-lg overflow-hidden border border-gray-300 h-20 group">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(idx)}
-                        className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Remove image"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Add via URL */}
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    placeholder="Or paste image URL (Unsplash, CDN, etc.)..."
-                    value={newImageUrl}
-                    onChange={(e) => setNewImageUrl(e.target.value)}
-                    className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-gray-900 outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddImage}
-                    className="px-3 py-1.5 bg-gray-800 text-white rounded-lg font-bold hover:bg-black"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-
+              {/* Button Text & Target Link */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Button Text</label>
+                  <label className="block font-black text-gray-800 mb-1">Button Text</label>
                   <input
                     type="text"
                     value={ctaText}
                     onChange={(e) => setCtaText(e.target.value)}
                     placeholder="e.g. Visit Partner Store"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Button Target Link</label>
+                  <label className="block font-black text-gray-800 mb-1">Button Target Link</label>
                   <input
                     type="text"
                     value={ctaLink}
                     onChange={(e) => setCtaLink(e.target.value)}
                     placeholder="e.g. /shops/ruhunu or /virtual-shops"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none focus:border-[#0052CC]"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none focus:border-[#0052CC] focus:bg-white"
                   />
                 </div>
               </div>
 
+              {/* Display Order & Active Live Toggle */}
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label className="block font-black text-gray-700 mb-1">Display Sort Order</label>
+                  <label className="block font-black text-gray-800 mb-1">Display Sort Order</label>
                   <input
                     type="number"
                     value={displayOrder}
                     onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 outline-none"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-gray-900 font-semibold outline-none"
                   />
                 </div>
                 <div className="flex items-center gap-3 pt-5">
@@ -666,30 +832,32 @@ export default function AdminAdsPage() {
                       type="checkbox"
                       checked={isActive}
                       onChange={(e) => setIsActive(e.target.checked)}
-                      className="w-4 h-4 rounded text-[#0052CC] focus:ring-blue-500"
+                      className="w-4 h-4 rounded text-[#0052CC] focus:ring-blue-500 cursor-pointer"
                     />
                     <span className="font-black text-gray-800">Publish Live on Homepage</span>
                   </label>
                 </div>
               </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-5 py-2 bg-[#0052CC] hover:bg-[#003893] text-white rounded-xl font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
-                >
-                  {saving ? 'Saving...' : editingAd ? 'Update Ad' : 'Publish Ad'}
-                </button>
-              </div>
             </form>
+
+            {/* 3. Modal Fixed Footer (ALWAYS visible at the bottom) */}
+            <div className="p-4 bg-gray-50 border-t border-gray-200 shrink-0 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-bold cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="ad-campaign-form"
+                disabled={saving || uploadingImages}
+                className="px-6 py-2.5 bg-[#0052CC] hover:bg-[#003893] text-white rounded-xl font-black uppercase tracking-wider transition-all shadow-md cursor-pointer disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : editingAd ? 'Update Ad Campaign' : 'Publish Ad Live'}
+              </button>
+            </div>
           </div>
         </div>
       )}

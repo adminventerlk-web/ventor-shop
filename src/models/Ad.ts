@@ -11,6 +11,8 @@ export interface IAd extends Document {
   ctaText: string;
   ctaLink: string;
   accentColor: string;
+  offerPill?: string;
+  rating?: string;
   isActive: boolean;
   displayOrder: number;
   createdAt: Date;
@@ -33,6 +35,8 @@ const AdSchema = new Schema<IAd>(
     ctaText: { type: String, default: 'Visit Partner Store' },
     ctaLink: { type: String, default: '/virtual-shops' },
     accentColor: { type: String, default: '#FFB800' },
+    offerPill: { type: String, default: '🔥 Verified Partner Store' },
+    rating: { type: String, default: '4.9 ★ Verified Partner' },
     isActive: { type: Boolean, default: true, index: true },
     displayOrder: { type: Number, default: 0 },
   },

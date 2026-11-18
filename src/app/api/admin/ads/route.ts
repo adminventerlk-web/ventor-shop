@@ -32,6 +32,8 @@ export async function POST(request: Request) {
       ctaText,
       ctaLink,
       accentColor,
+      offerPill,
+      rating,
       isActive,
       displayOrder,
     } = body;
@@ -58,6 +60,8 @@ export async function POST(request: Request) {
       ctaText: ctaText?.trim() || 'Visit Partner Store',
       ctaLink: ctaLink?.trim() || '/virtual-shops',
       accentColor: accentColor?.trim() || '#FFB800',
+      offerPill: offerPill?.trim() || '🔥 Verified Partner Store',
+      rating: rating?.trim() || '4.9 ★ Verified Partner',
       isActive: isActive !== undefined ? isActive : true,
       displayOrder: typeof displayOrder === 'number' ? displayOrder : 0,
     });
