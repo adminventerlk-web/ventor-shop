@@ -102,10 +102,10 @@ export default function FeaturedAdvertisementCard({
       </div>
 
       {/* Main Grid: Copy (Left) + Dynamic Multi-Image Gallery (Right) */}
-      <div className="p-5 sm:p-8 lg:p-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+      <div className="p-4 sm:p-6 lg:p-7">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Left Column: Commercial Story & Value Offer */}
-          <div className="lg:col-span-6 space-y-4">
+          <div className="lg:col-span-6 space-y-3.5">
             <div className="flex flex-wrap items-center gap-2">
               <span
                 className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider text-gray-900 shadow-sm"
@@ -120,11 +120,11 @@ export default function FeaturedAdvertisementCard({
               </span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight tracking-tight">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight tracking-tight">
               {ad.title}
             </h2>
 
-            <p className="text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed">
+            <p className="text-xs sm:text-sm text-blue-100/90 font-normal leading-relaxed">
               {ad.description || ad.tagline}
             </p>
 
