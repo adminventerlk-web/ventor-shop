@@ -15,12 +15,36 @@ import {
   ShieldCheck,
   Zap,
   Briefcase,
+  Layers,
+  Award,
 } from 'lucide-react';
 import FeaturedAdvertisementCard from '@/components/ads/FeaturedAdvertisementCard';
+
+const COLLAB_PREVIEW_IMAGES = [
+  {
+    title: 'Daily Supermarket & Provisions',
+    category: 'Groceries & Household',
+    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80',
+    stat: 'Over 2,500+ Daily Orders',
+  },
+  {
+    title: 'Ceylon Organic Spices & Exports',
+    category: 'Agri Exports & Spices',
+    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80',
+    stat: 'Islandwide & Global Dispatch',
+  },
+  {
+    title: 'Authentic Handloom & Apparel',
+    category: 'Textiles & Handicrafts',
+    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=900&q=80',
+    stat: 'Master Artisan Collective',
+  },
+];
 
 export default function PartnerCollabAdBanner() {
   const [realAds, setRealAds] = useState<any[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [collabImgIdx, setCollabImgIdx] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -57,8 +81,18 @@ export default function PartnerCollabAdBanner() {
     return () => clearInterval(interval);
   }, [isPaused, realAds.length]);
 
+  // Collab showcase auto-cycling every 3.5 seconds
+  useEffect(() => {
+    if (realAds.length > 0 || isPaused) return;
+    const interval = setInterval(() => {
+      setCollabImgIdx((prev) => (prev + 1) % COLLAB_PREVIEW_IMAGES.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [realAds.length, isPaused]);
+
   const hasRealAds = realAds.length > 0;
   const activeAd = hasRealAds ? realAds[currentSlide] : null;
+  const activeCollab = COLLAB_PREVIEW_IMAGES[collabImgIdx];
 
   return (
     <section
@@ -169,8 +203,10 @@ export default function PartnerCollabAdBanner() {
             )}
           </div>
         ) : (
-          /* ── CASE 2: NO DUMMY ADS — OFFICIAL OUT-OF-THE-BOX COLLABORATION BILLBOARD ── */
+          /* ── CASE 2: HIGH-IMPACT VISUAL COLLABORATION BILLBOARD WITH ATTRACTIVE IMAGERY ── */
           <div
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
             className="relative overflow-hidden rounded-3xl border-2 border-[#FFB800] shadow-2xl transition-all duration-500"
             style={{
               backgroundColor: '#021838',
@@ -183,7 +219,7 @@ export default function PartnerCollabAdBanner() {
             <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#FFB800]/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#0052CC]/35 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Top Bar */}
+            {/* Top Status Strip */}
             <div className="relative z-10 px-5 pt-4 sm:px-8 sm:pt-5 flex flex-wrap items-center justify-between gap-3 border-b border-blue-900/60 pb-3.5">
               <div className="flex items-center gap-2.5">
                 <span className="p-1.5 rounded-lg bg-[#FFB800] text-[#021838] shadow-sm">
@@ -213,7 +249,7 @@ export default function PartnerCollabAdBanner() {
               </div>
             </div>
 
-            {/* Collaboration Pitch Grid */}
+            {/* Main Collaboration Pitch Grid */}
             <div className="relative z-10 p-5 sm:p-8 lg:p-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                 {/* Left Column: Commercial Pitch */}
@@ -237,10 +273,9 @@ export default function PartnerCollabAdBanner() {
                   </h2>
 
                   <p className="text-sm sm:text-base text-blue-100 font-normal leading-relaxed max-w-xl">
-                    Are you a business owner, producer, or retailer? Reach over{' '}
-                    <strong className="text-[#FFB800]">50,000+ active shoppers</strong> across Sri Lanka.
-                    Get verified virtual storefronts, automated payments, delivery network, and prime
-                    homepage billboard showcase.
+                    Are you a store owner, distributor, or brand in Sri Lanka? Reach over{' '}
+                    <strong className="text-[#FFB800]">50,000+ active shoppers</strong> with your dedicated
+                    online storefront, multi-vendor logistics, and prime homepage billboard promotion.
                   </p>
 
                   {/* 4 Value Pillars */}
@@ -281,7 +316,7 @@ export default function PartnerCollabAdBanner() {
                       className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
                     >
                       <PhoneCall className="w-4 h-4" />
-                      <span>Chat on WhatsApp</span>
+                      <span>WhatsApp Direct (+94)</span>
                     </a>
 
                     <Link
@@ -294,45 +329,74 @@ export default function PartnerCollabAdBanner() {
                   </div>
                 </div>
 
-                {/* Right Column: Holographic Collaboration Card */}
+                {/* ── RIGHT COLUMN: HIGH-IMPACT VISUAL SHOWCASE CARD WITH MULTI-IMAGE GALLERY ── */}
                 <div className="lg:col-span-5 relative">
-                  <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#01142F]/95 to-[#021838]/95 border-2 border-[#FFB800] shadow-2xl space-y-5 text-center overflow-hidden">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0052CC] to-[#021838] border-2 border-[#FFB800] flex items-center justify-center mx-auto text-[#FFB800] shadow-xl">
-                      <Briefcase className="w-8 h-8 text-[#FFB800]" />
+                  <div className="relative rounded-3xl overflow-hidden border-2 border-[#FFB800] shadow-2xl bg-gray-950 group">
+                    {/* Main Image Showcase */}
+                    <div className="relative aspect-[4/3] w-full overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        key={activeCollab.image}
+                        src={activeCollab.image}
+                        alt={activeCollab.title}
+                        className="w-full h-full object-cover transition-all duration-700 transform group-hover:scale-106 animate-fadeIn"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#021838] via-black/20 to-transparent pointer-events-none" />
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#021838]/85 backdrop-blur-md border border-blue-400/30 text-[10px] font-black text-white shadow-md">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>VERIFIED MERCHANT NETWORK</span>
+                      </div>
+
+                      <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-bold text-[#FFB800] shadow-md">
+                        <TrendingUp className="w-3 h-3 text-[#FFB800]" />
+                        <span>50K+ Monthly Reach</span>
+                      </div>
+
+                      {/* Floating Glassmorphic Partner Card on Image */}
+                      <div className="absolute bottom-3 left-3 right-3 p-3.5 bg-[#021838]/95 backdrop-blur-lg rounded-2xl border border-blue-400/40 flex items-center justify-between shadow-2xl">
+                        <div>
+                          <p className="text-[9px] uppercase font-black text-[#FFB800] tracking-widest">
+                            {activeCollab.category}
+                          </p>
+                          <h4 className="text-sm font-black text-white">{activeCollab.title}</h4>
+                          <p className="text-[10px] text-emerald-400 font-bold">{activeCollab.stat}</p>
+                        </div>
+                        <Link
+                          href="/advertise-with-us"
+                          className="px-3.5 py-2 bg-[#0052CC] hover:bg-[#FFB800] hover:text-[#021838] text-white rounded-xl text-xs font-black transition-all flex items-center gap-1 shadow-md shrink-0 cursor-pointer"
+                        >
+                          <span>Advertise</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
                     </div>
 
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-[#FFB800] block mb-1">
-                        VENTERSHOP ADVERTISING MARKETPLACE
+                    {/* Interactive Thumbnail Selector Strip Below Main Image */}
+                    <div className="p-3 bg-[#01142F] border-t border-blue-900/60 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        {COLLAB_PREVIEW_IMAGES.map((item, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setCollabImgIdx(idx)}
+                            className={`relative w-14 h-10 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                              collabImgIdx === idx
+                                ? 'border-[#FFB800] scale-105 shadow-md'
+                                : 'border-white/20 opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+
+                      <span className="text-[10px] font-bold text-blue-200/70 hidden sm:inline">
+                        Click photo to preview
                       </span>
-                      <h3 className="text-xl font-black text-white">வணிக கூட்டாண்மை விளம்பரம்</h3>
-                      <p className="text-xs text-blue-200/80 mt-1 max-w-xs mx-auto leading-relaxed">
-                        உங்கள் வணிகத்திற்கான விளம்பரத்தை முகப்புப் பக்கத்தில் இடம்பெறச் செய்ய இப்போதே விண்ணப்பிக்கவும்.
-                      </p>
                     </div>
-
-                    <div className="bg-[#021838] border border-blue-900/80 rounded-2xl p-4 text-left space-y-2.5">
-                      <div className="flex items-center justify-between text-xs font-bold text-gray-200">
-                        <span className="text-gray-400">Target Coverage</span>
-                        <span className="text-white font-black">All 9 Provinces, Sri Lanka</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs font-bold text-gray-200">
-                        <span className="text-gray-400">Store Setup Fee</span>
-                        <span className="text-emerald-400 font-black">LKR 0.00 (Free Setup)</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs font-bold text-gray-200">
-                        <span className="text-gray-400">Merchant Helpline</span>
-                        <span className="text-[#FFB800] font-mono font-black">+94 77 833 1202</span>
-                      </div>
-                    </div>
-
-                    <Link
-                      href="/advertise-with-us"
-                      className="w-full py-3.5 px-4 bg-gradient-to-r from-[#0052CC] to-[#021838] hover:from-[#FFB800] hover:to-amber-500 hover:text-[#021838] text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer border border-[#FFB800]/50"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      <span>Submit Advertisement Request →</span>
-                    </Link>
                   </div>
                 </div>
               </div>

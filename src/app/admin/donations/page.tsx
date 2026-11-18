@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -288,11 +289,10 @@ export default function AdminDonationsPage() {
         <div className="flex items-center gap-2 border-b border-[#0052CC]/30 mb-6 pb-2">
           <button
             onClick={() => setActiveTab('requests')}
-            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
-              activeTab === 'requests'
+            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${activeTab === 'requests'
                 ? 'bg-[#0052CC] text-white shadow-md'
                 : 'bg-transparent text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <HeartHandshake className="w-4 h-4" />
             <span>Aid Applications ({requests.length})</span>
@@ -300,11 +300,10 @@ export default function AdminDonationsPage() {
 
           <button
             onClick={() => setActiveTab('initiatives')}
-            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
-              activeTab === 'initiatives'
+            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${activeTab === 'initiatives'
                 ? 'bg-[#0052CC] text-white shadow-md'
                 : 'bg-transparent text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Sparkles className="w-4 h-4 text-[#FFB800]" />
             <span>Donation Causes & Funds ({initiatives.length})</span>
@@ -321,11 +320,10 @@ export default function AdminDonationsPage() {
                   <button
                     key={st}
                     onClick={() => setStatusFilter(st)}
-                    className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 ${
-                      statusFilter === st
+                    className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 ${statusFilter === st
                         ? 'bg-[#0052CC] text-white'
                         : 'bg-[#01142F] text-gray-400 hover:text-white border border-blue-900/50'
-                    }`}
+                      }`}
                   >
                     {st.replace('_', ' ')}
                   </button>
@@ -382,17 +380,16 @@ export default function AdminDonationsPage() {
                             {req.initiativeTitle}
                           </span>
                           <span
-                            className={`text-[10px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider border ${
-                              req.status === 'APPROVED'
+                            className={`text-[10px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider border ${req.status === 'APPROVED'
                                 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
                                 : req.status === 'DISBURSED'
-                                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
-                                : req.status === 'REJECTED'
-                                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                                : req.status === 'UNDER_REVIEW'
-                                ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                                : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                            }`}
+                                  ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                                  : req.status === 'REJECTED'
+                                    ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                                    : req.status === 'UNDER_REVIEW'
+                                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                                      : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                              }`}
                           >
                             {req.status}
                           </span>
