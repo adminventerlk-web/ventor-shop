@@ -29,6 +29,8 @@ export async function POST(request: Request) {
       shopCity: requestedShopCity,
       shopDescription: requestedShopDescription,
       shopPhone: requestedShopPhone,
+      shopLogoUrl: requestedShopLogoUrl,
+      shopBannerUrl: requestedShopBannerUrl,
     } = await request.json();
 
     if (!email || !otp) {
@@ -259,6 +261,8 @@ export async function POST(request: Request) {
         description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERSHOP.',
         category: requestedShopCategory?.trim() || 'General Store',
         city: requestedShopCity?.trim() || 'Colombo',
+        logoUrl: requestedShopLogoUrl?.trim() || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
+        bannerUrl: requestedShopBannerUrl?.trim() || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80',
         status: 'PENDING',
         rating: 5.0,
         totalProducts: 0,
@@ -340,6 +344,8 @@ export async function POST(request: Request) {
                 description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERSHOP.',
                 category: requestedShopCategory?.trim() || 'General Store',
                 city: requestedShopCity?.trim() || 'Colombo',
+                logoUrl: requestedShopLogoUrl?.trim() || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
+                bannerUrl: requestedShopBannerUrl?.trim() || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=80',
                 status: 'PENDING',
               });
               shopId = createdShop._id.toString();

@@ -243,7 +243,7 @@ export default function Hero() {
               </Link>
 
               <Link
-                href="/virtual-shops"
+                href="/shops"
                 className={styles.secondary}
               >
                 <Store className="w-4 h-4" />

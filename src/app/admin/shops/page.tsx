@@ -31,6 +31,8 @@ interface IAdminShop {
   category: string;
   city: string;
   address?: string;
+  logoUrl?: string;
+  bannerUrl?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   rejectionReason?: string;
   rating?: number;
@@ -319,6 +321,33 @@ export default function AdminShopsPage() {
                       <p className="text-xs text-blue-100/90 leading-relaxed max-w-3xl">
                         {shop.description}
                       </p>
+
+                      {/* Shop 2 Images Preview (Logo & Banner) */}
+                      <div className="flex items-center gap-4 pt-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-blue-300/80 font-bold">Shop Logo:</span>
+                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/20 bg-gray-900 shrink-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={shop.logoUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=200&q=80'}
+                              alt="Logo"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-blue-300/80 font-bold">Storefront Banner:</span>
+                          <div className="w-16 h-8 rounded-lg overflow-hidden border border-white/20 bg-gray-900 shrink-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={shop.bannerUrl || 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80'}
+                              alt="Banner"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      </div>
 
                       {/* Owner & Location Details */}
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-2 text-[11px] text-blue-200/80">

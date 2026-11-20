@@ -24,6 +24,9 @@ import {
   Building2,
   MapPin,
   Tag,
+  Upload,
+  Image as ImageIcon,
+  X,
 } from 'lucide-react';
 
 function LoginContent() {
@@ -65,6 +68,8 @@ function LoginContent() {
   const [shopCity, setShopCity] = useState('Colombo');
   const [shopDescription, setShopDescription] = useState('');
   const [shopPhone, setShopPhone] = useState('');
+  const [shopLogoUrl, setShopLogoUrl] = useState('');
+  const [shopBannerUrl, setShopBannerUrl] = useState('');
 
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
@@ -85,6 +90,41 @@ function LoginContent() {
       }
     }
   }, [user, callbackUrl, router]);
+
+  // Device image upload handler with client-side canvas compression
+  const handleFileUpload = (file: File, target: 'logo' | 'banner') => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = target === 'logo' ? 400 : 1200;
+        let width = img.width;
+        let height = img.height;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.85);
+          if (target === 'logo') setShopLogoUrl(compressed);
+          else setShopBannerUrl(compressed);
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Form submission handler
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -238,6 +278,8 @@ function LoginContent() {
           shopCity: isVendorRegistration ? shopCity : undefined,
           shopDescription: isVendorRegistration ? shopDescription.trim() : undefined,
           shopPhone: isVendorRegistration ? (shopPhone.trim() || phone.trim()) : undefined,
+          shopLogoUrl: isVendorRegistration ? shopLogoUrl.trim() : undefined,
+          shopBannerUrl: isVendorRegistration ? shopBannerUrl.trim() : undefined,
         }),
       });
 
@@ -578,6 +620,117 @@ function LoginContent() {
                       onChange={(e) => setShopDescription(e.target.value)}
                       className="w-full px-3 py-2 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] text-white font-medium text-xs placeholder-blue-300/30 resize-none"
                     />
+                  </div>
+
+                  {/* 2 Shop Images: Logo (Image 1) & Banner (Image 2) */}
+                  <div className="pt-2 border-t border-blue-800/60 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="w-3.5 h-3.5 text-[#FFB800]" />
+                      <span className="text-[11px] font-black uppercase tracking-wider text-[#FFB800]">
+                        {isTa ? 'கடையின் 2 புகைப்படங்கள் (Shop Images)' : '2 Shop Promotional Images'}
+                      </span>
+                    </div>
+
+                    {/* Image 1: Shop Logo */}
+                    <div className="space-y-1.5 p-3 rounded-xl bg-[#010e24] border border-blue-900/60">
+                      <div className="flex items-center justify-between">
+                        <label className="text-blue-100 font-bold block text-[11px]">
+                          {isTa ? '1. கடை லோகோ / முத்திரை (Shop Logo)' : '1. Shop Logo / Brand Avatar'}
+                        </label>
+                        <span className="text-[10px] text-gray-400 font-semibold">1:1 Square</span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {shopLogoUrl ? (
+                          <div className="relative w-14 h-14 rounded-xl overflow-hidden border-2 border-[#FFB800] shrink-0 bg-gray-900">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={shopLogoUrl} alt="Logo Preview" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setShopLogoUrl('')}
+                              className="absolute top-0.5 right-0.5 p-0.5 bg-red-600 rounded-full text-white"
+                              title="Remove logo"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <label className="w-14 h-14 rounded-xl border-2 border-dashed border-blue-700/80 hover:border-[#FFB800] flex flex-col items-center justify-center text-blue-300 hover:text-white cursor-pointer transition-colors bg-white/5 shrink-0">
+                            <Upload className="w-4 h-4" />
+                            <span className="text-[8px] font-bold mt-0.5">Upload</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                if (e.target.files?.[0]) handleFileUpload(e.target.files[0], 'logo');
+                              }}
+                              className="hidden"
+                            />
+                          </label>
+                        )}
+
+                        <div className="flex-1 space-y-1">
+                          <input
+                            type="url"
+                            placeholder="Or paste Logo Image URL (https://...)"
+                            value={shopLogoUrl}
+                            onChange={(e) => setShopLogoUrl(e.target.value)}
+                            className="w-full px-2.5 py-1.5 bg-[#01142F] border border-blue-800/80 rounded-lg outline-none focus:border-[#FFB800] text-white text-[11px] placeholder-blue-300/30"
+                          />
+                          <p className="text-[9px] text-blue-200/60 leading-tight">
+                            {isTa ? 'சாதனத்திலிருந்து பதிவேற்றவும் அல்லது URL உள்ளிடவும்' : 'Upload from phone/device or paste web image URL.'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Image 2: Shop Banner */}
+                    <div className="space-y-1.5 p-3 rounded-xl bg-[#010e24] border border-blue-900/60">
+                      <div className="flex items-center justify-between">
+                        <label className="text-blue-100 font-bold block text-[11px]">
+                          {isTa ? '2. கடை முகப்பு கவர் புகைப்படம் (Storefront Banner)' : '2. Storefront Banner / Cover Photo'}
+                        </label>
+                        <span className="text-[10px] text-gray-400 font-semibold">16:9 Banner</span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {shopBannerUrl ? (
+                          <div className="relative aspect-[16/9] w-full max-h-28 rounded-xl overflow-hidden border-2 border-[#FFB800] bg-gray-900">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={shopBannerUrl} alt="Banner Preview" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setShopBannerUrl('')}
+                              className="absolute top-1.5 right-1.5 p-1 bg-red-600 rounded-full text-white shadow-md"
+                              title="Remove banner"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <label className="w-full h-20 rounded-xl border-2 border-dashed border-blue-700/80 hover:border-[#FFB800] flex flex-col items-center justify-center text-blue-300 hover:text-white cursor-pointer transition-colors bg-white/5">
+                            <Upload className="w-5 h-5" />
+                            <span className="text-[10px] font-bold mt-1">Upload Storefront Banner from Device</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                if (e.target.files?.[0]) handleFileUpload(e.target.files[0], 'banner');
+                              }}
+                              className="hidden"
+                            />
+                          </label>
+                        )}
+
+                        <input
+                          type="url"
+                          placeholder="Or paste Banner Image URL (https://...)"
+                          value={shopBannerUrl}
+                          onChange={(e) => setShopBannerUrl(e.target.value)}
+                          className="w-full px-2.5 py-1.5 bg-[#01142F] border border-blue-800/80 rounded-lg outline-none focus:border-[#FFB800] text-white text-[11px] placeholder-blue-300/30"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

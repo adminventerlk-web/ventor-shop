@@ -1,221 +1,270 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   HeartHandshake,
   GraduationCap,
   Sprout,
   Stethoscope,
   Sparkles,
-  ChevronRight,
   ShieldCheck,
   CheckCircle2,
-  X,
-  Send,
+  MapPin,
+  Calendar,
+  Building2,
+  ArrowRight,
+  Coins,
+  ChevronLeft,
+  ChevronRight,
+  Award,
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils/currency';
+
+interface IDonationRecord {
+  _id: string;
+  title: string;
+  amount: number;
+  category: string;
+  beneficiary: string;
+  location: string;
+  date: string;
+  description: string;
+  imageUrl?: string;
+  badge?: string;
+  status?: string;
+}
 
 export default function RevenueDonationSection() {
-  const [notifyModalOpen, setNotifyModalOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [records, setRecords] = useState<IDonationRecord[]>([]);
+  const [stats, setStats] = useState({
+    totalDonated: 1045000,
+    totalCauses: 3,
+    beneficiariesCount: '500+ Individuals & Families',
+  });
+  const [loading, setLoading] = useState(true);
+  const [activeSlide, setActiveSlide] = useState(0);
 
-  const handleNotifySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
+  useEffect(() => {
+    async function loadDonations() {
+      try {
+        const res = await fetch('/api/donations/showcase');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.records && Array.isArray(data.records) && data.records.length > 0) {
+            setRecords(data.records);
+          }
+          if (data.stats) {
+            setStats(data.stats);
+          }
+        }
+      } catch (err) {
+        console.warn('Error loading donation showcase:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDonations();
+  }, []);
+
+  if (!loading && records.length === 0) {
+    return null;
+  }
+
+  const currentRecord = records[activeSlide] || records[0];
 
   return (
     <section
-      id="community-grants-section"
-      aria-labelledby="grants-heading"
-      className="w-full py-4 px-4 sm:px-6 lg:px-8 font-sans"
+      id="community-donations-showcase"
+      aria-labelledby="donations-showcase-heading"
+      className="w-full py-6 px-4 sm:px-6 lg:px-8 font-sans"
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Compact Welfare Aid Strip */}
+      <div className="max-w-7xl mx-auto space-y-4">
+        {/* ── Main Showcase Container ── */}
         <div
-          className="relative overflow-hidden rounded-2xl border-2 border-emerald-500/80 shadow-xl transition-all"
+          className="relative overflow-hidden rounded-3xl border-2 border-emerald-500/70 shadow-2xl transition-all"
           style={{
             backgroundColor: '#021838',
-            backgroundImage: 'linear-gradient(135deg, #01142f 0%, #032759 60%, #010f24 100%)',
+            backgroundImage:
+              'radial-gradient(ellipse at 85% 15%, rgba(16, 185, 129, 0.25) 0%, transparent 60%), radial-gradient(ellipse at 15% 85%, rgba(0, 82, 204, 0.3) 0%, transparent 65%), linear-gradient(135deg, #01142f 0%, #032759 50%, #010f24 100%)',
             color: '#ffffff',
           }}
         >
-          {/* Subtle Ambient Glow */}
-          <div className="absolute top-0 right-1/4 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 p-5 sm:p-6 lg:p-7 flex flex-col lg:flex-row items-center justify-between gap-5">
-            {/* Left: Icon + Heading + Tagline */}
-            <div className="flex items-start sm:items-center gap-3.5 max-w-2xl">
-              <span className="p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0 mt-0.5 sm:mt-0 shadow-sm">
-                <HeartHandshake className="w-6 h-6" />
+          {/* Top Status & Summary Header Strip */}
+          <div className="relative z-10 px-5 pt-4 sm:px-7 sm:pt-5 flex flex-wrap items-center justify-between gap-3 border-b border-blue-900/50 pb-3.5">
+            <div className="flex items-center gap-2.5">
+              <span className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 shadow-xs">
+                <HeartHandshake className="w-4 h-4" />
               </span>
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
-                    Community Welfare Aid • நேரடி உதவி
+                    Community Giveback Showcase
                   </span>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-400/40">
-                    Coming Soon
+                  <span className="text-[10px] font-bold text-blue-200/80 hidden sm:inline">
+                    • எங்களின் சமூக நல பங்களிப்புகள்
                   </span>
                 </div>
-                <h3
-                  id="grants-heading"
-                  className="text-base sm:text-lg font-black text-white leading-snug"
-                >
-                  Need Financial Assistance? Community Welfare Grants Program
-                </h3>
-                <p className="text-xs text-blue-100 font-medium mt-0.5 line-clamp-2">
-                  Direct financial grants for higher education students, organic spice farmers, and families facing emergency medical relief across Sri Lanka.
-                </p>
               </div>
             </div>
 
-            {/* Middle: 3 Quick Program Badges */}
-            <div className="hidden md:flex flex-wrap items-center gap-2 shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#01142F] text-xs font-bold text-blue-200 border border-blue-700/60">
-                <GraduationCap className="w-3.5 h-3.5 text-[#FFB800]" />
-                <span>Education Grants</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#01142F] text-xs font-bold text-blue-200 border border-blue-700/60">
-                <Sprout className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Spice Farmer Aid</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#01142F] text-xs font-bold text-blue-200 border border-blue-700/60">
-                <Stethoscope className="w-3.5 h-3.5 text-rose-400" />
-                <span>Medical Relief</span>
+            {/* Total Impact Stats Pill */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-white text-xs font-black">
+                <Coins className="w-3.5 h-3.5 text-[#FFB800]" />
+                <span>Total Donated: </span>
+                <span className="text-emerald-300 font-extrabold">{formatCurrency(stats.totalDonated)}</span>
+              </div>
+              <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-bold text-blue-200/80 bg-white/10 px-2.5 py-1 rounded-lg">
+                <Award className="w-3.5 h-3.5 text-[#FFB800]" />
+                <span>{stats.beneficiariesCount}</span>
               </span>
             </div>
+          </div>
 
-            {/* Right: Action Button */}
-            <div className="shrink-0 w-full sm:w-auto flex items-center justify-end">
-              <button
-                onClick={() => {
-                  setSubmitted(false);
-                  setNotifyModalOpen(true);
-                }}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-[#FFB800] hover:to-amber-500 hover:text-[#021838] text-white text-xs font-black uppercase tracking-wider transition-all shadow-md cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Notify Me When Open</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
+          {/* Main Grid: Story Copy & Featured Image */}
+          <div className="relative z-10 p-5 sm:p-7 lg:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              {/* Left Column: Donation Cause & Impact Story */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-600 text-white font-black text-xs uppercase tracking-wider shadow-sm">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Donation Completed & Disbursed</span>
+                  </span>
+
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-300 bg-[#01142F] px-2.5 py-1 rounded-xl border border-blue-900">
+                    <Sparkles className="w-3 h-3 text-[#FFB800]" />
+                    <span>{currentRecord?.badge || '100% Platform Revenue Share'}</span>
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                    {currentRecord?.category || 'Community Welfare'}
+                  </span>
+                  <h3
+                    id="donations-showcase-heading"
+                    className="text-lg sm:text-2xl font-black text-white leading-snug tracking-tight"
+                  >
+                    {currentRecord?.title}
+                  </h3>
+                </div>
+
+                <p className="text-xs sm:text-sm text-blue-100/90 leading-relaxed max-w-xl">
+                  {currentRecord?.description}
+                </p>
+
+                {/* Beneficiary & Location Details Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <div className="p-3 rounded-xl bg-[#01142F]/90 border border-blue-900/80 space-y-0.5">
+                    <p className="text-[10px] uppercase font-bold text-blue-300/70">Beneficiary / Recipient</p>
+                    <p className="text-xs font-black text-white truncate">{currentRecord?.beneficiary}</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#01142F]/90 border border-blue-900/80 space-y-0.5">
+                    <p className="text-[10px] uppercase font-bold text-blue-300/70">Location & Date</p>
+                    <p className="text-xs font-black text-white flex items-center gap-1 truncate">
+                      <MapPin className="w-3 h-3 text-[#FFB800] shrink-0" />
+                      <span>{currentRecord?.location} • {currentRecord?.date}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Big Donated Amount Banner */}
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/90 to-[#01142F] border border-emerald-500/40 flex items-center justify-between shadow-inner">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-300 block">
+                      Direct Financial Contribution
+                    </span>
+                    <span className="text-xl sm:text-2xl font-black text-emerald-400">
+                      {formatCurrency(currentRecord?.amount || 0)}
+                    </span>
+                  </div>
+
+                  <span className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black uppercase tracking-wider">
+                    Verified Contribution ✓
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Column: Visual Photo Showcase & Selector */}
+              <div className="lg:col-span-5 space-y-3">
+                <div className="relative aspect-[16/11] rounded-2xl overflow-hidden border border-emerald-500/50 shadow-xl bg-gray-950">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={
+                      currentRecord?.imageUrl ||
+                      'https://images.unsplash.com/photo-1532629345422-7515f3d16bb7?auto=format&fit=crop&w=800&q=80'
+                    }
+                    alt={currentRecord?.title}
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#021838]/80 via-transparent to-transparent pointer-events-none" />
+
+                  <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-bold text-[#FFB800]">
+                    Cause {activeSlide + 1} of {records.length}
+                  </div>
+
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 p-2 bg-[#021838]/90 backdrop-blur-md rounded-xl border border-blue-400/30 flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-white truncate max-w-[200px]">
+                      {currentRecord?.beneficiary}
+                    </span>
+                    <span className="text-xs font-black text-emerald-400">
+                      {formatCurrency(currentRecord?.amount || 0)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Causes Selector Tabs if Multiple Records */}
+                {records.length > 1 && (
+                  <div className="flex items-center justify-between gap-2 p-1.5 bg-[#01142F] rounded-xl border border-blue-900/60">
+                    <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-1">
+                      {records.map((r, idx) => (
+                        <button
+                          key={r._id || idx}
+                          type="button"
+                          onClick={() => setActiveSlide(idx)}
+                          className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                            activeSlide === idx
+                              ? 'bg-emerald-600 text-white shadow-xs'
+                              : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                          }`}
+                        >
+                          Cause {idx + 1}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setActiveSlide((prev) => (prev - 1 + records.length) % records.length)
+                        }
+                        className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                        aria-label="Previous cause"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setActiveSlide((prev) => (prev + 1) % records.length)
+                        }
+                        className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                        aria-label="Next cause"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* ── NOTIFICATION MODAL ── */}
-      {notifyModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-          <div
-            className="bg-white border-2 border-emerald-600 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative text-gray-900"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="p-5 bg-[#021838] text-white flex items-center justify-between border-b-2 border-emerald-600">
-              <div className="flex items-center gap-2.5">
-                <span className="p-2 rounded-xl bg-emerald-600 text-white shadow-sm">
-                  <HeartHandshake className="w-5 h-5" />
-                </span>
-                <div>
-                  <h3 className="font-black text-sm sm:text-base text-white">
-                    Get Notified on Grant Launch
-                  </h3>
-                  <p className="text-xs text-emerald-300 font-bold">
-                    Direct Financial Assistance • 100% Free
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setNotifyModalOpen(false)}
-                className="p-2 rounded-full hover:bg-white/20 text-white transition-colors cursor-pointer"
-                aria-label="Close modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-5 sm:p-6 text-xs bg-white space-y-4">
-              {submitted ? (
-                <div className="text-center py-6 space-y-3">
-                  <div className="w-14 h-14 rounded-full bg-emerald-100 border-2 border-emerald-500 text-emerald-600 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <h4 className="text-lg font-black text-gray-900">You&apos;re On The List!</h4>
-                  <p className="text-gray-600 text-xs max-w-xs mx-auto">
-                    We will send an SMS / WhatsApp notification to your number as soon as welfare grant applications open.
-                  </p>
-                  <button
-                    onClick={() => setNotifyModalOpen(false)}
-                    className="mt-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-wider"
-                  >
-                    Done
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleNotifySubmit} className="space-y-3.5">
-                  <p className="text-gray-600 font-medium">
-                    Enter your name and WhatsApp number to receive an instant alert when grant application forms go live:
-                  </p>
-
-                  <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-gray-800 mb-1">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. S. Ramanathan"
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-xl text-gray-900 font-semibold focus:border-emerald-600 focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-gray-800 mb-1">
-                      WhatsApp / Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+94 77 123 4567"
-                      className="w-full px-3.5 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-xl text-gray-900 font-semibold focus:border-emerald-600 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-800">
-                    <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600" />
-                    <span>No repayment needed. Grants are provided directly to approved beneficiaries.</span>
-                  </div>
-
-                  <div className="pt-2 flex items-center justify-end gap-2 border-t border-gray-200">
-                    <button
-                      type="button"
-                      onClick={() => setNotifyModalOpen(false)}
-                      className="px-4 py-2.5 text-gray-600 font-bold hover:text-gray-900 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Notify Me</span>
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

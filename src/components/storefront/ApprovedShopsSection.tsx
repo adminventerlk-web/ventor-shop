@@ -57,7 +57,7 @@ export default function ApprovedShopsSection() {
   }
 
   return (
-    <section className="w-full py-10 sm:py-14 bg-gradient-to-b from-[#F4F7FC] to-white border-y border-gray-200/80">
+    <section id="partner-shops-section" className="w-full py-10 sm:py-14 bg-gradient-to-b from-[#F4F7FC] to-white border-y border-gray-200/80 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -91,7 +91,7 @@ export default function ApprovedShopsSection() {
           </div>
 
           <Link
-            href="/virtual-shops"
+            href="/shops"
             className="text-xs font-bold text-[#0052CC] hover:text-[#003893] flex items-center gap-1.5 transition-colors group shrink-0"
           >
             <span>{isTa ? 'அனைத்து கடைகளும்' : isSi ? 'සියලු වෙළඳසැල්' : 'Explore All Stores'}</span>

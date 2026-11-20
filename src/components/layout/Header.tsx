@@ -119,7 +119,7 @@ export default function Header() {
   const navLinks: INavLink[] = [
     { label: language === 'ta' ? 'முகப்பு' : 'Home', href: '/', isHome: true, icon: House },
     { label: language === 'ta' ? 'ஷாப்' : 'Shop', href: '/shop', icon: ShoppingBag },
-    { label: language === 'ta' ? 'வர்ச்சுவல் கடைகள்' : 'Virtual Shops', href: '/virtual-shops', icon: Store },
+    { label: language === 'ta' ? 'வணிகர் கடைகள்' : 'Partner Shops', href: '/shops', icon: Store },
     { label: language === 'ta' ? 'ஏற்றுமதி' : 'Export', href: '/export', icon: Globe },
     { label: language === 'ta' ? 'தொடர்பு' : 'Contact', href: '/contact', icon: Mail },
   ];
