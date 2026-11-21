@@ -104,11 +104,10 @@ export default async function ShopDetailPage({ params }: Props) {
     );
   }
 
-  // 3. Fallback to guarantee the storefront always showcases curated items
+  // 3. Final safety fallback: show some curated products (without mutating slug!)
   if (products.length === 0) {
     products = fallbackProducts.slice(0, 4).map((p: any) => ({
       ...p,
-      _id: `${p._id}_${shop.slug}`,
       shopSlug: shop.slug,
       shopName: shop.shopName,
       vendorId: shop.ownerId,

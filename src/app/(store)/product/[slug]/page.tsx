@@ -22,8 +22,18 @@ export async function generateMetadata({ params }: Props) {
     try {
       await connectToDatabase();
       product = await Product.findOne({ slug, isActive: true });
-    } catch {
+    } catch {}
+
+    if (!product) {
       product = fallbackProducts.find((p) => p.slug === slug);
+    }
+    if (!product && (global as any).globalVendorProducts) {
+      for (const list of (global as any).globalVendorProducts.values()) {
+        if (Array.isArray(list)) {
+          const found = list.find((p: any) => p.slug === slug);
+          if (found) { product = found; break; }
+        }
+      }
     }
     
     if (!product) {
@@ -87,6 +97,16 @@ export default async function ProductDetailPage({ params }: Props) {
 
   if (!product) {
     product = fallbackProducts.find((p) => p.slug === slug);
+  }
+
+  // Also check in-memory vendor products (for products added by vendor but not yet in DB)
+  if (!product && (global as any).globalVendorProducts) {
+    for (const list of (global as any).globalVendorProducts.values()) {
+      if (Array.isArray(list)) {
+        const found = list.find((p: any) => p.slug === slug);
+        if (found) { product = found; break; }
+      }
+    }
   }
 
   if (!product) {
