@@ -31,12 +31,6 @@ img {
   display: block;
 }
 
-section + section,
-section + div,
-div + section {
-  margin-top: 0;
-}
-
 /* Interactive Polish & Micro-Interactions */
 button, a {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);

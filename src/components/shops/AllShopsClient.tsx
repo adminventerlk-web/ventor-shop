@@ -232,9 +232,15 @@ export default function AllShopsClient() {
         </section>
 
         {/* ── Shops Grid ── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-16">
+        <section
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-14 sm:pb-20"
+          style={{ marginTop: '48px', marginBottom: '48px' }}
+        >
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              style={{ gap: '32px' }}
+            >
               {[1, 2, 3, 4, 5, 6].map((n) => (
                 <div key={n} className="h-72 bg-white rounded-3xl animate-pulse border border-gray-200" />
               ))}
@@ -261,7 +267,10 @@ export default function AllShopsClient() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              style={{ gap: '32px' }}
+            >
               {filteredShops.map((shop) => {
                 const banner =
                   shop.bannerUrl ||
@@ -356,7 +365,10 @@ export default function AllShopsClient() {
         </section>
 
         {/* ── Merchant Callout Banner ── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-14">
+        <section
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          style={{ marginTop: '64px', marginBottom: '32px' }}
+        >
           <div className="bg-gradient-to-r from-[#021838] via-[#042A63] to-[#0052CC] rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 max-w-xl text-center md:text-left">
               <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40">
