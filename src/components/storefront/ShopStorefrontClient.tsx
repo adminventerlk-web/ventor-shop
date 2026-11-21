@@ -212,7 +212,7 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
                   key={product._id}
                   className="bg-white rounded-2xl border border-gray-200 hover:border-[#0052CC]/50 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
                 >
-                  <Link href={`/product/${product.slug}`} className="block">
+                  <Link href={`/product/${product.slug}`} prefetch={true} className="block">
                     <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
                       <div
                         className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
@@ -252,6 +252,7 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
                     {variants.length > 0 ? (
                       <Link
                         href={`/product/${product.slug}`}
+                        prefetch={true}
                         className="w-full py-2 bg-[#F4F7FC] hover:bg-[#0052CC] hover:text-white text-[#0052CC] border border-[#0052CC]/40 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
                       >
                         <span>Select Size & Buy</span>

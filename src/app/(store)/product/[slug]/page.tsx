@@ -2,11 +2,15 @@ import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import Product from '@/models/Product';
+import Category from '@/models/Category';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductDetailClient from '@/components/product/ProductDetailClient';
-import { fallbackProducts } from '@/lib/data/fallbackData';
+import { fallbackProducts, fallbackCategories } from '@/lib/data/fallbackData';
 import JsonLd from '@/components/seo/JsonLd';
+
+// Always SSR — never statically generate so vendor products are always found
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -21,7 +25,13 @@ export async function generateMetadata({ params }: Props) {
 
     try {
       await connectToDatabase();
-      product = await Product.findOne({ slug, isActive: true });
+      product = await Product.findOne({
+        $or: [
+          { slug },
+          { slug: slug.toLowerCase() },
+          { slug: new RegExp(`^${slug}$`, 'i') },
+        ],
+      }).lean();
     } catch {}
 
     if (!product) {
@@ -75,31 +85,58 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export async function generateStaticParams() {
-  return fallbackProducts.map((p) => ({
-    slug: p.slug,
-  }));
-}
-
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
   let product: any = null;
 
   try {
     await connectToDatabase();
-    const productDoc = await Product.findOne({ slug, isActive: true }).populate('categoryId', 'name slug');
+
+    // Use lean() and case-insensitive matching to avoid CastError when categoryId is a string (vendor products)
+    const productDoc = await Product.findOne({
+      $or: [
+        { slug },
+        { slug: slug.toLowerCase() },
+        { slug: new RegExp(`^${slug}$`, 'i') },
+      ],
+    }).lean();
     if (productDoc) {
       product = JSON.parse(JSON.stringify(productDoc));
+
+      // Safely resolve category — won't throw on string IDs
+      if (product.categoryId) {
+        try {
+          const catId = typeof product.categoryId === 'object'
+            ? String(product.categoryId._id || product.categoryId)
+            : String(product.categoryId);
+
+          let cat: any = null;
+          if (catId.match(/^[a-f\d]{24}$/i)) {
+            cat = await Category.findById(catId).lean();
+          }
+          if (!cat) cat = await Category.findOne({ slug: catId.toLowerCase() }).lean();
+          if (!cat) {
+            cat = fallbackCategories.find(
+              (c: any) => c._id === catId || c.slug === catId.toLowerCase()
+            );
+          }
+          if (cat) {
+            product.categoryId = { _id: String(cat._id), name: cat.name, slug: cat.slug };
+          } else {
+            product.categoryId = { _id: catId, name: 'General', slug: 'general' };
+          }
+        } catch {}
+      }
     }
   } catch (dbError) {
-    console.warn('Database offline, looking up fallback product for slug:', slug);
+    console.warn('Database error on product detail page for slug:', slug, dbError);
   }
 
   if (!product) {
     product = fallbackProducts.find((p) => p.slug === slug);
   }
 
-  // Also check in-memory vendor products (for products added by vendor but not yet in DB)
+  // Check in-memory vendor products (resilience for memory-only products)
   if (!product && (global as any).globalVendorProducts) {
     for (const list of (global as any).globalVendorProducts.values()) {
       if (Array.isArray(list)) {

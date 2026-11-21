@@ -33,10 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export async function generateStaticParams() {
-  const memShops = getAllInMemoryShops();
-  return memShops.map((s) => ({ slug: s.slug }));
-}
+export const dynamic = 'force-dynamic';
 
 export default async function ShopDetailPage({ params }: Props) {
   const { slug } = await params;

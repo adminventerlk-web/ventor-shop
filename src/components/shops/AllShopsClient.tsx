@@ -232,11 +232,11 @@ export default function AllShopsClient() {
         </section>
 
         {/* ── Shops Grid ── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-16">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map((n) => (
-                <div key={n} className="h-56 bg-white rounded-2xl animate-pulse border border-gray-200" />
+                <div key={n} className="h-72 bg-white rounded-3xl animate-pulse border border-gray-200" />
               ))}
             </div>
           ) : filteredShops.length === 0 ? (
@@ -261,7 +261,7 @@ export default function AllShopsClient() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredShops.map((shop) => {
                 const banner =
                   shop.bannerUrl ||
@@ -273,11 +273,11 @@ export default function AllShopsClient() {
                 return (
                   <article
                     key={shop._id}
-                    className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden shadow-sm hover:shadow-lg hover:border-[#0052CC]/50 transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1"
+                    className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#0052CC]/50 transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1.5"
                   >
                     <div>
                       {/* Banner Image */}
-                      <div className="relative h-24 sm:h-32 w-full bg-gray-100 overflow-hidden">
+                      <div className="relative h-40 sm:h-48 w-full bg-gray-100 overflow-hidden">
                         <div
                           className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                           style={{ backgroundImage: `url('${banner}')` }}
@@ -285,52 +285,52 @@ export default function AllShopsClient() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                         {/* Category Badge */}
-                        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2">
-                          <span className="bg-[#021838]/90 backdrop-blur-xs text-[#FFB800] text-[8px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border border-[#FFB800]/30 shadow-xs">
+                        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
+                          <span className="bg-[#021838]/90 backdrop-blur-xs text-[#FFB800] text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#FFB800]/30 shadow-xs">
                             {shop.category}
                           </span>
                         </div>
 
                         {/* City Location */}
-                        <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 text-white text-[9px] sm:text-[10px] font-bold flex items-center gap-0.5 drop-shadow-sm">
-                          <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#FFB800]" />
-                          <span className="truncate max-w-[80px] sm:max-w-none">{shop.city}</span>
+                        <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 text-white text-[10px] sm:text-xs font-bold flex items-center gap-1 drop-shadow-sm">
+                          <MapPin className="w-3.5 h-3.5 text-[#FFB800]" />
+                          <span className="truncate max-w-[120px] sm:max-w-none">{shop.city}</span>
                         </div>
                       </div>
 
                       {/* Logo & Content */}
-                      <div className="p-3 sm:p-4 pt-0 relative">
+                      <div className="p-4 sm:p-5 pt-0 relative">
                         {/* Overlapping Logo */}
-                        <div className="relative -mt-5 sm:-mt-6 mb-2 sm:mb-2.5 w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-white shadow-sm overflow-hidden bg-white shrink-0">
+                        <div className="relative -mt-7 sm:-mt-8 mb-3 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white shrink-0">
                           <div
                             className="w-full h-full bg-cover bg-center"
                             style={{ backgroundImage: `url('${logo}')` }}
                           />
                         </div>
 
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1">
-                            <h2 className="text-xs sm:text-sm font-black text-[#021838] group-hover:text-[#0052CC] transition-colors leading-tight truncate">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <h2 className="text-sm sm:text-base font-black text-[#021838] group-hover:text-[#0052CC] transition-colors leading-tight truncate">
                               {shop.shopName}
                             </h2>
                             <span title="Super Admin Verified">
-                              <BadgeCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <BadgeCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                             </span>
                           </div>
 
-                          <p className="text-[10px] sm:text-xs text-gray-500 line-clamp-1 sm:line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
                             {shop.description}
                           </p>
 
-                          <div className="flex items-center gap-2 pt-0.5 text-[9px] sm:text-[10px] font-bold text-gray-500">
-                            <span className="flex items-center gap-0.5 text-amber-500">
-                              <Star className="w-3 h-3 fill-current" />
+                          <div className="flex items-center gap-3 pt-1 text-xs font-bold text-gray-500">
+                            <span className="flex items-center gap-1 text-amber-500">
+                              <Star className="w-3.5 h-3.5 fill-current" />
                               <strong className="text-gray-800">{shop.rating || 4.9}</strong>
                             </span>
                             <span className="text-gray-300">•</span>
-                            <span className="text-gray-600 flex items-center gap-0.5 truncate">
-                              <ShoppingBag className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#0052CC]" />
-                              <span>Catalog</span>
+                            <span className="text-gray-600 flex items-center gap-1 truncate">
+                              <ShoppingBag className="w-3.5 h-3.5 text-[#0052CC]" />
+                              <span>Store Catalog</span>
                             </span>
                           </div>
                         </div>
@@ -338,13 +338,14 @@ export default function AllShopsClient() {
                     </div>
 
                     {/* Card Footer with "Visit Shop" Button */}
-                    <div className="p-3 sm:p-3.5 pt-2 border-t border-gray-100 bg-gray-50/50">
+                    <div className="p-4 sm:p-5 pt-3 border-t border-gray-100 bg-gray-50/50">
                       <Link
                         href={`/shops/${shop.slug}`}
-                        className="w-full py-2 sm:py-2.5 px-3 bg-[#0052CC] hover:bg-[#003893] group-hover:bg-[#021838] text-white rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-xs group-hover:shadow-sm cursor-pointer"
+                        prefetch={true}
+                        className="w-full py-2.5 sm:py-3 px-4 bg-[#0052CC] hover:bg-[#003893] group-hover:bg-[#021838] text-white rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xs group-hover:shadow-md cursor-pointer"
                       >
                         <span>{isTa ? 'கடையை பார்வையிடு' : 'Visit Store'}</span>
-                        <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform" />
+                        <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </div>
                   </article>
