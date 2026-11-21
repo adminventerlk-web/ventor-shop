@@ -155,9 +155,9 @@ export default function AllShopsClient() {
         </section>
 
         {/* ── Filters & Search Bar ── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6">
-          <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-lg border border-gray-200/80 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-10 mb-8 sm:mb-10">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-gray-200 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4">
               {/* Search Input */}
               <div className="sm:col-span-6 relative flex items-center">
                 <Search className="w-4 h-4 text-gray-400 absolute left-3.5" />
@@ -170,7 +170,7 @@ export default function AllShopsClient() {
                   }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 outline-none focus:border-[#0052CC] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-900 placeholder-gray-400 outline-none focus:border-[#0052CC] focus:bg-white transition-all"
                 />
               </div>
 
@@ -179,7 +179,7 @@ export default function AllShopsClient() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 outline-none focus:border-[#0052CC] cursor-pointer"
+                  className="w-full px-3 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-800 outline-none focus:border-[#0052CC] cursor-pointer"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -194,7 +194,7 @@ export default function AllShopsClient() {
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 outline-none focus:border-[#0052CC] cursor-pointer"
+                  className="w-full px-3 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-800 outline-none focus:border-[#0052CC] cursor-pointer"
                 >
                   {CITIES.map((city) => (
                     <option key={city} value={city}>
@@ -206,7 +206,7 @@ export default function AllShopsClient() {
             </div>
 
             {/* Quick Filter Counts */}
-            <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-xs font-semibold text-gray-500">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-xs font-semibold text-gray-500">
               <span>
                 Showing <strong className="text-[#021838]">{filteredShops.length}</strong>{' '}
                 {filteredShops.length === 1 ? 'store' : 'stores'}
@@ -233,8 +233,7 @@ export default function AllShopsClient() {
 
         {/* ── Shops Grid ── */}
         <section
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-14 sm:pb-20"
-          style={{ marginTop: '48px', marginBottom: '48px' }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 sm:pb-20"
         >
           {loading ? (
             <div
