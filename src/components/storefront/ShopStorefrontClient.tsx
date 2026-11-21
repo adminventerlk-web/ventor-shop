@@ -218,10 +218,10 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
                         className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                         style={{ backgroundImage: `url('${displayImg}')` }}
                       />
-                      {variants.length > 0 && (
+                      {variants.length > 1 && (
                         <div className="absolute bottom-2 left-2">
                           <span className="bg-[#021838]/90 backdrop-blur-xs text-[#FFB800] text-[10px] font-black uppercase px-2 py-0.5 rounded-md border border-[#FFB800]/30 shadow-xs">
-                            {variants.length} Sizes / Options
+                            {variants.length} Options
                           </span>
                         </div>
                       )}
@@ -239,7 +239,7 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
                         <span className="text-base font-black text-[#021838]">
                           {formatCurrency(product.retailPrice)}
                         </span>
-                        {variants.length > 0 && (
+                        {variants.length > 1 && (
                           <span className="text-[10px] text-gray-400 font-semibold">
                             (from {formatCurrency(Math.min(...variants.map((v: any) => v.price)))})
                           </span>
@@ -249,13 +249,13 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
                   </Link>
 
                   <div className="p-4 pt-0">
-                    {variants.length > 0 ? (
+                    {variants.length > 1 ? (
                       <Link
                         href={`/product/${product.slug}`}
                         prefetch={true}
                         className="w-full py-2 bg-[#F4F7FC] hover:bg-[#0052CC] hover:text-white text-[#0052CC] border border-[#0052CC]/40 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
                       >
-                        <span>Select Size & Buy</span>
+                        <span>{isTa ? 'பொருளை பார்க்க' : 'View Details'}</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     ) : (
