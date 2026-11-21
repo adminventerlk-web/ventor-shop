@@ -234,7 +234,7 @@ export default function AllShopsClient() {
         {/* ── Shops Grid ── */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {[1, 2, 3, 4, 5, 6].map((n) => (
                 <div key={n} className="h-56 bg-white rounded-2xl animate-pulse border border-gray-200" />
               ))}
@@ -261,7 +261,7 @@ export default function AllShopsClient() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {filteredShops.map((shop) => {
                 const banner =
                   shop.bannerUrl ||
@@ -273,11 +273,11 @@ export default function AllShopsClient() {
                 return (
                   <article
                     key={shop._id}
-                    className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden shadow-xs hover:shadow-md hover:border-[#0052CC]/50 transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-0.5"
+                    className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden shadow-sm hover:shadow-lg hover:border-[#0052CC]/50 transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1"
                   >
                     <div>
                       {/* Banner Image */}
-                      <div className="relative h-20 sm:h-28 w-full bg-gray-100 overflow-hidden">
+                      <div className="relative h-24 sm:h-32 w-full bg-gray-100 overflow-hidden">
                         <div
                           className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                           style={{ backgroundImage: `url('${banner}')` }}
@@ -299,9 +299,9 @@ export default function AllShopsClient() {
                       </div>
 
                       {/* Logo & Content */}
-                      <div className="p-2.5 sm:p-3.5 pt-0 relative">
+                      <div className="p-3 sm:p-4 pt-0 relative">
                         {/* Overlapping Logo */}
-                        <div className="relative -mt-5 sm:-mt-6 mb-1 sm:mb-1.5 w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-white shadow-sm overflow-hidden bg-white shrink-0">
+                        <div className="relative -mt-5 sm:-mt-6 mb-2 sm:mb-2.5 w-10 h-10 sm:w-12 sm:h-12 rounded-xl border-2 border-white shadow-sm overflow-hidden bg-white shrink-0">
                           <div
                             className="w-full h-full bg-cover bg-center"
                             style={{ backgroundImage: `url('${logo}')` }}
@@ -338,10 +338,10 @@ export default function AllShopsClient() {
                     </div>
 
                     {/* Card Footer with "Visit Shop" Button */}
-                    <div className="p-2 sm:p-2.5 pt-1.5 border-t border-gray-100 bg-gray-50/50">
+                    <div className="p-3 sm:p-3.5 pt-2 border-t border-gray-100 bg-gray-50/50">
                       <Link
                         href={`/shops/${shop.slug}`}
-                        className="w-full py-1.5 sm:py-2 px-2 sm:px-3 bg-[#0052CC] hover:bg-[#003893] group-hover:bg-[#021838] text-white rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-xs group-hover:shadow-sm cursor-pointer"
+                        className="w-full py-2 sm:py-2.5 px-3 bg-[#0052CC] hover:bg-[#003893] group-hover:bg-[#021838] text-white rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-xs group-hover:shadow-sm cursor-pointer"
                       >
                         <span>{isTa ? 'கடையை பார்வையிடு' : 'Visit Store'}</span>
                         <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform" />
