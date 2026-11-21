@@ -3,7 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
 import { getCurrentUser } from '@/lib/auth/auth';
-import { fallbackProducts } from '@/lib/data/fallbackData';
+import { fallbackProducts, fallbackCategories } from '@/lib/data/fallbackData';
 
 export async function GET(request: Request) {
   try {
@@ -95,25 +95,81 @@ export async function GET(request: Request) {
       }
 
       let query = Product.find(queryFilter)
-        .populate('categoryId', 'name slug')
+        .lean()
         .sort(sortOptions);
 
       if (limit) {
         query = query.limit(limit);
       }
 
-      const products = await query;
-      if (products && products.length > 0) {
-        return NextResponse.json({ products });
+      const dbProducts: any[] = await query;
+      if (dbProducts && dbProducts.length > 0) {
+        // Build category resolution map to safely populate categoryId without CastError
+        const catMap = new Map<string, any>();
+        try {
+          const categories = await Category.find({}).lean();
+          categories.forEach((cat: any) => {
+            catMap.set(String(cat._id), { _id: cat._id, name: cat.name, slug: cat.slug });
+            catMap.set(cat.slug, { _id: cat._id, name: cat.name, slug: cat.slug });
+          });
+        } catch {}
+        fallbackCategories.forEach((cat: any) => {
+          if (!catMap.has(cat._id)) catMap.set(cat._id, cat);
+          if (!catMap.has(cat.slug)) catMap.set(cat.slug, cat);
+        });
+
+        // Resolve category on each product
+        dbProducts.forEach((p: any) => {
+          if (p.categoryId) {
+            if (typeof p.categoryId === 'object' && p.categoryId.name) {
+              // already populated
+            } else {
+              const key = String(p.categoryId._id || p.categoryId).trim();
+              p.categoryId = catMap.get(key) || catMap.get(key.toLowerCase()) || { _id: key, name: 'General', slug: 'general' };
+            }
+          }
+        });
+
+        // Merge in-memory vendor products so vendor items also appear in the main catalog
+        if ((global as any).globalVendorProducts) {
+          for (const list of (global as any).globalVendorProducts.values()) {
+            if (Array.isArray(list)) {
+              for (const vp of list) {
+                if (!dbProducts.some((p: any) => String(p._id) === String(vp._id) || p.slug === vp.slug)) {
+                  let vpCat = vp.categoryId;
+                  if (typeof vpCat !== 'object' || !vpCat?.name) {
+                    const key = String(vpCat?._id || vpCat || '').trim();
+                    vpCat = catMap.get(key) || catMap.get(key.toLowerCase()) || { _id: key, name: 'General', slug: 'general' };
+                  }
+                  dbProducts.unshift({ ...vp, categoryId: vpCat });
+                }
+              }
+            }
+          }
+        }
+
+        return NextResponse.json({ products: dbProducts });
       }
     } catch (dbError) {
       console.warn('Database error or offline, serving fallback products:', dbError);
     }
 
-    // Serve fallback products
-    let filtered = [...fallbackProducts];
+    // Serve fallback products merged with any in-memory vendor products
+    let filtered: any[] = [...fallbackProducts];
+    if ((global as any).globalVendorProducts) {
+      for (const list of (global as any).globalVendorProducts.values()) {
+        if (Array.isArray(list)) {
+          for (const vp of list) {
+            if (!filtered.some((p) => String(p._id) === String(vp._id) || p.slug === vp.slug)) {
+              filtered.unshift(vp);
+            }
+          }
+        }
+      }
+    }
+
     if (categorySlug && categorySlug !== 'all') {
-      filtered = filtered.filter((p) => p.categoryId.slug === categorySlug);
+      filtered = filtered.filter((p) => p.categoryId?.slug === categorySlug);
     }
     if (q) {
       const lowerQ = q.toLowerCase();

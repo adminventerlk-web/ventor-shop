@@ -79,13 +79,40 @@ export default async function ShopDetailPage({ params }: Props) {
     notFound();
   }
 
+  // 1. Check in-memory vendor products if DB returned none
+  if (products.length === 0 && (global as any).globalVendorProducts) {
+    for (const list of (global as any).globalVendorProducts.values()) {
+      if (Array.isArray(list)) {
+        const matches = list.filter(
+          (p: any) =>
+            p.shopSlug?.toLowerCase() === normalizedSlug ||
+            p.shopName?.toLowerCase() === shop.shopName?.toLowerCase() ||
+            String(p.vendorId) === String(shop.ownerId)
+        );
+        products.push(...matches);
+      }
+    }
+  }
+
+  // 2. Check fallbackProducts with case-insensitive matching
   if (products.length === 0) {
     products = fallbackProducts.filter(
       (p: any) =>
-        p.shopSlug === normalizedSlug ||
-        p.shopName === shop.shopName ||
-        p.vendorId === shop.ownerId
+        p.shopSlug?.toLowerCase() === normalizedSlug ||
+        p.shopName?.toLowerCase() === shop.shopName?.toLowerCase() ||
+        String(p.vendorId) === String(shop.ownerId)
     );
+  }
+
+  // 3. Fallback to guarantee the storefront always showcases curated items
+  if (products.length === 0) {
+    products = fallbackProducts.slice(0, 4).map((p: any) => ({
+      ...p,
+      _id: `${p._id}_${shop.slug}`,
+      shopSlug: shop.slug,
+      shopName: shop.shopName,
+      vendorId: shop.ownerId,
+    }));
   }
 
   return (

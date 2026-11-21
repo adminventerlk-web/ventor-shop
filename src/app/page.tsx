@@ -67,35 +67,39 @@ export default function HomePage() {
         <PromoBanners />
       </Suspense>
 
-      {/* 5b. Partner & Shop Collaboration Animated Ad Banner */}
+      {/* The following sections below vouchers are temporarily commented out as requested for launch:
+      5b. Partner & Shop Collaboration Animated Ad Banner
+      6. Virtual Shops / Explore Shops
+      6b. Community Welfare Aid Grants Section
+      8. Why Shop With VenterShop? Banner
+      International Buyers
+      9. 5-Column Trust Badges
+      */}
+      {/*
       <Suspense fallback={<div className="h-56 bg-transparent animate-pulse" />}>
         <PartnerCollabAdBanner />
       </Suspense>
 
-      {/* 6. Virtual Shops / Explore Shops */}
       <Suspense fallback={<div className="h-96 bg-transparent animate-pulse" />}>
         <VirtualShops />
       </Suspense>
 
-      {/* 6b. Community Welfare Aid Grants Section (Compact, Below Explore Shops) */}
       <Suspense fallback={<div className="h-28 bg-transparent animate-pulse" />}>
         <RevenueDonationSection />
       </Suspense>
 
-      {/* 8. Why Shop With VenterShop? Banner */}
       <Suspense fallback={<div className="h-40 bg-transparent animate-pulse" />}>
         <WhyShopBanner />
       </Suspense>
 
-      {/* International Buyers */}
       <Suspense fallback={<div className="h-64 bg-transparent animate-pulse" />}>
         <InternationalBuyers />
       </Suspense>
 
-      {/* 9. 5-Column Trust Badges */}
       <Suspense fallback={<div className="h-28 bg-transparent animate-pulse" />}>
         <TrustBadges />
       </Suspense>
+      */}
 
       {/* 10. Global Footer */}
       <Footer />
