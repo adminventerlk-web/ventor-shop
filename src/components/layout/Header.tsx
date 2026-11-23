@@ -30,10 +30,10 @@ function NavbarLogo({ compact = false }: { compact?: boolean }) {
   return (
     <Link href="/" className={compact ? styles.drawerLogo : styles.logo} aria-label="Venterprise home">
       <Image
-        src="/images/ventershop-logo.png"
+        src="/images/logo-emblem.webp"
         alt="VENTERPRISE - Find more. Shop smart."
-        width={1254}
-        height={1254}
+        width={1286}
+        height={1286}
         sizes={compact ? '44px' : '(max-width: 767px) 44px, 64px'}
         preload={!compact}
       />
