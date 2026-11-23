@@ -58,12 +58,12 @@ export default function VendorDashboardOverview() {
   const shopName = user?.shopName || 'My Vendor Shop';
 
   return (
-    <div className="flex min-h-screen bg-[#010e24] text-white">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-[#010e24] text-white overflow-x-hidden">
       <VendorSidebar />
 
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 w-full p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Welcome Header */}
-        <div className="bg-gradient-to-r from-[#021838] via-[#032352] to-[#0052CC]/40 border border-[#0052CC]/40 rounded-3xl p-6 sm:p-8 mb-8 shadow-xl relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#021838] via-[#032352] to-[#0052CC]/40 border border-[#0052CC]/40 rounded-2xl sm:rounded-3xl p-4 sm:p-8 mb-6 sm:mb-8 shadow-xl relative overflow-hidden">
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2">

@@ -68,10 +68,10 @@ export default function VendorOrdersPage() {
   const shopName = user?.shopName || 'My Vendor Shop';
 
   return (
-    <div className="flex min-h-screen bg-[#010e24] text-white">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-[#010e24] text-white overflow-x-hidden">
       <VendorSidebar />
 
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 w-full p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#0052CC]/30 mb-6">
           <div>

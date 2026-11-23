@@ -330,10 +330,10 @@ export default function VendorProductsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#010e24] text-white">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-[#010e24] text-white overflow-x-hidden">
       <VendorSidebar />
 
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 w-full p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#0052CC]/30 mb-6">
           <div>
@@ -496,7 +496,7 @@ export default function VendorProductsPage() {
         {/* ADD / EDIT PRODUCT MODAL */}
         {modalOpen && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-            <div className="bg-[#021838] border border-[#0052CC] rounded-3xl max-w-2xl w-full my-8 p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-6">
+            <div className="bg-[#021838] border border-[#0052CC] rounded-3xl max-w-2xl w-full my-8 p-4 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-blue-900/50">
                 <div className="flex items-center gap-2">
                   <div className={`p-2 rounded-xl ${editingProduct ? 'bg-blue-500/20 text-blue-300' : 'bg-[#FFB800]/20 text-[#FFB800]'}`}>
