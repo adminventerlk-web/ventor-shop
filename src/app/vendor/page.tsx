@@ -78,7 +78,7 @@ export default function VendorDashboardOverview() {
                 Welcome back, {shopName}!
               </h1>
               <p className="text-xs text-blue-200/80 max-w-2xl">
-                Your store is live on the VENTERSHOP home page and marketplace. Manage your products, variants, and customer orders directly below.
+                Your store is live on the VENTERPRISE home page and marketplace. Manage your products, variants, and customer orders directly below.
               </p>
             </div>
 
@@ -204,7 +204,7 @@ export default function VendorDashboardOverview() {
                   {orders.slice(0, 5).map((ord) => {
                     const cleanPhone = ord.customerPhone?.replace(/[^0-9]/g, '');
                     const whatsappText = encodeURIComponent(
-                      `Hello ${ord.customerName}, regarding your order #${ord.orderNumber} on VentorShop from ${shopName}. We are preparing your order!`
+                      `Hello ${ord.customerName}, regarding your order #${ord.orderNumber} on Venterprise from ${shopName}. We are preparing your order!`
                     );
                     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${whatsappText}`;
 

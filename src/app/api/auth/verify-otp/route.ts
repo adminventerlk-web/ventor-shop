@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 
       // Check for default admin credentials
       if (
-        (normalizedEmail === 'admin@ventershop.ca' && password === 'admin123') ||
+        (normalizedEmail === 'admin@venterprise.lk' && password === 'admin123') ||
         (normalizedEmail === 'adminventerlk@gmail.com' && (password === 'admin123' || password === 'xeuesmcbuyhpqnsx'))
       ) {
         userRole = 'SUPER_ADMIN';
@@ -234,7 +234,7 @@ export async function POST(request: Request) {
     let userId = 'usr_' + Date.now();
     const userFirstName = firstName?.trim() || 'Valued';
     const userLastName = lastName?.trim() || 'Customer';
-    const rawPassword = password || 'VenterShop2026!';
+    const rawPassword = password || 'Venterprise2026!';
     const hashedPassword = hashPassword(rawPassword);
 
     let shopId = '';
@@ -258,7 +258,7 @@ export async function POST(request: Request) {
         ownerPhone: requestedShopPhone?.trim() || phone?.trim() || '',
         shopName: shopName,
         slug: shopSlug,
-        description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERSHOP.',
+        description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERPRISE.',
         category: requestedShopCategory?.trim() || 'General Store',
         city: requestedShopCity?.trim() || 'Colombo',
         logoUrl: requestedShopLogoUrl?.trim() || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',
@@ -341,7 +341,7 @@ export async function POST(request: Request) {
                 ownerPhone: requestedShopPhone?.trim() || phone?.trim() || '',
                 shopName: shopName,
                 slug: shopSlug,
-                description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERSHOP.',
+                description: requestedShopDescription?.trim() || 'Specialty merchant partner store on VENTERPRISE.',
                 category: requestedShopCategory?.trim() || 'General Store',
                 city: requestedShopCity?.trim() || 'Colombo',
                 logoUrl: requestedShopLogoUrl?.trim() || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=300&q=80',

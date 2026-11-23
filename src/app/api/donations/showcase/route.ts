@@ -85,7 +85,7 @@ export async function POST(request: Request) {
         beneficiary: beneficiary.trim(),
         location: (location || 'Sri Lanka').trim(),
         date: (date || new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })).trim(),
-        description: (description || 'Community welfare contribution supported directly by VENTERSHOP platform revenue.').trim(),
+        description: (description || 'Community welfare contribution supported directly by VENTERPRISE platform revenue.').trim(),
         imageUrl:
           imageUrl ||
           'https://images.unsplash.com/photo-1532629345422-7515f3d16bb7?auto=format&fit=crop&w=800&q=80',
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
       beneficiary: beneficiary.trim(),
       location: (location || 'Sri Lanka').trim(),
       date: (date || new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })).trim(),
-      description: (description || 'Community welfare contribution supported directly by VENTERSHOP platform revenue.').trim(),
+      description: (description || 'Community welfare contribution supported directly by VENTERPRISE platform revenue.').trim(),
       imageUrl:
         imageUrl ||
         'https://images.unsplash.com/photo-1532629345422-7515f3d16bb7?auto=format&fit=crop&w=800&q=80',

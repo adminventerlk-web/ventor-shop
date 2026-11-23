@@ -73,7 +73,7 @@ export default function HowItWorks() {
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-[#1B5E20] animate-pulse" />
             <h2 className="text-base sm:text-lg font-black text-gray-900 tracking-wider uppercase font-sans">
-              HOW VENTERSHOP WORKS?
+              HOW VENTERPRISE WORKS?
             </h2>
           </div>
 

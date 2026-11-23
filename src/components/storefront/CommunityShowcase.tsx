@@ -87,8 +87,8 @@ export default function CommunityShowcase() {
           </span>
           <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white uppercase leading-tight">
             {language === 'ta'
-              ? 'VenterShop சமூகக் குழுவில் சேர்ந்து சிறப்புத் தள்ளுபடி பெறுங்கள்'
-              : 'Join a VenterShop Community & Unlock Group Savings'}
+              ? 'Venterprise சமூகக் குழுவில் சேர்ந்து சிறப்புத் தள்ளுபடி பெறுங்கள்'
+              : 'Join a Venterprise Community & Unlock Group Savings'}
           </h2>
           <p className="text-sm text-gray-300 font-semibold leading-relaxed">
             {language === 'ta'
@@ -204,7 +204,7 @@ export default function CommunityShowcase() {
               </div>
 
               <p className="text-gray-300 text-xs leading-relaxed">
-                Operating a store or ordering bulk quantities? Apply for VenterShop Wholesale tier pricing to unlock bulk discounts up to 30% and commercial logistics.
+                Operating a store or ordering bulk quantities? Apply for Venterprise Wholesale tier pricing to unlock bulk discounts up to 30% and commercial logistics.
               </p>
 
               <div className="pt-2 space-y-1.5 text-[11px] text-gray-200">

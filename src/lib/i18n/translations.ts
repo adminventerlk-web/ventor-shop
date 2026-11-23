@@ -73,7 +73,7 @@ export const translations = {
     checkoutPlaceOrder: 'Place Order',
     checkoutPlacingOrder: 'Placing Order...',
     checkoutSuccessTitle: 'Order Placed Successfully!',
-    checkoutSuccessSubtitle: 'Thank you for shopping with VENTERSHOP. We have sent a confirmation email to your registered address.',
+    checkoutSuccessSubtitle: 'Thank you for shopping with VENTERPRISE. We have sent a confirmation email to your registered address.',
     checkoutOrderNumber: 'Order Number',
     checkoutContinueShopping: 'Continue Shopping',
 
@@ -120,7 +120,7 @@ export const translations = {
     addressSaving: 'Saving Address...',
 
     // Trust Features
-    trustTitle: 'Why Shop With VENTERSHOP?',
+    trustTitle: 'Why Shop With VENTERPRISE?',
     trustItem1Title: 'Quality Products',
     trustItem1Desc: 'We source only high-quality items for you and your family.',
     trustItem2Title: 'Reliable Shipping',
@@ -210,7 +210,7 @@ export const translations = {
     checkoutPlaceOrder: 'ஆர்டர் செய்',
     checkoutPlacingOrder: 'ஆர்டர் செய்யப்படுகிறது...',
     checkoutSuccessTitle: 'ஆர்டர் வெற்றிகரமாக செய்யப்பட்டது!',
-    checkoutSuccessSubtitle: 'வென்டர்ஷாப்பில் ஷாப்பிங் செய்ததற்கு நன்றி. உங்கள் பதிவு செய்யப்பட்ட மின்னஞ்சல் முகவரிக்கு உறுதிப்படுத்தல் மின்னஞ்சலை அனுப்பியுள்ளோம்.',
+    checkoutSuccessSubtitle: 'வென்டர்பிரைஸ்பில் ஷாப்பிங் செய்ததற்கு நன்றி. உங்கள் பதிவு செய்யப்பட்ட மின்னஞ்சல் முகவரிக்கு உறுதிப்படுத்தல் மின்னஞ்சலை அனுப்பியுள்ளோம்.',
     checkoutOrderNumber: 'ஆர்டர் எண்',
     checkoutContinueShopping: 'ஷாப்பிங்கைத் தொடரவும்',
 
@@ -257,7 +257,7 @@ export const translations = {
     addressSaving: 'முகவரி சேமிக்கப்படுகிறது...',
 
     // Trust Features
-    trustTitle: 'ஏன் வென்டர்ஷாப்பில் வாங்க வேண்டும்?',
+    trustTitle: 'ஏன் வென்டர்பிரைஸ்பில் வாங்க வேண்டும்?',
     trustItem1Title: 'தரமான தயாரிப்புகள்',
     trustItem1Desc: 'உங்களுக்கும் உங்கள் குடும்பத்தினருக்கும் உயர்தர தயாரிப்புகளை மட்டுமே நாங்கள் வழங்குகிறோம்.',
     trustItem2Title: 'நம்பகமான ஷிப்பிங்',
@@ -347,7 +347,7 @@ export const translations = {
     checkoutPlaceOrder: 'ඇණවුම යොමු කරන්න',
     checkoutPlacingOrder: 'ඇණවුම යොමු කරමින් පවතී...',
     checkoutSuccessTitle: 'ඇණවුම සාර්ථකයි!',
-    checkoutSuccessSubtitle: 'VENTERSHOP වෙතින් මිලදී ගැනීම ගැන ස්තූතියි. අපි ඔබේ විද්‍යුත් තැපෑලට තහවුරු කිරීමක් යවා ඇත.',
+    checkoutSuccessSubtitle: 'VENTERPRISE වෙතින් මිලදී ගැනීම ගැන ස්තූතියි. අපි ඔබේ විද්‍යුත් තැපෑලට තහවුරු කිරීමක් යවා ඇත.',
     checkoutOrderNumber: 'ඇණවුම් අංකය',
     checkoutContinueShopping: 'තවත් සාප්පු සවාරි යන්න',
 
@@ -394,7 +394,7 @@ export const translations = {
     addressSaving: 'ලිපිනය සුරකිමින්...',
 
     // Trust Features
-    trustTitle: 'VENTERSHOP වෙතින් මිලදී ගන්නේ ඇයි?',
+    trustTitle: 'VENTERPRISE වෙතින් මිලදී ගන්නේ ඇයි?',
     trustItem1Title: 'උසස් ගුණාත්මක භාණ්ඩ',
     trustItem1Desc: 'ඔබට සහ ඔබේ පවුලට හොඳම දේ පමණක් ලබා දෙන්නෙමු.',
     trustItem2Title: 'විශ්වාසදායක බෙදාහැරීම',

@@ -20,7 +20,7 @@ export default function DualFeatureCards() {
             {isTa ? 'எங்களின் சிறப்பு கடைகள் & சேவைகள்' : isSi ? 'අපගේ විශේෂිත සාප්පු සහ සේවාවන්' : 'OUR FEATURED SHOPS & SERVICES'}
           </span>
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">
-            {isTa ? 'VENTERSHOP இல் எங்களின் சிறப்பு கடைகளை ஆராயுங்கள்' : isSi ? 'VENTERSHOP හි අපගේ විශේෂ සාප්පු ගවේෂණය කරන්න' : 'Explore Our Special Shops on VENTERSHOP'}
+            {isTa ? 'VENTERPRISE இல் எங்களின் சிறப்பு கடைகளை ஆராயுங்கள்' : isSi ? 'VENTERPRISE හි අපගේ විශේෂ සාප්පු ගවේෂණය කරන්න' : 'Explore Our Special Shops on VENTERPRISE'}
           </h2>
           <p className="text-xs sm:text-sm font-semibold text-gray-500">
             {isTa

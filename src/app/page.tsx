@@ -16,10 +16,10 @@ import TrustBadges from '@/components/storefront/TrustBadges';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export | Sri Lanka',
+  title: 'VENTERPRISE - Premium Multi-Category E-Commerce & Ceylon Export | Sri Lanka',
   description: 'Free Fast Delivery on Orders over LKR 7,500. Premium Groceries, Rani Animal Feed, Ceylon Spices, Books, Electronics, and Direct Commercial Exports.',
   keywords: [
-    'VENTERSHOP Sri Lanka',
+    'VENTERPRISE Sri Lanka',
     'Online Groceries Sri Lanka',
     'Rani Animal Feed',
     'Ceylon Spices Export',
@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export',
+    title: 'VENTERPRISE - Premium Multi-Category E-Commerce & Ceylon Export',
     description: 'Free Fast Delivery on Orders over LKR 7,500. Premium Groceries, Rani Animal Feed, Ceylon Spices, Books, Electronics, and Direct Commercial Exports.',
-    url: 'https://ventershop.vercel.app',
-    images: [{ url: '/images/hero_banner.webp', width: 1200, height: 630, alt: 'VENTERSHOP Home' }],
+    url: 'https://venterprise.vercel.app',
+    images: [{ url: '/images/hero_banner.webp', width: 1200, height: 630, alt: 'VENTERPRISE Home' }],
   },
 };
 
@@ -71,7 +71,7 @@ export default function HomePage() {
       5b. Partner & Shop Collaboration Animated Ad Banner
       6. Virtual Shops / Explore Shops
       6b. Community Welfare Aid Grants Section
-      8. Why Shop With VenterShop? Banner
+      8. Why Shop With Venterprise? Banner
       International Buyers
       9. 5-Column Trust Badges
       */}

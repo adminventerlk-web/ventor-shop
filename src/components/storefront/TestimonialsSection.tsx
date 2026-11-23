@@ -29,7 +29,7 @@ export default function TestimonialsSection() {
         ? 'B2B மொத்தக் கொள்முதல் விலை மிகவும் சிறப்பானது. எனது உணவகத்திற்கான அத்தியாவசியப் பொருட்கள் குறித்த நேரத்தில் கிடைக்கின்றன.'
         : language === 'si'
         ? 'තොග මිල ගණන් සහ ප්‍රමාණාත්මක වට්ටම් ඉතා වාසිදායකයි. අපගේ ආපනශාලාවට අවශ්‍ය ද්‍රව්‍ය වෙලාවටම ලැබේ.'
-        : 'As a restaurant manager, the wholesale bulk pricing matrix and automated volume discounts make VenterShop our go-to supplier.',
+        : 'As a restaurant manager, the wholesale bulk pricing matrix and automated volume discounts make Venterprise our go-to supplier.',
       tier: 'Wholesale Buyer',
     },
     {
@@ -66,7 +66,7 @@ export default function TestimonialsSection() {
             {language === 'ta' ? 'வாடிக்கையாளர்களின் கருத்துக்கள்' : language === 'si' ? 'පාරිභෝගික අදහස්' : 'Loved by Thousands Across Canada'}
           </h2>
           <p className="text-xs text-gray-500 font-semibold">
-            See what our shoppers in Toronto, Vancouver, and Montreal have to say about VenterShop.
+            See what our shoppers in Toronto, Vancouver, and Montreal have to say about Venterprise.
           </p>
         </div>
 

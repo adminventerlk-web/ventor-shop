@@ -5,15 +5,15 @@ import JsonLd from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'Community Gift Vouchers - V2CC Educating Bank & TMSAP Project',
-  description: 'Redeem community gift vouchers on VENTERSHOP for educational textbooks, stationery, and family grocery support packages.',
-  keywords: ['VenterShop Vouchers', 'Student Gift Voucher', 'V2CC Educating Bank', 'TMSAP Project', 'Sri Lanka Community Discount'],
+  description: 'Redeem community gift vouchers on VENTERPRISE for educational textbooks, stationery, and family grocery support packages.',
+  keywords: ['Venterprise Vouchers', 'Student Gift Voucher', 'V2CC Educating Bank', 'TMSAP Project', 'Sri Lanka Community Discount'],
   alternates: {
     canonical: '/vouchers',
   },
   openGraph: {
-    title: 'Community Gift Vouchers - VENTERSHOP',
-    description: 'Redeem community gift vouchers on VENTERSHOP for educational textbooks, stationery, and family grocery support packages.',
-    url: 'https://ventershop.vercel.app/vouchers',
+    title: 'Community Gift Vouchers - VENTERPRISE',
+    description: 'Redeem community gift vouchers on VENTERPRISE for educational textbooks, stationery, and family grocery support packages.',
+    url: 'https://venterprise.vercel.app/vouchers',
   },
 };
 
@@ -21,8 +21,8 @@ export default function CommunityVouchersPage() {
   const vouchersJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
-    name: 'VENTERSHOP Community Gift Vouchers',
-    url: 'https://ventershop.vercel.app/vouchers',
+    name: 'VENTERPRISE Community Gift Vouchers',
+    url: 'https://venterprise.vercel.app/vouchers',
     description: 'Subsidized vouchers for educational materials and family essentials supported by V2CC.',
   };
 

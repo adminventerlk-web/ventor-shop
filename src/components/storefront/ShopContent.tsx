@@ -256,7 +256,7 @@ export default function ShopContent() {
               {language === 'ta' ? 'சிறப்பு சலுகைகள் & தள்ளுபடி பொருட்கள்' : language === 'si' ? 'විශේෂ දීමනා සහ වට්ටම් නිෂ්පාදන' : 'Special Offers & Exclusive Deals'}
             </h1>
             <p className="text-xs text-[#DBEDFF] mt-1 font-semibold">
-              {language === 'ta' ? 'அனைத்து சிறப்பு சலுகைகள் மற்றும் தள்ளுபடி தயாரிப்புகளை பார்வையிடுகிறீர்கள்.' : language === 'si' ? 'VenterShop හි සියලුම විශේෂ දීමනා සහ වට්ටම් සහිත නිෂ්පාදන නරඹන්න.' : 'Browsing all promotional deals, vouchers, and discounted products across VenterShop.'}
+              {language === 'ta' ? 'அனைத்து சிறப்பு சலுகைகள் மற்றும் தள்ளுபடி தயாரிப்புகளை பார்வையிடுகிறீர்கள்.' : language === 'si' ? 'Venterprise හි සියලුම විශේෂ දීමනා සහ වට්ටම් සහිත නිෂ්පාදන නරඹන්න.' : 'Browsing all promotional deals, vouchers, and discounted products across Venterprise.'}
             </p>
           </div>
           <button

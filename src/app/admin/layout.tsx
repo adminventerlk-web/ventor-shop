@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import AdminGuard from '@/components/admin/AdminGuard';
 
 export const metadata: Metadata = {
-  title: 'Admin Control Center - VENTERSHOP',
+  title: 'Admin Control Center - VENTERPRISE',
   description: 'Manage products, orders, customers, vouchers, and storefront configurations.',
   robots: {
     index: false,

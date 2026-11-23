@@ -25,7 +25,7 @@ const getBaseUrl = () => {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
-  return 'https://www.ventershop.com';
+  return 'https://www.venterprise.com';
 };
 
 const baseUrl = getBaseUrl();
@@ -39,12 +39,12 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export",
-    template: "%s | VENTERSHOP",
+    default: "VENTERPRISE - Premium Multi-Category E-Commerce & Ceylon Export",
+    template: "%s | VENTERPRISE",
   },
   description: "Your trusted online store for high-quality groceries, Rani animal feed, Ceylon spices, books, electronics, daily essentials, and global bulk export from Sri Lanka.",
   keywords: [
-    "VENTERSHOP",
+    "VENTERPRISE",
     "Online Shopping Sri Lanka",
     "Ceylon Spices Export",
     "Rani Animal Feed",
@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     "Virtual Supermarket",
     "Ceylon Tea Export",
   ],
-  authors: [{ name: "VENTERSHOP", url: baseUrl }],
-  creator: "VENTERSHOP",
-  publisher: "VENTERSHOP",
+  authors: [{ name: "VENTERPRISE", url: baseUrl }],
+  creator: "VENTERPRISE",
+  publisher: "VENTERPRISE",
   robots: {
     index: true,
     follow: true,
@@ -74,21 +74,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: baseUrl,
-    siteName: "VENTERSHOP",
-    title: "VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export",
+    siteName: "VENTERPRISE",
+    title: "VENTERPRISE - Premium Multi-Category E-Commerce & Ceylon Export",
     description: "Discover premium groceries, Rani livestock feed, Ceylon spices, stationery, electronics, and direct international export from Sri Lanka.",
     images: [
       {
         url: "/images/hero_banner.png",
         width: 1200,
         height: 630,
-        alt: "VENTERSHOP Online Marketplace",
+        alt: "VENTERPRISE Online Marketplace",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "VENTERSHOP - Premium Multi-Category E-Commerce & Ceylon Export",
+    title: "VENTERPRISE - Premium Multi-Category E-Commerce & Ceylon Export",
     description: "Discover premium groceries, Rani livestock feed, Ceylon spices, stationery, electronics, and direct international export from Sri Lanka.",
     images: ["/images/hero_banner.webp"],
   },
@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'VENTERSHOP',
+    name: 'VENTERPRISE',
     url: baseUrl,
     logo: `${baseUrl}/images/logo.png`,
     description: 'Premier multi-category e-commerce and international export platform.',
@@ -128,7 +128,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'VENTERSHOP',
+    name: 'VENTERPRISE',
     url: baseUrl,
     potentialAction: {
       '@type': 'SearchAction',

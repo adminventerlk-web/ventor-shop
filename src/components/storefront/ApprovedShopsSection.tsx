@@ -86,7 +86,7 @@ export default function ApprovedShopsSection() {
                 ? 'எங்கள் சூப்பர் அட்மினால் அங்கீகரிக்கப்பட்ட உள்ளூர் உற்பத்தியாளர்கள் மற்றும் சிறப்பு கடைகளில் இருந்து நேரடியாக வாங்கவும்.'
                 : isSi
                 ? 'අපගේ සුපිරි පරිපාලක විසින් අනුමත කරන ලද දේශීය නිෂ්පාදකයින්ගෙන් සෘජුවම මිලදී ගන්න.'
-                : 'Shop directly from certified local vendors, organic spice growers, and specialty merchants verified by VENTERSHOP.'}
+                : 'Shop directly from certified local vendors, organic spice growers, and specialty merchants verified by VENTERPRISE.'}
             </p>
           </div>
 

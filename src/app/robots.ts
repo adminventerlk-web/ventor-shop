@@ -11,7 +11,7 @@ const getBaseUrl = () => {
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  return 'https://ventershop.vercel.app';
+  return 'https://venterprise.vercel.app';
 };
 
 export default function robots(): MetadataRoute.Robots {

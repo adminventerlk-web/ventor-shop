@@ -9,15 +9,15 @@ async function seedInitialLogsIfEmpty() {
   if (count === 0) {
     await AuditLog.create([
       {
-        adminEmail: 'admin@ventershop.com',
+        adminEmail: 'admin@venterprise.com',
         adminName: 'System Administrator',
         action: 'SYSTEM_INITIALIZATION',
         targetModel: 'System',
-        details: 'VENTERSHOP Multi-Category E-Commerce Platform initialized with Ceylon Export & Local catalog.',
+        details: 'VENTERPRISE Multi-Category E-Commerce Platform initialized with Ceylon Export & Local catalog.',
         ipAddress: '127.0.0.1',
       },
       {
-        adminEmail: 'admin@ventershop.com',
+        adminEmail: 'admin@venterprise.com',
         adminName: 'System Administrator',
         action: 'STUDENT_VOUCHER_POLICY_UPDATED',
         targetModel: 'StudentVoucher',
@@ -25,7 +25,7 @@ async function seedInitialLogsIfEmpty() {
         ipAddress: '127.0.0.1',
       },
       {
-        adminEmail: 'admin@ventershop.com',
+        adminEmail: 'admin@venterprise.com',
         adminName: 'System Administrator',
         action: 'COMMUNITY_PROGRAM_TOGGLED',
         targetModel: 'CommunityProgramVoucher',
@@ -33,7 +33,7 @@ async function seedInitialLogsIfEmpty() {
         ipAddress: '127.0.0.1',
       },
       {
-        adminEmail: 'admin@ventershop.com',
+        adminEmail: 'admin@venterprise.com',
         adminName: 'System Administrator',
         action: 'STORE_SETTINGS_VERIFIED',
         targetModel: 'Setting',

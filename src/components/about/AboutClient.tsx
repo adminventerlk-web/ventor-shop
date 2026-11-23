@@ -40,11 +40,11 @@ export default function AboutClient() {
             {language === 'ta' ? 'எங்களைப் பற்றி' : 'OUR IDENTITY'}
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-[#1A2A4A] tracking-tight">
-            {language === 'ta' ? 'வெண்டர்ஷாப் வரலாறு' : 'About VenterShop'}
+            {language === 'ta' ? 'வென்டர்பிரைஸ் வரலாறு' : 'About Venterprise'}
           </h1>
           <div className="w-12 h-0.5 bg-[#E53935] mx-auto rounded-full" />
           <p className="text-sm text-gray-700 font-medium leading-relaxed pt-2">
-            Established in 2026, VenterShop is a premier multi-category e-commerce platform offering top-tier home goods, groceries, electronics, Rani animal feed, and global exports.
+            Established in 2026, Venterprise is a premier multi-category e-commerce platform offering top-tier home goods, groceries, electronics, Rani animal feed, and global exports.
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function AboutClient() {
               Our Backstory & Mission
             </h2>
             <p className="text-xs text-gray-700 leading-relaxed font-medium">
-              VenterShop was founded with a singular vision: to connect households and businesses with high-quality retail essentials through an optimized, bilingual e-commerce pipeline.
+              Venterprise was founded with a singular vision: to connect households and businesses with high-quality retail essentials through an optimized, bilingual e-commerce pipeline.
             </p>
             <p className="text-xs text-gray-700 leading-relaxed font-medium">
               By combining normal B2C shopping loops, local community group discount networks (V2CC), and dedicated corporate wholesale B2B pipelines, we serve a diverse customer base with segment-optimized pricing matrices.

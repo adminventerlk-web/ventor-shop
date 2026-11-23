@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const normalizedSlug = slug.toLowerCase().trim();
 
   let shopName = 'Verified Partner Store';
-  let description = 'Shop quality goods directly from certified merchants on VENTERSHOP.';
+  let description = 'Shop quality goods directly from certified merchants on VENTERPRISE.';
 
   const memShop = getInMemoryShopBySlug(normalizedSlug);
   if (memShop) {
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${shopName} | VENTERSHOP Sri Lanka`,
+    title: `${shopName} | VENTERPRISE Sri Lanka`,
     description: description,
   };
 }

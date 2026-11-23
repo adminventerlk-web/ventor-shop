@@ -51,16 +51,16 @@ export async function POST(request: Request) {
     }
 
     // Send email with premium HTML layout
-    const subject = `Your VENTERSHOP Verification Code: ${otpCode}`;
+    const subject = `Your VENTERPRISE Verification Code: ${otpCode}`;
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
         <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1a2a4a; padding-bottom: 15px;">
-          <h1 style="color: #1a2a4a; margin: 0; font-size: 28px; letter-spacing: 1px;">VENTERSHOP</h1>
+          <h1 style="color: #1a2a4a; margin: 0; font-size: 28px; letter-spacing: 1px;">VENTERPRISE</h1>
           <p style="color: #E53935; margin: 5px 0 0; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;">Your Trusted Online Store for Quality Products</p>
         </div>
         <div style="padding: 25px; background-color: #f9fafb; border-radius: 6px; text-align: center;">
           <p style="color: #333333; font-size: 16px; margin-top: 0; text-align: left;">Hello,</p>
-          <p style="color: #333333; font-size: 16px; text-align: left; line-height: 1.5;">Use the following verification code to log in or register your account on the VENTERSHOP platform:</p>
+          <p style="color: #333333; font-size: 16px; text-align: left; line-height: 1.5;">Use the following verification code to log in or register your account on the VENTERPRISE platform:</p>
           <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #1a2a4a; margin: 25px 0; padding: 15px; background-color: #ffffff; border: 1px dashed #E5E7EB; border-radius: 6px; display: inline-block;">
             ${otpCode}
           </div>
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         </div>
         <div style="margin-top: 25px; text-align: center; color: #9ca3af; font-size: 12px; border-top: 1px solid #E5E7EB; padding-top: 15px;">
           <p style="margin: 0 0 5px;">This is an automated message, please do not reply directly to this email.</p>
-          <p style="margin: 0; font-weight: bold;">© 2026 VENTERSHOP Canada. All rights reserved.</p>
+          <p style="margin: 0; font-weight: bold;">© 2026 VENTERPRISE Canada. All rights reserved.</p>
         </div>
       </div>
     `;

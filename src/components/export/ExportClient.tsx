@@ -120,7 +120,7 @@ export default function ExportClient() {
               
               <p className="text-xs sm:text-sm text-[#dceaff] font-medium leading-relaxed max-w-xl">
                 {isTa
-                  ? 'இலங்கையின் தலைசிறந்த மளிகைப் பொருட்கள், மசாலாக்கள், ராணி கால்நடை தீவனங்கள் மற்றும் பாரம்பரிய உற்பத்திகளை உலகளாவிய பல்க் கொள்முதலுக்கு VENTERSHOP மூலம் பாதுகாப்பாகப் பெறுங்கள்.'
+                  ? 'இலங்கையின் தலைசிறந்த மளிகைப் பொருட்கள், மசாலாக்கள், ராணி கால்நடை தீவனங்கள் மற்றும் பாரம்பரிய உற்பத்திகளை உலகளாவிய பல்க் கொள்முதலுக்கு VENTERPRISE மூலம் பாதுகாப்பாகப் பெறுங்கள்.'
                   : 'Source authentic Sri Lankan Ceylon spices, fresh groceries, Rani animal feed, and manufactured goods directly from verified suppliers. Seamless bulk supply with international shipping.'}
               </p>
 
@@ -191,7 +191,7 @@ export default function ExportClient() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
             <span className="text-[10px] font-extrabold text-[#0759D6] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-              {isTa ? 'ஏன் VENTERSHOP ஏற்றுமதி?' : 'Why Export With VENTERSHOP?'}
+              {isTa ? 'ஏன் VENTERPRISE ஏற்றுமதி?' : 'Why Export With VENTERPRISE?'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-[#082B68]">
               {isTa ? 'உங்கள் நம்பகமான சர்வதேச விநியோக கூட்டாளி' : 'Your Trusted International Supply Partner'}

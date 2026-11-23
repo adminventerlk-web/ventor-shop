@@ -66,7 +66,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#FFB800] shrink-0" />
-                <span>support@ventershop.lk</span>
+                <span>support@venterprise.lk</span>
               </div>
             </div>
 
@@ -171,7 +171,7 @@ export default function Footer() {
 
         {/* Bottom Copyright */}
         <div className="pt-6 lg:pt-3 flex flex-col sm:flex-row justify-between items-center text-xs text-blue-200/70 font-semibold gap-2">
-          <p>© 2026 VENTERSHOP. Find More. Shop Smart. All Rights Reserved.</p>
+          <p>© 2026 VENTERPRISE. Find More. Shop Smart. All Rights Reserved.</p>
           <div className="flex items-center gap-1 text-amber-300 font-bold">
             <ShieldCheck className="w-4 h-4 text-[#FFB800]" />
             <span>100% Secured Ceylon E-Commerce Portal</span>

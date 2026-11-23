@@ -84,7 +84,7 @@ export default function VendorGuard({ children }: { children: React.ReactNode })
               {user.shopName || 'Your Shop'} is Pending Super Admin Approval
             </h1>
             <p className="text-xs text-blue-200/80 leading-relaxed max-w-md mx-auto">
-              Thank you for registering on VENTERSHOP! Our marketplace administration team is currently reviewing your store details. Once approved, your vendor dashboard will be fully activated and you can start uploading products with variants.
+              Thank you for registering on VENTERPRISE! Our marketplace administration team is currently reviewing your store details. Once approved, your vendor dashboard will be fully activated and you can start uploading products with variants.
             </p>
           </div>
 
@@ -139,8 +139,8 @@ export default function VendorGuard({ children }: { children: React.ReactNode })
           </div>
           <div className="bg-[#01142F] border border-red-950 rounded-xl p-3 text-xs text-red-300">
             Please check your email for specific feedback or contact support at{' '}
-            <a href="mailto:support@ventershop.ca" className="underline font-bold text-white">
-              support@ventershop.ca
+            <a href="mailto:support@venterprise.lk" className="underline font-bold text-white">
+              support@venterprise.lk
             </a>
             .
           </div>

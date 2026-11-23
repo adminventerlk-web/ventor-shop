@@ -170,7 +170,7 @@ export default function ContactClient() {
                   </div>
                   <div>
                     <h4 className="font-extrabold text-[#082B68]">Customer Desk</h4>
-                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere">VenterShop Headquarters & Logistics Center, Sri Lanka</p>
+                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere">Venterprise Headquarters & Logistics Center, Sri Lanka</p>
                   </div>
                 </div>
 
@@ -190,7 +190,7 @@ export default function ContactClient() {
                   </div>
                   <div>
                     <h4 className="font-extrabold text-[#082B68]">Support Email</h4>
-                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere"><a href="mailto:support@ventershop.com" className="rounded-sm hover:text-[#0759D6] focus-visible:outline-2 focus-visible:outline-[#0759D6]">support@ventershop.com</a> / <a href="mailto:export@ventershop.com" className="rounded-sm hover:text-[#0759D6] focus-visible:outline-2 focus-visible:outline-[#0759D6]">export@ventershop.com</a></p>
+                    <p className="text-[#526681] font-medium pt-0.5 leading-relaxed wrap-anywhere"><a href="mailto:support@venterprise.com" className="rounded-sm hover:text-[#0759D6] focus-visible:outline-2 focus-visible:outline-[#0759D6]">support@venterprise.com</a> / <a href="mailto:export@venterprise.com" className="rounded-sm hover:text-[#0759D6] focus-visible:outline-2 focus-visible:outline-[#0759D6]">export@venterprise.com</a></p>
                   </div>
                 </div>
               </div>

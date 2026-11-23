@@ -93,8 +93,8 @@ export default function VouchersClient() {
     {
       q: isTa ? 'மாணவர் பரிசு வவுச்சரை யார் பெறலாம்?' : 'Who is eligible for the Student Gift Voucher?',
       a: isTa
-        ? 'V2CC கல்வி வங்கியால் அங்கீகரிக்கப்பட்ட மாணவர்கள் மற்றும் VENTERSHOP தளத்தில் கல்வித் திட்டத்தின் கீழ் பதிவு செய்த பயனர்கள் இந்த வவுச்சரைப் பயன்படுத்தி கல்விப் பொருட்களுக்கு சிறப்பு சலுகை பெறலாம்.'
-        : 'Registered students affiliated with the V2CC Educating Bank System and general learners on VENTERSHOP can redeem this voucher for exclusive discounts on educational books and stationery.',
+        ? 'V2CC கல்வி வங்கியால் அங்கீகரிக்கப்பட்ட மாணவர்கள் மற்றும் VENTERPRISE தளத்தில் கல்வித் திட்டத்தின் கீழ் பதிவு செய்த பயனர்கள் இந்த வவுச்சரைப் பயன்படுத்தி கல்விப் பொருட்களுக்கு சிறப்பு சலுகை பெறலாம்.'
+        : 'Registered students affiliated with the V2CC Educating Bank System and general learners on VENTERPRISE can redeem this voucher for exclusive discounts on educational books and stationery.',
     },
     {
       q: isTa ? 'குடும்ப ஆதரவு வவுச்சர் எப்போது செயல்படும்?' : 'When will the Family Support Voucher be activated?',

@@ -18,7 +18,7 @@ export async function GET() {
       // Auto seed defaults if settings not found
       settings = await Setting.create({
         freeDeliveryThreshold: 75,
-        primaryEmail: 'admin@ventershop.ca',
+        primaryEmail: 'admin@venterprise.lk',
         maintenanceMode: false,
       });
     }

@@ -396,7 +396,7 @@ function LoginContent() {
       <div className="text-center space-y-2.5">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-900/60 border border-blue-600/40 text-[#FFB800] text-[10px] font-black uppercase tracking-widest shadow-xs">
           <Sparkles className="w-3.5 h-3.5 text-[#FFB800]" />
-          <span>VENTERSHOP SECURE PORTAL</span>
+          <span>VENTERPRISE SECURE PORTAL</span>
         </div>
 
         <div className="w-14 h-14 bg-blue-950/80 rounded-2xl flex items-center justify-center border border-[#FFB800]/40 text-[#FFB800] mx-auto shadow-inner shadow-blue-950">
@@ -765,7 +765,7 @@ function LoginContent() {
               <input
                 type="email"
                 required
-                placeholder="e.g. customer@ventershop.com"
+                placeholder="e.g. customer@venterprise.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-[#01142F] border border-blue-800/80 rounded-xl outline-none focus:border-[#FFB800] focus:ring-2 focus:ring-[#FFB800]/20 text-white font-bold placeholder-blue-300/30 transition-all"

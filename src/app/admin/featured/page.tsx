@@ -189,7 +189,7 @@ export default function FeaturedProductsAdminPage() {
                 </span>
               </div>
               <p className="text-xs text-gray-500 font-medium mt-0.5">
-                Super Admin control to select up to 10 showcase products per category for the VENTERSHOP homepage.
+                Super Admin control to select up to 10 showcase products per category for the VENTERPRISE homepage.
               </p>
             </div>
           </div>

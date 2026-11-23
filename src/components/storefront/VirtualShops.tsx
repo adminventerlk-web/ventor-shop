@@ -163,7 +163,7 @@ export default function VirtualShops() {
             {isTa ? 'எங்களின் பிற வர்ச்சுவல் கடைகள்' : 'OUR OTHER VIRTUAL SHOPS'}
           </span>
           <h2 className="mx-auto max-w-3xl font-serif text-[clamp(24px,2.2vw,32px)] font-bold leading-[1.2] tracking-[-.02em] text-[#102b4c]">
-            {isTa ? 'VENTERSHOP இல் மேலும் கடைகளை ஆராயுங்கள்' : 'Explore More Shops on VENTERSHOP'}
+            {isTa ? 'VENTERPRISE இல் மேலும் கடைகளை ஆராயுங்கள்' : 'Explore More Shops on VENTERPRISE'}
           </h2>
           <p className="mx-auto max-w-2xl text-xs font-medium leading-relaxed text-[#64748b] sm:text-sm">
             {isTa ? 'பல்வேறு கடைகள், பல சாத்தியக்கூறுகள் - ஒரே தளத்தில்' : 'Different Shops, More Possibilities – All in One Platform'}

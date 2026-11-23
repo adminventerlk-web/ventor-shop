@@ -444,7 +444,7 @@ export default function AdminAdsPage() {
           requestId: selectedRequest._id,
           action: 'APPROVE_AND_PUBLISH',
           placement: publishPlacement,
-          adminFeedback: 'Approved by Super Admin. Promotion is now live on VentorShop!',
+          adminFeedback: 'Approved by Super Admin. Promotion is now live on Venterprise!',
         }),
       });
 

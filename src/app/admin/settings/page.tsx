@@ -6,7 +6,7 @@ import { Settings, Save, CheckCircle, Info } from 'lucide-react';
 export default function AdminSettingsPage() {
   const [formValues, setFormValues] = useState({
     freeDeliveryThreshold: '75',
-    primaryEmail: 'admin@ventershop.ca',
+    primaryEmail: 'admin@venterprise.lk',
     maintenanceMode: false,
   });
 

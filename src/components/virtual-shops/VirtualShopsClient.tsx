@@ -178,7 +178,7 @@ export default function VirtualShopsClient() {
       title: isTa ? 'மேலும் கடைகள் விரைவில்' : 'More Shops Coming Soon',
       subtitle: isTa ? 'புதிய சிறப்பு கடைகள் விரைவில் இணையும்' : 'Specialty Categories & Brands',
       desc: isTa
-        ? 'விரைவில் மேலும் பல பிரத்யேக வர்ச்சுவல் கடைகள் VENTERSHOP தளத்தில் இணைக்கப்படவுள்ளன.'
+        ? 'விரைவில் மேலும் பல பிரத்யேக வர்ச்சுவல் கடைகள் VENTERPRISE தளத்தில் இணைக்கப்படவுள்ளன.'
         : 'More exciting virtual shops and specialty partner brand stores will be launching soon.',
       icon: MoreHorizontal,
       image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80',

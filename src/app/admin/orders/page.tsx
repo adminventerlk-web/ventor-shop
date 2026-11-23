@@ -173,7 +173,7 @@ export default function AdminOrdersPage() {
         </head>
         <body>
           <div class="header">
-            <div class="logo">VENTERSHOP</div>
+            <div class="logo">VENTERPRISE</div>
           </div>
           <div class="meta">
             <div>

@@ -16,7 +16,7 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ventershop.vercel.app';
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://venterprise.vercel.app';
 
 export async function generateMetadata({ params }: Props) {
   try {
@@ -48,8 +48,8 @@ export async function generateMetadata({ params }: Props) {
     
     if (!product) {
       return {
-        title: 'Product Details - VENTERSHOP',
-        description: 'Browse quality groceries, animal feed, books, and daily essentials at VENTERSHOP.',
+        title: 'Product Details - VENTERPRISE',
+        description: 'Browse quality groceries, animal feed, books, and daily essentials at VENTERPRISE.',
       };
     }
 
@@ -57,9 +57,9 @@ export async function generateMetadata({ params }: Props) {
     const image = product.images && product.images.length > 0 ? product.images[0] : '/images/hero_banner.png';
 
     return {
-      title: `${product.name} | VENTERSHOP Sri Lanka`,
+      title: `${product.name} | VENTERPRISE Sri Lanka`,
       description: description,
-      keywords: [product.name, 'VENTERSHOP Product', 'Online Shopping Sri Lanka', product.sku || 'E-Commerce SKU'],
+      keywords: [product.name, 'VENTERPRISE Product', 'Online Shopping Sri Lanka', product.sku || 'E-Commerce SKU'],
       alternates: {
         canonical: `/product/${slug}`,
       },
@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: Props) {
         title: product.name,
         description: description,
         url: `${baseUrl}/product/${slug}`,
-        siteName: 'VENTERSHOP',
+        siteName: 'VENTERPRISE',
         images: [{ url: image, alt: product.name }],
         type: 'article',
       },
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: Props) {
     };
   } catch (error) {
     return {
-      title: 'Product Details - VENTERSHOP',
+      title: 'Product Details - VENTERPRISE',
     };
   }
 }
@@ -159,7 +159,7 @@ export default async function ProductDetailPage({ params }: Props) {
     sku: product.sku || product._id,
     brand: {
       '@type': 'Brand',
-      name: 'VENTERSHOP',
+      name: 'VENTERPRISE',
     },
     offers: {
       '@type': 'Offer',
@@ -171,7 +171,7 @@ export default async function ProductDetailPage({ params }: Props) {
       availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'Organization',
-        name: 'VENTERSHOP',
+        name: 'VENTERPRISE',
       },
     },
   };

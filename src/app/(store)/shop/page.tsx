@@ -7,15 +7,15 @@ import JsonLd from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'Shop All Categories - Groceries, Feed, Books & Electronics',
-  description: 'Explore the complete VENTERSHOP catalog: fresh groceries, Ceylon spices, Rani animal feed, Tamil & English books, stationery, mobile devices, and daily household items.',
+  description: 'Explore the complete VENTERPRISE catalog: fresh groceries, Ceylon spices, Rani animal feed, Tamil & English books, stationery, mobile devices, and daily household items.',
   keywords: ['Shop Online Sri Lanka', 'Buy Groceries', 'Rani Animal Feed', 'Buy Books Sri Lanka', 'Electronics Catalog'],
   alternates: {
     canonical: '/shop',
   },
   openGraph: {
-    title: 'Shop All Categories - VENTERSHOP',
-    description: 'Explore the complete VENTERSHOP catalog: fresh groceries, Ceylon spices, Rani animal feed, Tamil & English books, stationery, mobile devices, and daily household items.',
-    url: 'https://www.ventershop.com/shop',
+    title: 'Shop All Categories - VENTERPRISE',
+    description: 'Explore the complete VENTERPRISE catalog: fresh groceries, Ceylon spices, Rani animal feed, Tamil & English books, stationery, mobile devices, and daily household items.',
+    url: 'https://www.venterprise.com/shop',
     images: [{ url: '/images/hero_banner.png' }],
   },
 };
@@ -24,8 +24,8 @@ export default function ShopPage() {
   const shopCatalogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'VENTERSHOP Multi-Category Catalog',
-    url: 'https://www.ventershop.com/shop',
+    name: 'VENTERPRISE Multi-Category Catalog',
+    url: 'https://www.venterprise.com/shop',
     description: 'Complete inventory catalog of groceries, livestock feed, stationery, literature, and electronics.',
   };
 

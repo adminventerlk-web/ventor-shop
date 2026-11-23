@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
           <Link href="/" className="inline-block transition-transform hover:scale-105 mb-2">
             <img
               src="/images/logo-badge.png"
-              alt="VENTERSHOP Round Badge Logo"
+              alt="VENTERPRISE Round Badge Logo"
               className="w-28 h-28 sm:w-32 sm:h-32 object-contain drop-shadow-2xl hover:scale-105 transition-transform"
             />
           </Link>

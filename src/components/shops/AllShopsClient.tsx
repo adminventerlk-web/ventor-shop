@@ -139,7 +139,7 @@ export default function AllShopsClient() {
                 <p className="text-xs sm:text-sm text-blue-100 font-medium leading-relaxed">
                   {isTa
                     ? 'இலங்கை முழுவதும் உள்ள பதிவுசெய்யப்பட்ட மற்றும் சரிபார்க்கப்பட்ட வணிகர்களின் தயாரிப்புகளை நேரடியாக ஆராய்ந்து வாங்குங்கள்.'
-                    : 'Discover authentic local producers, organic spice cultivators, bookshops, and boutique merchants approved by VENTERSHOP.'}
+                    : 'Discover authentic local producers, organic spice cultivators, bookshops, and boutique merchants approved by VENTERPRISE.'}
                 </p>
               </div>
 
@@ -371,7 +371,7 @@ export default function AllShopsClient() {
           <div className="bg-gradient-to-r from-[#021838] via-[#042A63] to-[#0052CC] rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 max-w-xl text-center md:text-left">
               <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40">
-                Join VentorShop Merchant Network
+                Join Venterprise Merchant Network
               </span>
               <h3 className="text-xl sm:text-2xl font-black">
                 Are you a Shop Owner or Producer in Sri Lanka?

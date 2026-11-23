@@ -60,7 +60,7 @@ export default function AdminSidebar() {
           </button>
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-[#FFB800]" />
-            <span className="font-black text-xs tracking-wider uppercase font-mono text-white">VENTERSHOP ADMIN</span>
+            <span className="font-black text-xs tracking-wider uppercase font-mono text-white">VENTERPRISE ADMIN</span>
           </div>
         </div>
 
@@ -87,7 +87,7 @@ export default function AdminSidebar() {
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-[#FFB800]" />
                   <div>
-                    <h2 className="font-black text-xs tracking-widest uppercase text-white">VENTERSHOP</h2>
+                    <h2 className="font-black text-xs tracking-widest uppercase text-white">VENTERPRISE</h2>
                     <span className="text-[9px] text-[#FFB800] font-extrabold uppercase">CONTROL PANEL</span>
                   </div>
                 </div>
@@ -169,7 +169,7 @@ export default function AdminSidebar() {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-black text-sm tracking-widest uppercase text-white font-sans">VENTERSHOP</h1>
+              <h1 className="font-black text-sm tracking-widest uppercase text-white font-sans">VENTERPRISE</h1>
               <span className="text-[9px] text-[#FFB800] font-black uppercase tracking-widest flex items-center gap-1">
                 <Sparkles className="w-2.5 h-2.5" /> Admin Panel
               </span>

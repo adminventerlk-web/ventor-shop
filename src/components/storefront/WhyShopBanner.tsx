@@ -33,7 +33,7 @@ export default function WhyShopBanner() {
             <span className="h-px w-12 bg-[#99c4e9]" />
           </div>
           <h2 id="why-shop-heading" className="font-serif text-[clamp(24px,2.2vw,32px)] font-bold leading-[1.2] tracking-[-.02em] text-[#102b4c]">
-            {language === 'ta' ? 'வெண்டர்ஷாப்பில் ஏன் வாங்க வேண்டும்?' : language === 'si' ? 'VENTERSHOP වෙතින් මිලදී ගන්නේ ඇයි?' : 'Why Shop with VENTERSHOP?'}
+            {language === 'ta' ? 'வென்டர்பிரைஸ்பில் ஏன் வாங்க வேண்டும்?' : language === 'si' ? 'VENTERPRISE වෙතින් මිලදී ගන්නේ ඇයි?' : 'Why Shop with VENTERPRISE?'}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-xs font-medium leading-relaxed text-[#53677d] sm:text-sm">
             {language === 'ta'

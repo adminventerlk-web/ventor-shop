@@ -20,7 +20,7 @@ export default function VendorPendingPage() {
       <div className="relative z-10 w-full max-w-lg text-center space-y-6">
         {/* Logo */}
         <div className="flex justify-center mb-4">
-          <span className="text-xl font-black tracking-wider text-[#FFB800] font-mono">VENTERSHOP</span>
+          <span className="text-xl font-black tracking-wider text-[#FFB800] font-mono">VENTERPRISE</span>
         </div>
 
         {/* Waiting Icon with Animated Ring */}

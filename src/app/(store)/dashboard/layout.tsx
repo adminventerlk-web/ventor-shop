@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 
 export const metadata: Metadata = {
-  title: 'My Customer Account Dashboard - VENTERSHOP',
+  title: 'My Customer Account Dashboard - VENTERPRISE',
   description: 'Manage your profile, shipping addresses, track orders, and view vouchers.',
   robots: {
     index: false,

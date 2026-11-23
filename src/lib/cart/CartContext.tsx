@@ -40,11 +40,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // 1. Load cart from localStorage on mount
   useEffect(() => {
     try {
-      const storedCart = localStorage.getItem('ventershop_cart');
+      const storedCart = localStorage.getItem('venterprise_cart') || localStorage.getItem('ventershop_cart');
       if (storedCart) {
         setCart(JSON.parse(storedCart));
       }
-      const storedVoucher = localStorage.getItem('ventershop_voucher');
+      const storedVoucher = localStorage.getItem('venterprise_voucher') || localStorage.getItem('ventershop_voucher');
       if (storedVoucher) {
         setAppliedVoucherCode(storedVoucher);
       }
@@ -58,7 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isLoaded) return;
     try {
-      localStorage.setItem('ventershop_cart', JSON.stringify(cart));
+      localStorage.setItem('venterprise_cart', JSON.stringify(cart));
     } catch (e) {
       console.error('Failed to save cart to localStorage:', e);
     }
@@ -69,8 +69,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isLoaded) return;
     try {
       if (appliedVoucherCode) {
-        localStorage.setItem('ventershop_voucher', appliedVoucherCode);
+        localStorage.setItem('venterprise_voucher', appliedVoucherCode);
       } else {
+        localStorage.removeItem('venterprise_voucher');
         localStorage.removeItem('ventershop_voucher');
       }
     } catch (e) {

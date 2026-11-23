@@ -1,4 +1,4 @@
-// In-memory store for VentorShop completed donation records showcase
+// In-memory store for Venterprise completed donation records showcase
 
 export interface InMemoryDonationRecord {
   _id: string;

@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import CheckoutContentClient from '@/components/checkout/CheckoutContentClient';
 
 export const metadata: Metadata = {
-  title: 'Secure Checkout - VENTERSHOP',
+  title: 'Secure Checkout - VENTERPRISE',
   description: 'Provide your shipping address, review order details, and place your order securely.',
   robots: {
     index: false,

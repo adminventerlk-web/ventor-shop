@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'VENTERSHOP - Premium Multi-Category E-Commerce & Global Export',
-    short_name: 'VENTERSHOP',
+    name: 'VENTERPRISE - Premium Multi-Category E-Commerce & Global Export',
+    short_name: 'VENTERPRISE',
     description: 'Your Trusted Online Store for Quality Products, Rani Animal Feed, Groceries, and Ceylon Exports.',
     start_url: '/',
     display: 'standalone',

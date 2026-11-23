@@ -216,7 +216,7 @@ export default function PartnerCollabAdBanner() {
 
               <div className="flex items-center gap-2">
                 <a
-                  href="https://wa.me/94778331202?text=Hello%20VentorShop%20Team%2C%20I%20want%20to%20collaborate%20and%20advertise%20my%20store%20on%20VENTERSHOP."
+                  href="https://wa.me/94778331202?text=Hello%20Venterprise%20Team%2C%20I%20want%20to%20collaborate%20and%20advertise%20my%20store%20on%20VENTERPRISE."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black tracking-wider transition-all shadow-xs"
@@ -235,7 +235,7 @@ export default function PartnerCollabAdBanner() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-amber-500 text-[#021838] font-black text-[10px] uppercase tracking-wider">
                       <Sparkles className="w-3 h-3" />
-                      <span>PARTNER WITH VENTERSHOP</span>
+                      <span>PARTNER WITH VENTERPRISE</span>
                     </span>
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
                       <ShieldCheck className="w-3 h-3 text-emerald-400" />
@@ -251,7 +251,7 @@ export default function PartnerCollabAdBanner() {
                   </h2>
 
                   <p className="text-xs sm:text-sm text-blue-100 font-normal leading-relaxed max-w-xl">
-                    Are you a retailer, distributor, or brand in Sri Lanka? Partner with VENTERSHOP today.
+                    Are you a retailer, distributor, or brand in Sri Lanka? Partner with VENTERPRISE today.
                     Showcase your products on our homepage billboard and get your own verified virtual storefront with
                     islandwide delivery logistics.
                   </p>
@@ -288,7 +288,7 @@ export default function PartnerCollabAdBanner() {
                     </Link>
 
                     <a
-                      href="https://wa.me/94778331202?text=Hello%20VentorShop%20Team%2C%20I%20want%20to%20collaborate%20and%20advertise%20my%20store%20on%20VENTERSHOP."
+                      href="https://wa.me/94778331202?text=Hello%20Venterprise%20Team%2C%20I%20want%20to%20collaborate%20and%20advertise%20my%20store%20on%20VENTERPRISE."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs"

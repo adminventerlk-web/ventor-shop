@@ -28,17 +28,17 @@ import styles from './Header.module.css';
 
 function NavbarLogo({ compact = false }: { compact?: boolean }) {
   return (
-    <Link href="/" className={compact ? styles.drawerLogo : styles.logo} aria-label="VentorShop home">
+    <Link href="/" className={compact ? styles.drawerLogo : styles.logo} aria-label="Venterprise home">
       <Image
         src="/images/ventershop-logo.png"
-        alt="VENTERSHOP - Find more. Shop smart."
+        alt="VENTERPRISE - Find more. Shop smart."
         width={1254}
         height={1254}
         sizes={compact ? '44px' : '(max-width: 767px) 44px, 64px'}
         preload={!compact}
       />
       <span className={styles.brandText}>
-        <span className={styles.brandName}>VENTER<span>SHOP</span></span>
+        <span className={styles.brandName}>VENTER<span>PRISE</span></span>
         <span className={styles.tagline}>FIND MORE. SHOP SMART.</span>
       </span>
     </Link>
@@ -166,7 +166,7 @@ export default function Header() {
               <>
                 <Link href="/login" className="hover:text-amber-200 transition-colors flex items-center gap-1 text-amber-300 font-bold">
                   <Store className="w-3.5 h-3.5" />
-                  <span>Sell on VentorShop</span>
+                  <span>Sell on Venterprise</span>
                 </Link>
                 <span className="text-white/40">|</span>
               </>

@@ -5,7 +5,7 @@ function getEmailWrapper(title: string, bodyContent: string): string {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff;">
       <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1a2a4a; padding-bottom: 15px;">
-        <h1 style="color: #1a2a4a; margin: 0; font-size: 28px; letter-spacing: 1px;">VENTERSHOP</h1>
+        <h1 style="color: #1a2a4a; margin: 0; font-size: 28px; letter-spacing: 1px;">VENTERPRISE</h1>
         <p style="color: #E53935; margin: 5px 0 0; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;">Your Trusted Online Store for Quality Products</p>
       </div>
       <div style="padding: 10px 0;">
@@ -14,7 +14,7 @@ function getEmailWrapper(title: string, bodyContent: string): string {
       </div>
       <div style="margin-top: 25px; text-align: center; color: #9ca3af; font-size: 12px; border-top: 1px solid #E5E7EB; padding-top: 15px;">
         <p style="margin: 0 0 5px;">This is an automated message, please do not reply directly.</p>
-        <p style="margin: 0; font-weight: bold;">© 2026 VENTERSHOP Canada. All rights reserved.</p>
+        <p style="margin: 0; font-weight: bold;">© 2026 VENTERPRISE Canada. All rights reserved.</p>
       </div>
     </div>
   `;
@@ -25,10 +25,10 @@ export class EmailService {
    * Sends a Welcome email to a new user
    */
   static async sendWelcomeEmail(to: string, name: string) {
-    const title = 'Welcome to VENTERSHOP!';
+    const title = 'Welcome to VENTERPRISE!';
     const bodyContent = `
       <p style="color: #333333; font-size: 16px; line-height: 1.5;">Hello <strong>${name}</strong>,</p>
-      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for registering on VENTERSHOP. We are committed to providing you with quality products and a reliable shopping experience across Canada.</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for registering on VENTERPRISE. We are committed to providing you with quality products and a reliable shopping experience across Canada.</p>
       <p style="color: #333333; font-size: 16px; line-height: 1.5;">Logged in to your dashboard, you can track orders, update delivery addresses, manage vouchers in your wallet, and explore custom benefits.</p>
       <div style="text-align: center; margin: 25px 0;">
         <a href="${process.env.NEXT_PUBLIC_APP_URL}" style="background-color: #1a2a4a; color: #ffffff; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">Start Shopping</a>
@@ -37,7 +37,7 @@ export class EmailService {
 
     await sendEmail({
       to,
-      subject: 'Welcome to VENTERSHOP!',
+      subject: 'Welcome to VENTERPRISE!',
       html: getEmailWrapper(title, bodyContent),
     });
   }
@@ -151,7 +151,7 @@ export class EmailService {
         statusDesc = 'Your package is out for delivery today and will reach your address shortly.';
         break;
       case 'DELIVERED':
-        statusDesc = 'Your order has been successfully delivered. Thank you for shopping with VENTERSHOP!';
+        statusDesc = 'Your order has been successfully delivered. Thank you for shopping with VENTERPRISE!';
         break;
       case 'CANCELLED':
         statusDesc = 'Your order has been cancelled. If you believe this is an error, please contact customer support.';
@@ -234,7 +234,7 @@ export class EmailService {
 
     await sendEmail({
       to,
-      subject: 'Wholesale B2B Account Approved - VENTERSHOP',
+      subject: 'Wholesale B2B Account Approved - VENTERPRISE',
       html: getEmailWrapper(title, bodyContent),
     });
   }
@@ -246,7 +246,7 @@ export class EmailService {
     const title = `Alert: New Order Placed - #${order.orderNumber}`;
     const bodyContent = `
       <p style="color: #333333; font-size: 16px;">Dear Admin,</p>
-      <p style="color: #333333; font-size: 16px; line-height: 1.5;">A new order has been received on VENTERSHOP.</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">A new order has been received on VENTERPRISE.</p>
       
       <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
         <table style="width: 100%; font-size: 14px;">
@@ -284,7 +284,7 @@ export class EmailService {
     const title = `Shop Application Received: ${shopName}`;
     const bodyContent = `
       <p style="color: #333333; font-size: 16px;">Hello <strong>${ownerName}</strong>,</p>
-      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for registering <strong>${shopName}</strong> on the VENTERSHOP multi-vendor marketplace!</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for registering <strong>${shopName}</strong> on the VENTERPRISE multi-vendor marketplace!</p>
       <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
         <p style="margin: 0; color: #92400e; font-weight: bold; font-size: 14px;">Status: Pending Super Admin Approval</p>
         <p style="margin: 5px 0 0; color: #78350f; font-size: 13px;">Our marketplace operations team is reviewing your shop information. You will receive an email as soon as your store is verified and approved.</p>
@@ -294,7 +294,7 @@ export class EmailService {
 
     await sendEmail({
       to,
-      subject: `[VENTERSHOP] Shop Application Received - ${shopName}`,
+      subject: `[VENTERPRISE] Shop Application Received - ${shopName}`,
       html: getEmailWrapper(title, bodyContent),
     });
   }
@@ -304,14 +304,14 @@ export class EmailService {
    */
   static async sendShopApprovalEmail(to: string, ownerName: string, shopName: string, shopSlug: string) {
     const title = `🎉 Congratulations! Your Shop ${shopName} is Approved!`;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ventershop.vercel.app';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://venterprise.vercel.app';
     const bodyContent = `
       <p style="color: #333333; font-size: 16px;">Hello <strong>${ownerName}</strong>,</p>
-      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Great news! Your shop <strong>${shopName}</strong> has been officially approved by the VENTERSHOP Super Admin team.</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Great news! Your shop <strong>${shopName}</strong> has been officially approved by the VENTERPRISE Super Admin team.</p>
       
       <div style="background-color: #ecfdf5; border-left: 4px solid #10b981; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
         <p style="margin: 0; color: #065f46; font-weight: bold; font-size: 14px;">Status: APPROVED & ACTIVE</p>
-        <p style="margin: 5px 0 0; color: #047857; font-size: 13px;">Your store is now featured on the VENTERSHOP home page and marketplace.</p>
+        <p style="margin: 5px 0 0; color: #047857; font-size: 13px;">Your store is now featured on the VENTERPRISE home page and marketplace.</p>
       </div>
 
       <div style="text-align: center; margin: 25px 0;">
@@ -322,7 +322,7 @@ export class EmailService {
 
     await sendEmail({
       to,
-      subject: `[APPROVED] Your Shop "${shopName}" is Live on VENTERSHOP!`,
+      subject: `[APPROVED] Your Shop "${shopName}" is Live on VENTERPRISE!`,
       html: getEmailWrapper(title, bodyContent),
     });
   }
@@ -334,19 +334,19 @@ export class EmailService {
     const title = `Update Regarding Your Shop Application - ${shopName}`;
     const bodyContent = `
       <p style="color: #333333; font-size: 16px;">Hello <strong>${ownerName}</strong>,</p>
-      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for your interest in selling on VENTERSHOP. After reviewing your store application for <strong>${shopName}</strong>, our administrative team was unable to approve your application at this time.</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">Thank you for your interest in selling on VENTERPRISE. After reviewing your store application for <strong>${shopName}</strong>, our administrative team was unable to approve your application at this time.</p>
       
       <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 12px 16px; margin: 20px 0; border-radius: 4px;">
         <p style="margin: 0; color: #991b1b; font-weight: bold; font-size: 14px;">Decision: Application Rejected</p>
         ${reason ? `<p style="margin: 5px 0 0; color: #7f1d1d; font-size: 13px;">Reason: ${reason}</p>` : ''}
       </div>
 
-      <p style="color: #6b7280; font-size: 14px;">If you have any questions or wish to provide updated documentation, please contact our support team at <a href="mailto:support@ventershop.ca" style="color: #0052CC;">support@ventershop.ca</a>.</p>
+      <p style="color: #6b7280; font-size: 14px;">If you have any questions or wish to provide updated documentation, please contact our support team at <a href="mailto:support@venterprise.lk" style="color: #0052CC;">support@venterprise.lk</a>.</p>
     `;
 
     await sendEmail({
       to,
-      subject: `[VENTERSHOP] Shop Application Status Update - ${shopName}`,
+      subject: `[VENTERPRISE] Shop Application Status Update - ${shopName}`,
       html: getEmailWrapper(title, bodyContent),
     });
   }
@@ -361,7 +361,7 @@ export class EmailService {
     vendorItems: any[]
   ) {
     const title = `🛍️ New Order #${order.orderNumber} for ${shopName}`;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ventershop.vercel.app';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://venterprise.vercel.app';
 
     let itemsHtml = '';
     let vendorTotal = 0;
@@ -382,7 +382,7 @@ export class EmailService {
 
     const bodyContent = `
       <p style="color: #333333; font-size: 16px;">Hello <strong>${shopName}</strong>,</p>
-      <p style="color: #333333; font-size: 16px; line-height: 1.5;">You have received a new customer order on VENTERSHOP! Please prepare the items below for dispatch.</p>
+      <p style="color: #333333; font-size: 16px; line-height: 1.5;">You have received a new customer order on VENTERPRISE! Please prepare the items below for dispatch.</p>
       
       <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin: 15px 0;">
         <h3 style="margin: 0 0 10px; color: #021838; font-size: 14px; text-transform: uppercase;">Customer & Delivery Details:</h3>

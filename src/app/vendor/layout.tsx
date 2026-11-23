@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import VendorGuard from '@/components/vendor/VendorGuard';
 
 export const metadata: Metadata = {
-  title: 'Vendor Seller Portal - VENTERSHOP',
+  title: 'Vendor Seller Portal - VENTERPRISE',
   description: 'Manage your storefront, upload products with custom variants, and track incoming orders.',
   robots: {
     index: false,

@@ -263,7 +263,7 @@ export default function AdminDonationsPage() {
             </h1>
           </div>
           <p className="text-xs text-blue-200/70 mt-1 max-w-2xl">
-            Manage VentorShop’s verified community donations. When you add what was donated, for whom, and how much, it automatically showcases on the homepage for customer transparency.
+            Manage Venterprise’s verified community donations. When you add what was donated, for whom, and how much, it automatically showcases on the homepage for customer transparency.
           </p>
         </div>
 
@@ -291,7 +291,7 @@ export default function AdminDonationsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
         <div className="p-5 rounded-2xl bg-[#021838] border border-emerald-500/40 space-y-1 shadow-lg relative overflow-hidden">
           <div className="flex items-center justify-between text-emerald-400">
-            <span className="text-[11px] font-black uppercase tracking-wider text-blue-300">Total Donated by VentorShop</span>
+            <span className="text-[11px] font-black uppercase tracking-wider text-blue-300">Total Donated by Venterprise</span>
             <Coins className="w-5 h-5 text-[#FFB800]" />
           </div>
           <p className="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">
@@ -485,7 +485,7 @@ export default function AdminDonationsPage() {
                     {editingId ? 'Edit Donation Record' : 'Record New Completed Donation'}
                   </h3>
                   <p className="text-xs text-blue-200/70">
-                    Add donation details to showcase on the live VentorShop storefront.
+                    Add donation details to showcase on the live Venterprise storefront.
                   </p>
                 </div>
               </div>

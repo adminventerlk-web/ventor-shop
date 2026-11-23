@@ -114,19 +114,19 @@ export default function AdminShopsPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full text-white" style={{ backgroundColor: '#010e24' }}>
+    <div className="min-h-screen p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full text-white rounded-2xl sm:rounded-3xl" style={{ backgroundColor: '#010e24' }}>
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#0052CC]/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-[#0052CC]/30">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-2 bg-[#0052CC]/20 border border-[#0052CC] text-[#FFB800] rounded-xl">
-                <Store className="w-5 h-5" />
+              <span className="p-1.5 sm:p-2 bg-[#0052CC]/20 border border-[#0052CC] text-[#FFB800] rounded-xl shrink-0">
+                <Store className="w-4 h-4 sm:w-5 sm:h-5" />
               </span>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+              <h1 className="text-lg sm:text-2xl font-black tracking-tight text-white">
                 Shop Approvals & Vendor Management
               </h1>
             </div>
-            <p className="text-xs text-blue-200/70 mt-1">
+            <p className="text-[11px] sm:text-xs text-blue-200/70 mt-1 leading-relaxed">
               Super Admin verification portal. Only approved shops can list products and sell on the marketplace.
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function AdminShopsPage() {
           <button
             onClick={fetchShops}
             disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 bg-[#021A3E] hover:bg-[#0052CC] border border-[#0052CC]/40 rounded-xl text-xs font-bold transition-all text-blue-100 hover:text-white cursor-pointer self-start sm:self-auto"
+            className="flex items-center justify-center gap-2 px-3.5 py-2 bg-[#021A3E] hover:bg-[#0052CC] border border-[#0052CC]/40 rounded-xl text-xs font-bold transition-all text-blue-100 hover:text-white cursor-pointer self-start sm:self-auto w-full sm:w-auto"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
@@ -152,15 +152,15 @@ export default function AdminShopsPage() {
           >
             <div className="flex items-center gap-2">
               {feedbackMsg.type === 'success' ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
               ) : (
-                <AlertCircle className="w-4 h-4 text-red-400" />
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
               )}
-              <span>{feedbackMsg.text}</span>
+              <span className="text-xs break-words">{feedbackMsg.text}</span>
             </div>
             <button
               onClick={() => setFeedbackMsg(null)}
-              className="text-xs opacity-70 hover:opacity-100 cursor-pointer"
+              className="text-xs opacity-70 hover:opacity-100 cursor-pointer p-1"
             >
               ✕
             </button>
@@ -168,63 +168,63 @@ export default function AdminShopsPage() {
         )}
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 my-6">
-          <div className="bg-[#021838] border border-[#0052CC]/30 rounded-2xl p-4">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-300">Total Shops</span>
-            <p className="text-2xl sm:text-3xl font-black text-white mt-1">{stats.total}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 my-4 sm:my-6">
+          <div className="bg-[#021838] border border-[#0052CC]/30 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-300">Total Shops</span>
+            <p className="text-xl sm:text-3xl font-black text-white mt-0.5 sm:mt-1">{stats.total}</p>
           </div>
 
           <div
             onClick={() => setActiveTab('PENDING')}
-            className={`border rounded-2xl p-4 cursor-pointer transition-all ${
+            className={`border rounded-xl sm:rounded-2xl p-3 sm:p-4 cursor-pointer transition-all ${
               activeTab === 'PENDING'
                 ? 'bg-[#FFB800]/15 border-[#FFB800] ring-1 ring-[#FFB800]/50'
                 : 'bg-[#021838] border-[#FFB800]/40 hover:border-[#FFB800]'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#FFB800]">Pending Review</span>
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#FFB800]">Pending</span>
               {stats.pending > 0 && (
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FFB800] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#FFB800] animate-pulse" />
               )}
             </div>
-            <p className="text-2xl sm:text-3xl font-black text-[#FFB800] mt-1">{stats.pending}</p>
+            <p className="text-xl sm:text-3xl font-black text-[#FFB800] mt-0.5 sm:mt-1">{stats.pending}</p>
           </div>
 
           <div
             onClick={() => setActiveTab('APPROVED')}
-            className={`border rounded-2xl p-4 cursor-pointer transition-all ${
+            className={`border rounded-xl sm:rounded-2xl p-3 sm:p-4 cursor-pointer transition-all ${
               activeTab === 'APPROVED'
                 ? 'bg-emerald-500/15 border-emerald-500 ring-1 ring-emerald-500/50'
                 : 'bg-[#021838] border-emerald-500/40 hover:border-emerald-500'
             }`}
           >
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Approved & Live</span>
-            <p className="text-2xl sm:text-3xl font-black text-emerald-400 mt-1">{stats.approved}</p>
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-400">Approved</span>
+            <p className="text-xl sm:text-3xl font-black text-emerald-400 mt-0.5 sm:mt-1">{stats.approved}</p>
           </div>
 
           <div
             onClick={() => setActiveTab('REJECTED')}
-            className={`border rounded-2xl p-4 cursor-pointer transition-all ${
+            className={`border rounded-xl sm:rounded-2xl p-3 sm:p-4 cursor-pointer transition-all ${
               activeTab === 'REJECTED'
                 ? 'bg-red-500/15 border-red-500 ring-1 ring-red-500/50'
                 : 'bg-[#021838] border-red-500/40 hover:border-red-500'
             }`}
           >
-            <span className="text-[11px] font-bold uppercase tracking-wider text-red-400">Rejected</span>
-            <p className="text-2xl sm:text-3xl font-black text-red-400 mt-1">{stats.rejected}</p>
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-red-400">Rejected</span>
+            <p className="text-xl sm:text-3xl font-black text-red-400 mt-0.5 sm:mt-1">{stats.rejected}</p>
           </div>
         </div>
 
         {/* Filter Tabs & Search */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6">
           {/* Tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-[#021838] border border-[#0052CC]/30 rounded-xl overflow-x-auto">
+          <div className="flex items-center gap-1 p-1 bg-[#021838] border border-[#0052CC]/30 rounded-xl overflow-x-auto max-w-full">
             {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   activeTab === tab
                     ? 'bg-[#0052CC] text-white shadow-xs'
                     : 'text-blue-200/70 hover:text-white hover:bg-white/5'
@@ -239,7 +239,7 @@ export default function AdminShopsPage() {
           </div>
 
           {/* Search */}
-          <div className="relative min-w-[260px]">
+          <div className="relative w-full sm:w-auto sm:min-w-[260px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-300/60" />
             <input
               type="text"
@@ -258,7 +258,7 @@ export default function AdminShopsPage() {
             <p className="text-xs text-blue-200/70 font-semibold">Loading shops from marketplace registry...</p>
           </div>
         ) : filteredShops.length === 0 ? (
-          <div className="bg-[#021838] border border-[#0052CC]/20 rounded-2xl p-12 text-center">
+          <div className="bg-[#021838] border border-[#0052CC]/20 rounded-2xl p-8 sm:p-12 text-center">
             <Store className="w-12 h-12 text-blue-400/40 mx-auto mb-3" />
             <h3 className="text-base font-bold text-white">No shops found</h3>
             <p className="text-xs text-blue-200/60 mt-1 max-w-sm mx-auto">
@@ -278,7 +278,7 @@ export default function AdminShopsPage() {
               return (
                 <div
                   key={shop._id}
-                  className={`bg-[#021838] border rounded-2xl p-5 sm:p-6 transition-all ${
+                  className={`bg-[#021838] border rounded-2xl p-4 sm:p-6 transition-all ${
                     isPending
                       ? 'border-[#FFB800]/50 hover:border-[#FFB800] bg-gradient-to-r from-[#021838] to-[#042456]'
                       : isApproved
@@ -288,32 +288,32 @@ export default function AdminShopsPage() {
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     {/* Shop Info */}
-                    <div className="space-y-2 flex-1">
+                    <div className="space-y-2.5 flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-lg font-black text-white">{shop.shopName}</h2>
+                        <h2 className="text-base sm:text-lg font-black text-white">{shop.shopName}</h2>
                         
                         {/* Status Badge */}
                         {isPending && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40">
-                            <Clock className="w-3 h-3" />
-                            Pending Super Admin Approval
+                            <Clock className="w-3 h-3 shrink-0" />
+                            Pending Approval
                           </span>
                         )}
                         {isApproved && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Approved & Verified
+                            <CheckCircle2 className="w-3 h-3 shrink-0" />
+                            Approved
                           </span>
                         )}
                         {isRejected && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-500/20 text-red-300 border border-red-500/40">
-                            <XCircle className="w-3 h-3" />
+                            <XCircle className="w-3 h-3 shrink-0" />
                             Rejected
                           </span>
                         )}
 
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#0052CC]/30 text-blue-200 border border-[#0052CC]/40">
-                          <Tag className="w-3 h-3" />
+                          <Tag className="w-3 h-3 shrink-0" />
                           {shop.category}
                         </span>
                       </div>
@@ -323,9 +323,9 @@ export default function AdminShopsPage() {
                       </p>
 
                       {/* Shop 2 Images Preview (Logo & Banner) */}
-                      <div className="flex items-center gap-4 pt-1">
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-blue-300/80 font-bold">Shop Logo:</span>
+                          <span className="text-[10px] text-blue-300/80 font-bold">Logo:</span>
                           <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/20 bg-gray-900 shrink-0">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -337,7 +337,7 @@ export default function AdminShopsPage() {
                         </div>
 
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-blue-300/80 font-bold">Storefront Banner:</span>
+                          <span className="text-[10px] text-blue-300/80 font-bold">Banner:</span>
                           <div className="w-16 h-8 rounded-lg overflow-hidden border border-white/20 bg-gray-900 shrink-0">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -349,30 +349,30 @@ export default function AdminShopsPage() {
                         </div>
                       </div>
 
-                      {/* Owner & Location Details */}
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-2 text-[11px] text-blue-200/80">
-                        <span className="flex items-center gap-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-blue-400" />
-                          <strong>Owner:</strong> {shop.ownerName}
+                      {/* Owner & Location Details - Responsive Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pt-2 text-[11px] text-blue-200/80">
+                        <span className="flex items-center gap-1.5 truncate">
+                          <Building2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                          <strong className="text-white shrink-0">Owner:</strong> <span className="truncate">{shop.ownerName}</span>
                         </span>
-                        <span className="flex items-center gap-1.5">
-                          <Mail className="w-3.5 h-3.5 text-blue-400" />
-                          <a href={`mailto:${shop.ownerEmail}`} className="hover:underline text-blue-300">
+                        <span className="flex items-center gap-1.5 truncate">
+                          <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                          <a href={`mailto:${shop.ownerEmail}`} className="hover:underline text-blue-300 truncate">
                             {shop.ownerEmail}
                           </a>
                         </span>
                         <span className="flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-[#FFB800]" />
+                          <Phone className="w-3.5 h-3.5 text-[#FFB800] shrink-0" />
                           <a href={`tel:${shop.ownerPhone}`} className="hover:underline font-bold text-[#FFB800]">
                             {shop.ownerPhone}
                           </a>
                         </span>
-                        <span className="flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                          {shop.city} {shop.address ? `• ${shop.address}` : ''}
+                        <span className="flex items-center gap-1.5 truncate">
+                          <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                          <span className="truncate">{shop.city} {shop.address ? `• ${shop.address}` : ''}</span>
                         </span>
                         <span className="flex items-center gap-1.5 text-gray-400">
-                          <Calendar className="w-3.5 h-3.5" />
+                          <Calendar className="w-3.5 h-3.5 shrink-0" />
                           Applied: {new Date(shop.createdAt).toLocaleDateString()}
                         </span>
                       </div>
@@ -385,16 +385,16 @@ export default function AdminShopsPage() {
                       )}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap items-center gap-2 lg:flex-col lg:items-end justify-end shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-blue-900/40">
+                    {/* Action Buttons - Fully Responsive */}
+                    <div className="flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-end gap-2 w-full lg:w-auto pt-3 lg:pt-0 border-t lg:border-t-0 border-blue-900/40 shrink-0">
                       {isPending && (
                         <>
                           <button
                             onClick={() => handleAction(shop._id, 'APPROVE')}
                             disabled={isActionProcessing}
-                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                            className="w-full sm:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                           >
-                            <CheckCircle2 className="w-4 h-4" />
+                            <CheckCircle2 className="w-4 h-4 shrink-0" />
                             <span>{isActionProcessing ? 'Approving...' : 'Approve Store'}</span>
                           </button>
 
@@ -404,9 +404,9 @@ export default function AdminShopsPage() {
                               setRejectionReason('');
                             }}
                             disabled={isActionProcessing}
-                            className="px-4 py-2 bg-red-600/80 hover:bg-red-600 disabled:bg-gray-700 text-white font-extrabold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                            className="w-full sm:w-auto px-4 py-2.5 bg-red-600/80 hover:bg-red-600 disabled:bg-gray-700 text-white font-extrabold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                           >
-                            <XCircle className="w-4 h-4" />
+                            <XCircle className="w-4 h-4 shrink-0" />
                             <span>Reject</span>
                           </button>
                         </>
@@ -417,9 +417,9 @@ export default function AdminShopsPage() {
                           <Link
                             href={`/shops/${shop.slug}`}
                             target="_blank"
-                            className="px-3.5 py-2 bg-[#0052CC] hover:bg-[#003893] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"
+                            className="w-full sm:w-auto px-3.5 py-2.5 bg-[#0052CC] hover:bg-[#003893] text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-xs text-center"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
                             <span>View Store Page</span>
                           </Link>
 
@@ -429,7 +429,7 @@ export default function AdminShopsPage() {
                               setRejectionReason('Store deactivated by administrator.');
                             }}
                             disabled={isActionProcessing}
-                            className="px-3 py-1.5 text-xs text-red-300 hover:text-red-100 hover:underline cursor-pointer"
+                            className="w-full sm:w-auto px-3 py-1.5 text-xs text-red-300 hover:text-red-100 hover:underline cursor-pointer text-center"
                           >
                             Revoke / Deactivate
                           </button>
@@ -440,9 +440,9 @@ export default function AdminShopsPage() {
                         <button
                           onClick={() => handleAction(shop._id, 'APPROVE')}
                           disabled={isActionProcessing}
-                          className="px-3.5 py-2 bg-blue-700 hover:bg-blue-600 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="w-full sm:w-auto px-3.5 py-2.5 bg-blue-700 hover:bg-blue-600 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          <RefreshCw className="w-3.5 h-3.5" />
+                          <RefreshCw className="w-3.5 h-3.5 shrink-0" />
                           <span>Re-Approve Shop</span>
                         </button>
                       )}

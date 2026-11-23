@@ -182,10 +182,10 @@ export default function PromoBanners() {
 
                 <p className="text-xs font-normal leading-[1.7] text-white/90">
                   {isTa
-                    ? 'எங்கள் சமூகத் திட்டங்கள் மூலம் வழங்கப்படும் பரிசு வவுச்சர்கள் மாணவர்கள் மற்றும் குடும்பங்கள் VENTERSHOP மூலம் அத்தியாவசிய பொருட்களைப் பெற உதவுகின்றன.'
+                    ? 'எங்கள் சமூகத் திட்டங்கள் மூலம் வழங்கப்படும் பரிசு வவுச்சர்கள் மாணவர்கள் மற்றும் குடும்பங்கள் VENTERPRISE மூலம் அத்தியாவசிய பொருட்களைப் பெற உதவுகின்றன.'
                     : isSi
-                    ? 'අපගේ සමූහ වැඩසටහන් හරහා ලබා දෙන ත්‍යාග වවුචර මගින් සිසුන්ට සහ පවුල්වලට VENTERSHOP හරහා අවශ්‍ය ද්‍රව්‍ය ලබා ගැනීමට උපකාරී වේ.'
-                    : 'Gift vouchers provided through our community programmes help students and families access essential items through VENTERSHOP.'}
+                    ? 'අපගේ සමූහ වැඩසටහන් හරහා ලබා දෙන ත්‍යාග වවුචර මගින් සිසුන්ට සහ පවුල්වලට VENTERPRISE හරහා අවශ්‍ය ද්‍රව්‍ය ලබා ගැනීමට උපකාරී වේ.'
+                    : 'Gift vouchers provided through our community programmes help students and families access essential items through VENTERPRISE.'}
                 </p>
               </div>
             </div>

@@ -4,7 +4,7 @@ const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
-const SMTP_FROM = process.env.SMTP_FROM || '"VENTERSHOP" <noreply@ventershop.ca>';
+const SMTP_FROM = process.env.SMTP_FROM || '"VENTERPRISE" <noreply@venterprise.lk>';
 
 // Check if credentials are placeholders or empty
 const isDummySmtp =
@@ -72,7 +72,7 @@ export async function sendEmail({ to, subject, html }: { to: string; subject: st
     const transporter = await getTransporter();
     
     const mailOptions = {
-      from: isDummySmtp ? '"VENTERSHOP Test Mail" <noreply@ventershop.ca>' : SMTP_FROM,
+      from: isDummySmtp ? '"VENTERPRISE Test Mail" <noreply@venterprise.lk>' : SMTP_FROM,
       to,
       subject,
       html,

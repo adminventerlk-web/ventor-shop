@@ -143,7 +143,7 @@ function OrdersPageContent() {
         </head>
         <body>
           <div class="header">
-            <div class="logo">VENTERSHOP</div>
+            <div class="logo">VENTERPRISE</div>
             <p style="margin: 5px 0 0; color: #E53935; font-weight: bold; font-size: 13px;">Your Trusted Online Store for Quality Products</p>
           </div>
           <div class="meta">
@@ -196,8 +196,8 @@ function OrdersPageContent() {
             </table>
           </div>
           <div class="footer">
-            <p>Thank you for shopping with VENTERSHOP Canada.</p>
-            <p>© 2026 VENTERSHOP Canada. All rights reserved.</p>
+            <p>Thank you for shopping with VENTERPRISE Canada.</p>
+            <p>© 2026 VENTERPRISE Canada. All rights reserved.</p>
           </div>
           <script>window.print();</script>
         </body>

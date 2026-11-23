@@ -43,7 +43,7 @@ export default function ShopStorefrontClient({ shop, initialProducts }: IShopCli
   const cleanPhone = shop.ownerPhone?.replace(/[^0-9]/g, '');
   const whatsappUrl = cleanPhone
     ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-        `Hello ${shop.shopName}, I found your store on VENTERSHOP and would like to inquire about your products.`
+        `Hello ${shop.shopName}, I found your store on VENTERPRISE and would like to inquire about your products.`
       )}`
     : null;
 

@@ -15,6 +15,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Store,
+  UserPlus,
+  ShoppingBag,
+  HeartHandshake,
+  PhoneCall,
+  Briefcase,
+  Layers,
 } from 'lucide-react';
 
 export default function Hero() {
@@ -22,115 +28,135 @@ export default function Hero() {
   const isTa = language === 'ta';
   const isSi = language === 'si';
 
-  // 4 Rotating animated hero background slides - tailored specifically for VENTERSHOP
+  // 4 Rotating animated hero background slides - tailored specifically for VENTERPRISE
   const slides = [
     {
       id: 1,
-      image: '/images/hero/ceylon-exports.png',
+      image: '/images/hero_banner.webp',
       imageClass: styles.ceylon,
       blurDataURL:
         'data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADwAQCdASoKAAcABUB8JagCdADcqZqWUAAA3NdCC3rJvBeyyj4GX54CRDgEe/6TiCkCWygTzQAAAA==',
       dominantColor: '#021430',
-      tagEn: '🇱🇰 DIRECT CEYLON EXPORTS & SPICES',
-      tagTa: '🇱🇰 இலங்கை நேரடி ஏற்றுமதி & மசாலா பொருட்கள்',
-      tagSi: '🇱🇰 ශ්‍රී ලාංකීය සෘජු කුළුබඩු සහ අපනයන',
-      titleLine1En: 'AUTHENTIC CEYLON EXPORTS,',
-      titleLine1Ta: 'உண்மையான இலங்கை ஏற்றுமதி பொருட்கள்,',
-      titleLine1Si: 'නියම ශ්‍රී ලාංකීය අපනයන නිෂ්පාදන,',
-      titleLine2En: 'SHIPPED DIRECTLY WORLDWIDE.',
-      titleLine2Ta: 'உலகெங்கும் பாதுகாப்பாக டெலிவரி.',
-      titleLine2Si: 'ලොව පුරා සුරක්ෂිතව බෙදාහැරේ.',
+      tagEn: '🇱🇰 100% CEYLON LOCAL & DOMESTIC PRODUCTS',
+      tagTa: '🇱🇰 100% உள்ளூர் உற்பத்தி பொருட்கள்',
+      tagSi: '🇱🇰 100% දේශීය නිෂ්පාදන සහ භාණ්ඩ',
+      titleLine1En: 'PROUDLY CELEBRATING,',
+      titleLine1Ta: 'பெருமையுடன் வழங்கும்,',
+      titleLine1Si: 'අභිමානවත් ලෙස පිරිනමන,',
+      titleLine2En: 'AUTHENTIC LOCAL PRODUCTS.',
+      titleLine2Ta: 'உண்மையான உள்ளூர் உற்பத்தி பொருட்கள்.',
+      titleLine2Si: 'නියම දේශීය නිෂ්පාදන එකතුව.',
       subtitleEn:
-        'Direct source Ceylon cinnamon, premium single-origin black tea, cloves, and authentic local goods shipped securely from Sri Lanka to international buyers.',
+        'Discover authentic homegrown provisions, pure Ceylon spices, handcrafted domestic goods, and quality artisan products manufactured across Sri Lanka.',
       subtitleTa:
-        'உண்மையான இலங்கை இலவங்கப்பட்டை, பிரீமியம் கருப்பு தேயிலை, கிராம்பு மற்றும் பாரம்பரிய உள்ளூர் பொருட்கள் இலங்கையிலிருந்து உலகெங்கும் உள்ள வாங்குபவர்களுக்கு பாதுகாப்பாக அனுப்பப்படுகிறது.',
+        'இலங்கை முழுவதிலும் உள்ள கைவினைப் பொருட்கள், புதிய விவசாய விளைபொருட்கள், தூய மசாலாக்கள் மற்றும் உயர்தர உள்ளூர் உற்பத்திப் பொருட்களை நேரடியாகப் பெற்றுக்கொள்ளுங்கள்.',
       subtitleSi:
-        'ශ්‍රී ලාංකීය කුරුඳු, තේ, කරාබුනැටි ඇතුළු ගුණාත්මක නිෂ්පාදන ලොව පුරා පාරිභෝගිකයින් වෙත විශ්වාසනීයව සෘජුවම ලබාගන්න.',
-      ctaTextEn: 'Explore Export Catalog',
-      ctaTextTa: 'ஏற்றுமதி பட்டியலை காண்க',
-      ctaTextSi: 'අපනයන නාමාවලිය',
-      ctaLink: '/export',
+        'දිවයින පුරා දේශීයව නිෂ්පාදිත අත්කම් භාණ්ඩ, නැවුම් ගොවිපල අස්වැන්න, කුළුබඩු සහ සුවිශේෂී දේශීය නිෂ්පාදන එකම තැනකින් පහසුවෙන් මිලදී ගන්න.',
+      primaryCtaTextEn: 'Register as Customer',
+      primaryCtaTextTa: 'இப்போதே இணையுங்கள்',
+      primaryCtaTextSi: 'පාරිභෝගික ලියාපදිංචිය',
+      primaryCtaLink: '/login?tab=register',
+      secondaryCtaTextEn: 'Browse Catalog',
+      secondaryCtaTextTa: 'தயாரிப்பு பட்டியல்',
+      secondaryCtaTextSi: 'නාමාවලිය බලන්න',
+      secondaryCtaLink: '/shop',
+      secondaryIconType: 'bag',
     },
     {
       id: 2,
-      image: '/images/groceries_basket.webp',
-      imageClass: styles.groceries,
-      blurDataURL:
-        'data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoKAAoABUB8JZACdAEQE6TU+OQAAP7h7OSV4Mw7NC5KofJeBv1dQ7j5CMfDpt7eZiSzhP5bGoyaEz2gAAA=',
-      dominantColor: '#021430',
-      tagEn: '🛒 DAILY ESSENTIALS & SUPERMARKET',
-      tagTa: '🛒 மளிகை பொருட்கள் & சூப்பர் மார்க்கெட்',
-      tagSi: '🛒 දෛනික අත්‍යවශ්‍ය ආහාර ද්‍රව්‍ය',
-      titleLine1En: 'FRESH DAILY PROVISIONS,',
-      titleLine1Ta: 'புதிய மளிகைப் பொருட்கள்,',
-      titleLine1Si: 'නැවුම් දෛනික ආහාර ද්‍රව්‍ය,',
-      titleLine2En: 'DELIVERED TO YOUR DOORSTEP.',
-      titleLine2Ta: 'உங்கள் இல்லத்திற்கே விரைவான டெலிவரி.',
-      titleLine2Si: 'ඔබේ නිවසටම කඩිනමින් බෙදාහැරේ.',
-      subtitleEn:
-        'Top-quality rice, pantry staples, cooking essentials, and household goods delivered safely across all 25 districts in Sri Lanka.',
-      subtitleTa:
-        'உயர்தர அரிசி வகைகள், சமையல் பொருட்கள், மற்றும் வீட்டு உபயோகப் பொருட்கள் இலங்கை முழுவதும் உள்ள 25 மாவட்டங்களுக்கும் விரைவாக அனுப்பி வைக்கப்படுகிறது.',
-      subtitleSi:
-        'උසස් තත්ත්වයේ සහල්, දෛනික කුළුබඩු සහ ගෘහස්ථ ද්‍රව්‍ය දිවයිනේ සියලු දිස්ත්‍රික්ක වෙත ආරක්ෂිතව බෙදාහැරේ.',
-      ctaTextEn: 'Shop Daily Groceries',
-      ctaTextTa: 'மளிகை பொருட்கள் வாங்க',
-      ctaTextSi: 'ආහාර ද්‍රව්‍ය මිලදී ගන්න',
-      ctaLink: '/shop?category=groceries',
-    },
-    {
-      id: 3,
-      image: '/images/rani_animal_feed.webp',
-      imageClass: styles.feed,
-      blurDataURL:
-        'data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoKAAoABUB8JZACdAEQFOxffEAA/uDObunmPptbt2mELJiOCathnh1oNkWVc2GPmOAJzaAA',
-      dominantColor: '#021430',
-      tagEn: '🌾 OFFICIAL RANI LIVESTOCK & POULTRY FEED',
-      tagTa: '🌾 ராணி கால்நடை & கோழி தீவனங்கள்',
-      tagSi: '🌾 රාණි සත්ව සහ කුකුළු ආහාර',
-      titleLine1En: 'MAXIMIZE FARM YIELD & HEALTH,',
-      titleLine1Ta: 'பண்ணை உற்பத்தி மற்றும் ஆரோக்கியத்தை அதிகரிக்க,',
-      titleLine1Si: 'ගොවිපල ඵලදායිතාව ඉහළ නැංවීමට,',
-      titleLine2En: 'WITH SCIENTIFICALLY FORMULATED FEED.',
-      titleLine2Ta: 'அறிவியல் முறைப்படி தயாரிக்கப்பட்ட தீவனங்கள்.',
-      titleLine2Si: 'විද්‍යාත්මකව සකස් කළ පෝෂණ ආහාර.',
-      subtitleEn:
-        'Scientifically balanced poultry, broiler, layer, and dairy cattle feeds. Order in bulk for farms and retail stores across Sri Lanka.',
-      subtitleTa:
-        'கோழி வளர்ப்பு, முட்டை உற்பத்தி மற்றும் கறவை மாடுகளுக்கான உயர்தர அறிவியல் ஊட்டச்சத்து தீவனங்கள். இலங்கை முழுவதும் பண்ணைகளுக்கே நேரடியாக டெலிவரி.',
-      subtitleSi:
-        'කුකුළු, බිත්තර සහ කිරි ගවයන් සඳහා විද්‍යාත්මකව සකස් කළ උසස් පෝෂණ ආහාර. දිවයින පුරා ගොවිපල වෙත තොග වශයෙන් බෙදාහැරේ.',
-      ctaTextEn: 'Order Animal Feed',
-      ctaTextTa: 'தீவனங்களை ஆர்டர் செய்க',
-      ctaTextSi: 'සත්ව ආහාර ඇණවුම් කරන්න',
-      ctaLink: '/shop?category=animal-feed',
-    },
-    {
-      id: 4,
       image: '/images/storefront_3d.webp',
       imageClass: styles.storefront,
       blurDataURL:
         'data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoKAAoABUB8JaACdADZPzzgAAD+xnBz1pLw4noBNpyC03+WiBhk631mDIKD1rJ7lorAlWQ+sAA=',
       dominantColor: '#021430',
-      tagEn: '🏪 SRI LANKAN MERCHANT MARKETPLACE',
-      tagTa: '🏪 இலங்கை விற்பனையாளர்களின் டிஜிட்டல் சந்தை',
-      tagSi: '🏪 දේශීය ව්‍යවසායක ඩිජිටල් වෙළඳපල',
-      titleLine1En: 'SUPPORT LOCAL MERCHANTS,',
-      titleLine1Ta: 'உள்ளூர் வணிகர்களை ஆதரிப்போம்,',
-      titleLine1Si: 'දේශීය ව්‍යවසායකයින් ශක්තිමත් කරමු,',
-      titleLine2En: 'SHOP DIRECT WITH COMMUNITY SAVINGS.',
-      titleLine2Ta: 'சிறப்பு வவுச்சர்களுடன் வாங்குங்கள்.',
-      titleLine2Si: 'විශේෂ වවුචර් සමඟ මිලදී ගන්න.',
+      tagEn: '🏬 VIRTUAL MULTISHOP MARKETPLACE',
+      tagTa: '🏬 டிஜிட்டல் மல்டிஷாப் சந்தை',
+      tagSi: '🏬 අතථ්‍ය බහු-වෙළඳසැල් වෙළඳපල',
+      titleLine1En: 'ONE PLATFORM,',
+      titleLine1Ta: 'ஒரே மேடையில்,',
+      titleLine1Si: 'එක් ඩිජිටල් තලයකින්,',
+      titleLine2En: 'HUNDREDS OF VIRTUAL SHOPS.',
+      titleLine2Ta: 'நூற்றுக்கணக்கான டிஜிட்டல் கடைகள்.',
+      titleLine2Si: 'සිය ගණනක් අතථ්‍ය වෙළඳසැල්.',
       subtitleEn:
-        'Connect with verified local producers, access V2CC community discounts, student vouchers, and wholesale pricing on authentic Sri Lankan products.',
+        'Explore our interactive Virtual Multishop where verified merchants showcase certified boutique storefronts, regional collections, and direct-from-origin goods.',
       subtitleTa:
-        'சரிபார்க்கப்பட்ட இலங்கை விற்பனையாளர்களிடம் இருந்து நேரடியாகப் பொருட்கள் வாங்கவும், V2CC சமூக வவுச்சர்கள் மற்றும் தள்ளுபடிகளைப் பெறவும் வென்டர்ஷாப்பில் இணையுங்கள்.',
+        'சரிபார்க்கப்பட்ட வணிகர்களின் பிரத்யேக டிஜிட்டல் கடைகள், பிராந்திய தயாரிப்புகள் மற்றும் சிறப்பு ஸ்டோர்களை ஒரே இடத்தில் பார்வையிட்டு மகிழுங்கள்.',
       subtitleSi:
-        'තහවුරු කළ දේශීය නිෂ්පාදකයින්ගෙන් සෘජුවම මිලදී ගෙන, V2CC ප්‍රජා වවුචර් සහ තොග වට්ටම් දීමනා ලබාගන්න.',
-      ctaTextEn: 'Explore Virtual Shops',
-      ctaTextTa: 'கடைகளை ஆராய்க',
-      ctaTextSi: 'සාප්පු ගවේෂණය කරන්න',
-      ctaLink: '/virtual-shops',
+        'තහවුරු කළ වෙළඳුන්ගේ සුවිශේෂී ඩිජිටල් වෙළඳසැල් සහ සන්නාම කුටි වෙත පිවිස දිවයිනේ විශිෂ්ටතම නිෂ්පාදන සෘජුවම මිලදී ගන්න.',
+      primaryCtaTextEn: 'Explore Shops',
+      primaryCtaTextTa: 'கடைகளை ஆராய்க',
+      primaryCtaTextSi: 'සාප්පු ගවේෂණය',
+      primaryCtaLink: '/shops',
+      secondaryCtaTextEn: 'Register Your Shop',
+      secondaryCtaTextTa: 'உங்கள் கடையை சேர்க்க',
+      secondaryCtaTextSi: 'වෙළඳසැල එක්කරන්න',
+      secondaryCtaLink: '/login?tab=register&role=vendor',
+      secondaryIconType: 'store',
+    },
+    {
+      id: 3,
+      image: '/images/groceries_basket.webp',
+      imageClass: styles.groceries,
+      blurDataURL:
+        'data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoKAAoABUB8JZACdAEQE6TU+OQAAP7h7OSV4Mw7NC5KofJeBv1dQ7j5CMfDpt7eZiSzhP5bGoyaEz2gAAA=',
+      dominantColor: '#021430',
+      tagEn: '🤝 PEOPLE MULTI SHOP & V2CC SAVINGS',
+      tagTa: '🤝 மக்கள் மல்டிஷாப் & V2CC சமூகம்',
+      tagSi: '🤝 ජනතා බහු-වෙළඳසැල සහ V2CC ප්‍රතිලාභ',
+      titleLine1En: "PEOPLE'S MULTI-SHOP,",
+      titleLine1Ta: 'மக்கள் மல்டிஷாப்,',
+      titleLine1Si: 'ජනතා බහු-වෙළඳසැල,',
+      titleLine2En: 'COMMUNITY DISCOUNTS & SUBSIDIES.',
+      titleLine2Ta: 'சமூக சேமிப்பு & சிறப்பு சலுகைகள்.',
+      titleLine2Si: 'ප්‍රජා වට්ටම් සහ විශේෂ දීමනා.',
+      subtitleEn:
+        'Register as a V2CC Community Member to unlock exclusive welfare offers, subsidized consumer rates, student gift vouchers, and maximum household savings.',
+      subtitleTa:
+        'V2CC சமூக உறுப்பினராகப் பதிவு செய்து பிரத்யேக தள்ளுபடி சலுகைகள், மானிய விலைகள், கல்வி வவுச்சர்கள் மற்றும் குடும்பத்திற்கான அதிகபட்ச சேமிப்பு நன்மைகளைப் பெறுங்கள்.',
+      subtitleSi:
+        'V2CC ප්‍රජා සාමාජිකයෙකු ලෙස ලියාපදිංචි වී සුවිශේෂී සහනාධාර මිල ගණන්, අධ්‍යාපනික වවුචර් දීමනා සහ විශේෂ වට්ටම් රැසක් අත්විඳින්න.',
+      primaryCtaTextEn: 'Join V2CC Member',
+      primaryCtaTextTa: 'V2CC உறுப்பினராக சேர',
+      primaryCtaTextSi: 'V2CC සාමාජිකයෙකු වන්න',
+      primaryCtaLink: '/login?tab=register',
+      secondaryCtaTextEn: 'Explore Shops',
+      secondaryCtaTextTa: 'கடைகளை ஆராய்க',
+      secondaryCtaTextSi: 'සාප්පු ගවේෂණය',
+      secondaryCtaLink: '/shops',
+      secondaryIconType: 'store',
+    },
+    {
+      id: 4,
+      image: '/images/hero/ceylon-exports.png',
+      imageClass: styles.feed,
+      blurDataURL:
+        'data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoKAAoABUB8JZACdAEQFOxffEAA/uDObunmPptbt2mELJiOCathnh1oNkWVc2GPmOAJzaAA',
+      dominantColor: '#021430',
+      tagEn: '📈 INVESTOR RELATIONS & PARTNERSHIPS',
+      tagTa: '📈 முதலீட்டாளர்கள் & வணிகக் கூட்டு',
+      tagSi: '📈 ආයෝජක සම්බන්ධතා සහ හවුල්කාරිත්වය',
+      titleLine1En: 'GROW WITH VENTERPRISE,',
+      titleLine1Ta: 'வென்டர்பிரைஸ் உடன் இணையுங்கள்,',
+      titleLine1Si: 'වෙන්ටර්ප්‍රයිස් සමඟ එක්වන්න,',
+      titleLine2En: 'SCALE COMMERCE & EXPORT VENTURES.',
+      titleLine2Ta: 'வலுவான வணிக வளர்ச்சி காண்போம்.',
+      titleLine2Si: 'ඉහළ ප්‍රතිලාභ ලබන වාණිජ්‍යය.',
+      subtitleEn:
+        'Partner with Sri Lanka’s next-generation e-commerce ecosystem. Invest in localized supply chains, digital producer empowerment, and high-growth commercial export networks.',
+      subtitleTa:
+        'இலங்கையின் அதிவேகமாக வளரும் டிஜிட்டல் சந்தை வலையமைப்பில் முதலீடு செய்து, உள்ளூர் உற்பத்தியாளர்கள் மேம்பாடு மற்றும் சர்வதேச ஏற்றுமதி வளர்ச்சியில் கூட்டு சேருங்கள்.',
+      subtitleSi:
+        'ශ්‍රී ලංකාවේ වේගයෙන්ම වර්ධනය වන ඩිජිටල් වෙළඳපල ජාලය සමඟ එක්ව දේශීය සැපයුම් දාම සහ අපනයන ක්ෂේත්‍රයේ නව ආයෝජන අවස්ථා ලබාගන්න.',
+      primaryCtaTextEn: 'Explore Shops',
+      primaryCtaTextTa: 'கடைகளை ஆராய்க',
+      primaryCtaTextSi: 'සාප්පු ගවේෂණය',
+      primaryCtaLink: '/shops',
+      secondaryCtaTextEn: 'Contact Us',
+      secondaryCtaTextTa: 'தொடர்பு கொள்ள',
+      secondaryCtaTextSi: 'අප අමතන්න',
+      secondaryCtaLink: '/contact',
+      secondaryIconType: 'contact',
     },
   ];
 
@@ -222,43 +248,44 @@ export default function Hero() {
                 : current.subtitleEn}
             </p>
 
-            {/* 4. Action Buttons - Prominent, fully visible, never clipped */}
+            {/* 4. Action Buttons - Tailored specifically per slide */}
             <div
               key={`cta-${currentSlide}`}
               className={styles.actions}
               style={{ animation: 'heroFadeSlideIn 0.5s ease-out 0.3s both' }}
             >
               <Link
-                href={current.ctaLink}
+                href={current.primaryCtaLink}
                 className={styles.primary}
               >
                 <span>
                   {isTa
-                    ? current.ctaTextTa
+                    ? current.primaryCtaTextTa
                     : isSi
-                    ? current.ctaTextSi
-                    : current.ctaTextEn}
+                    ? current.primaryCtaTextSi
+                    : current.primaryCtaTextEn}
                 </span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </Link>
 
               <Link
-                href="/shops"
+                href={current.secondaryCtaLink}
                 className={styles.secondary}
               >
-                <Store className="w-4 h-4" />
+                {current.secondaryIconType === 'bag' && <ShoppingBag className="w-4 h-4" />}
+                {current.secondaryIconType === 'store' && <Store className="w-4 h-4" />}
+                {current.secondaryIconType === 'contact' && <PhoneCall className="w-4 h-4" />}
                 <span>
                   {isTa
-                    ? 'கடைகளை ஆராய்க'
+                    ? current.secondaryCtaTextTa
                     : isSi
-                    ? 'සාප්පු ගවේෂණය'
-                    : 'Explore Shops'}
+                    ? current.secondaryCtaTextSi
+                    : current.secondaryCtaTextEn}
                 </span>
               </Link>
             </div>
-
-
           </div>
+
           <div className={styles.visual}>
             <div className={styles.imageFrame}>
               {slides.map((slide, index) => (
@@ -286,49 +313,50 @@ export default function Hero() {
             <ChevronRight size={22} />
           </button>
         </div>
-            {/* 5. Real Trust Features Row - NO FAKE RATINGS, only real platform values */}
-            <div className={styles.trustStrip}>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-[#073979] shrink-0" />
-                <span>
-                  {isTa
-                    ? 'சரிபார்க்கப்பட்ட இலங்கை வணிகர்கள்'
-                    : isSi
-                    ? 'තහවුරු කළ දේශීය වෙළඳුන්'
-                    : 'Verified Ceylon Merchants'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Truck className="w-5 h-5 text-[#073979] shrink-0" />
-                <span>
-                  {isTa
-                    ? '25 மாவட்டங்களுக்கும் டெலிவரி'
-                    : isSi
-                    ? 'සියලු දිස්ත්‍රික්ක වෙත බෙදාහැරීම'
-                    : 'Islandwide Delivery (All 25 Districts)'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Globe2 className="w-5 h-5 text-[#073979] shrink-0" />
-                <span>
-                  {isTa
-                    ? 'சர்வதேச நேரடி ஏற்றுமதி'
-                    : isSi
-                    ? 'ගෝලීය අපනයන සේවාව'
-                    : 'Direct Worldwide Export'}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#073979] shrink-0" />
-                <span>
-                  {isTa
-                    ? 'சமூக வவுச்சர்கள் & மொத்த விலை'
-                    : isSi
-                    ? 'ප්‍රජා වවුචර් සහ තොග මිල'
-                    : 'Community Vouchers & Wholesale'}
-                </span>
-              </div>
-            </div>
+
+        {/* 5. Real Trust Features Row - NO FAKE RATINGS, only real platform values */}
+        <div className={styles.trustStrip}>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-[#073979] shrink-0" />
+            <span>
+              {isTa
+                ? 'சரிபார்க்கப்பட்ட இலங்கை வணிகர்கள்'
+                : isSi
+                ? 'තහවුරු කළ දේශීය වෙළඳුන්'
+                : 'Verified Ceylon Merchants'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Truck className="w-5 h-5 text-[#073979] shrink-0" />
+            <span>
+              {isTa
+                ? '25 மாவட்டங்களுக்கும் டெலிவரி'
+                : isSi
+                ? 'සියලු දිස්ත්‍රික්ක වෙත බෙදාහැරීම'
+                : 'Islandwide Delivery (All 25 Districts)'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe2 className="w-5 h-5 text-[#073979] shrink-0" />
+            <span>
+              {isTa
+                ? 'சர்வதேச நேரடி ஏற்றுமதி'
+                : isSi
+                ? 'ගෝලීය අපනයන සේවාව'
+                : 'Direct Worldwide Export'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-[#073979] shrink-0" />
+            <span>
+              {isTa
+                ? 'சமூக வவுச்சர்கள் & மொத்த விலை'
+                : isSi
+                ? 'ප්‍රජා වවුචර් සහ තොග මිල'
+                : 'Community Vouchers & Wholesale'}
+            </span>
+          </div>
+        </div>
       </section>
 
       {/* Animation keyframes */}

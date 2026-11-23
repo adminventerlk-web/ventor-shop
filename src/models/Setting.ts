@@ -15,7 +15,7 @@ export interface ISetting extends Document {
 
 const SettingSchema = new Schema<ISetting>(
   {
-    storeName: { type: String, default: 'VENTERSHOP' },
+    storeName: { type: String, default: 'VENTERPRISE' },
     tagline: { type: String, default: 'Your Trusted Online Store for Quality Products' },
     freeDeliveryThreshold: { type: Number, default: 7500, min: 0 },
     currency: { type: String, default: 'LKR' },

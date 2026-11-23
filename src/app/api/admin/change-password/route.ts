@@ -30,10 +30,10 @@ export async function POST(request: Request) {
     const adminRecord = await Admin.findById(adminUser.id);
     if (!adminRecord) {
       // Default fallback check
-      if (adminUser.email === 'admin@ventershop.ca' && currentPassword === 'admin123') {
+      if (adminUser.email === 'admin@venterprise.lk' && currentPassword === 'admin123') {
         const hashedPassword = hashPassword(newPassword);
         await Admin.create({
-          email: 'admin@ventershop.ca',
+          email: 'admin@venterprise.lk',
           password: hashedPassword,
           firstName: 'System',
           lastName: 'Admin',

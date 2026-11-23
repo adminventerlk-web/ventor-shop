@@ -192,7 +192,7 @@ export default function AdvertiseWithUsPage() {
 
   const handleSubmitRequest = async () => {
     if (!agreeTerms) {
-      alert('Please accept the VentorShop Advertising Terms and Conditions.');
+      alert('Please accept the Venterprise Advertising Terms and Conditions.');
       return;
     }
 
@@ -282,16 +282,16 @@ export default function AdvertiseWithUsPage() {
         <div className="max-w-6xl mx-auto space-y-6 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFB800]/20 text-[#FFB800] border border-[#FFB800]/40 text-xs font-black uppercase tracking-wider">
             <Sparkles className="w-4 h-4" />
-            <span>VENTERSHOP ADVERTISING MARKETPLACE</span>
+            <span>VENTERPRISE ADVERTISING MARKETPLACE</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
-            Grow Your Business with VentorShop
+            Grow Your Business with Venterprise
           </h1>
 
           <p className="text-base sm:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
             Promote your shop, reach more customers, and showcase your products to a wider audience through
-            VentorShop. Integrated directly into Sri Lanka’s premier digital e-commerce ecosystem.
+            Venterprise. Integrated directly into Sri Lanka’s premier digital e-commerce ecosystem.
           </p>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
@@ -305,7 +305,7 @@ export default function AdvertiseWithUsPage() {
             </button>
 
             <a
-              href="https://wa.me/94778331202?text=Hello%20VentorShop%20Team%2C%20I%20want%20to%20advertise%20my%20store%20on%20VENTERSHOP."
+              href="https://wa.me/94778331202?text=Hello%20Venterprise%20Team%2C%20I%20want%20to%20advertise%20my%20store%20on%20VENTERPRISE."
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm uppercase tracking-wider rounded-2xl shadow-xl transition-all flex items-center gap-2 cursor-pointer"
@@ -363,7 +363,7 @@ export default function AdvertiseWithUsPage() {
             SIMPLE 3-STEP COLLABORATION
           </span>
           <h2 className="text-2xl sm:text-3xl font-black text-[#021838]">
-            How Commercial Advertising Works on VentorShop
+            How Commercial Advertising Works on Venterprise
           </h2>
         </div>
 
@@ -396,7 +396,7 @@ export default function AdvertiseWithUsPage() {
             </span>
             <h3 className="font-black text-base text-[#021838]">Live Billboard Promotion</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Your advertisement goes live on VentorShop’s homepage, category sections, and discover portals, driving
+              Your advertisement goes live on Venterprise’s homepage, category sections, and discover portals, driving
               instant traffic!
             </p>
           </div>
@@ -466,7 +466,7 @@ export default function AdvertiseWithUsPage() {
 
                 <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
                   <a
-                    href={`https://wa.me/94778331202?text=Hello%20VentorShop%20Team%2C%20I%20have%20submitted%20an%20ad%20request%20with%20tracking%20code%20${successData.trackingCode}.`}
+                    href={`https://wa.me/94778331202?text=Hello%20Venterprise%20Team%2C%20I%20have%20submitted%20an%20ad%20request%20with%20tracking%20code%20${successData.trackingCode}.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md"
@@ -887,7 +887,7 @@ export default function AdvertiseWithUsPage() {
                           className="w-4 h-4 mt-0.5 rounded text-[#0052CC] focus:ring-blue-500 cursor-pointer shrink-0"
                         />
                         <span className="text-xs text-gray-700 leading-relaxed">
-                          I agree to the VentorShop Commercial Partnership Terms & Advertising Guidelines. I confirm
+                          I agree to the Venterprise Commercial Partnership Terms & Advertising Guidelines. I confirm
                           that the provided store information and promotional images are authentic and comply with
                           applicable commercial regulations.
                         </span>
@@ -1011,7 +1011,7 @@ export default function AdvertiseWithUsPage() {
                   </div>
 
                   <a
-                    href={`https://wa.me/94778331202?text=Hello%20VentorShop%2C%20inquiring%20about%20my%20ad%20tracking%20code%20${r.trackingCode}.`}
+                    href={`https://wa.me/94778331202?text=Hello%20Venterprise%2C%20inquiring%20about%20my%20ad%20tracking%20code%20${r.trackingCode}.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-[11px] flex items-center justify-center gap-1.5 shrink-0"
@@ -1040,7 +1040,7 @@ export default function AdvertiseWithUsPage() {
               a: 'Our merchant verification team reviews all collaborator submissions within 24 to 48 business hours. If any additional photos or verification documents are required, we contact you directly via WhatsApp.',
             },
             {
-              q: 'What is the cost of advertising on VentorShop?',
+              q: 'What is the cost of advertising on Venterprise?',
               a: 'Submitting an advertisement request is completely free. We offer promotional partnership packages with zero upfront setup fees, as well as revenue-sharing and sponsored showcase models.',
             },
             {
@@ -1049,7 +1049,7 @@ export default function AdvertiseWithUsPage() {
             },
             {
               q: 'Can I advertise if I don’t have an existing online store?',
-              a: 'Yes! We can set up a dedicated virtual shop on VentorShop (e.g. ventor-shop.vercel.app/shops/your-name) where customers can order your products directly using Cash on Delivery (COD) or Bank Transfer.',
+              a: 'Yes! We can set up a dedicated virtual shop on Venterprise (e.g. venterprise.vercel.app/shops/your-name) where customers can order your products directly using Cash on Delivery (COD) or Bank Transfer.',
             },
           ].map((faq, idx) => (
             <div key={idx} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">

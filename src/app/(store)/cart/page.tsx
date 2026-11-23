@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import CartContentClient from '@/components/cart/CartContentClient';
 
 export const metadata: Metadata = {
-  title: 'Your Cart - VENTERSHOP',
+  title: 'Your Cart - VENTERPRISE',
   description: 'View your selected products, apply voucher codes, and check out.',
   robots: {
     index: false,
