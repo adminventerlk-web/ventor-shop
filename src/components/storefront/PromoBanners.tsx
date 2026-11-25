@@ -10,15 +10,12 @@ import {
   ArrowRight,
   Gift,
   GraduationCap,
-  Home,
   Clock,
   CheckCircle,
   XCircle,
   X,
   Building2,
   ShieldCheck,
-  Check,
-  Copy,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -27,17 +24,6 @@ interface IVoucherStatus {
   status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
   voucherAmount: number;
   institution: string;
-}
-
-interface ICommunityProgramVoucher {
-  _id: string;
-  title: string;
-  supportedBy: string;
-  communityType: string;
-  voucherCode: string;
-  voucherAmount: number;
-  status: 'ON' | 'OFF';
-  noticeMessage?: string;
 }
 
 export default function PromoBanners() {
@@ -49,13 +35,11 @@ export default function PromoBanners() {
   const router = useRouter();
 
   const [voucher, setVoucher] = useState<IVoucherStatus | null>(null);
-  const [communityVouchers, setCommunityVouchers] = useState<ICommunityProgramVoucher[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [institution, setInstitution] = useState('');
   const [studentId, setStudentId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const fetchUserVoucher = async () => {
     if (!user) return;
@@ -72,21 +56,8 @@ export default function PromoBanners() {
     }
   };
 
-  const fetchCommunityVouchers = async () => {
-    try {
-      const res = await fetch('/api/vouchers/community');
-      if (res.ok) {
-        const data = await res.json();
-        setCommunityVouchers(data.vouchers || []);
-      }
-    } catch (err) {
-      console.error('Failed to fetch community vouchers:', err);
-    }
-  };
-
   useEffect(() => {
     fetchUserVoucher();
-    fetchCommunityVouchers();
   }, [user]);
 
   const handleUseVoucherClick = (e: React.MouseEvent) => {
@@ -97,9 +68,9 @@ export default function PromoBanners() {
     }
 
     if (voucher) {
-      router.push('/dashboard/vouchers');
+      router.push('/vouchers');
     } else {
-      setModalOpen(true);
+      router.push('/vouchers');
     }
   };
 
@@ -138,17 +109,6 @@ export default function PromoBanners() {
     }
   };
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2500);
-  };
-
-  // Get active family support / community voucher if configured
-  const familyVoucher = communityVouchers.find((cv) => cv.communityType === 'FAMILY_SUPPORT') || communityVouchers[0];
-
-  const isFamilyOn = familyVoucher?.status === 'ON';
-
   return (
     <section ref={sectionRef} aria-labelledby="community-vouchers-heading" className="pb-8 pt-2 text-[#800020] font-sans sm:pb-10 [&_a:focus-visible]:outline-3 [&_a:focus-visible]:outline-[#800020] [&_a:focus-visible]:outline-offset-4 [&_button:focus-visible]:outline-3 [&_button:focus-visible]:outline-[#800020] [&_button:focus-visible]:outline-offset-4 motion-reduce:[&_*]:animate-none! motion-reduce:[&_*]:transition-none!">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8">
@@ -170,74 +130,77 @@ export default function PromoBanners() {
 
               {/* Title & Description */}
               <div className="space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-[.16em] text-white">COMMUNITY BENEFITS</p>
+                <p className="text-[10px] font-bold uppercase tracking-[.16em] text-white">STUDENT EDUCATION BENEFITS</p>
                 <h2 id="community-vouchers-heading" className="font-serif text-[clamp(24px,2.2vw,32px)] font-bold leading-[1.2] tracking-[-.02em] text-white">
-                  {isTa ? 'சமூக பரிசு வவுச்சர்கள்' : isSi ? 'සමූහ ත්‍යාග වවුචර' : 'Community Gift Vouchers'}
+                  {isTa ? 'மாணவர் பரிசு வவுச்சர்கள்' : isSi ? 'ශිෂ්‍ය ත්‍යාග වවුචර' : 'Student Gift Vouchers'}
                 </h2>
                 <div aria-hidden="true" className="h-0.5 w-12 rounded-full bg-[#edc76a]" />
                 <p className="text-[13px] font-semibold leading-relaxed text-white">
-                  {isTa ? 'கல்வி மற்றும் சமூகப் பராமரிப்பிற்கு ஆதரவளித்தல்' : isSi ? 'අධ්‍යාපනය සහ සමාජ සුභසාධනය සඳහා සහය වීම' : 'Supporting Education & Community Care'}
+                  {isTa ? 'கல்வி மற்றும் கற்றல் உபகரணங்களுக்கு ஆதரவளித்தல்' : isSi ? 'අධ්‍යාපනය සහ ඉගෙනුම් ද්‍රව්‍ය සඳහා සහය වීම' : 'Supporting Education & Learning Essentials'}
                 </p>
-                
 
                 <p className="text-xs font-normal leading-[1.7] text-white/90">
                   {isTa
-                    ? 'எங்கள் சமூகத் திட்டங்கள் மூலம் வழங்கப்படும் பரிசு வவுச்சர்கள் மாணவர்கள் மற்றும் குடும்பங்கள் VENTERPRISE மூலம் அத்தியாவசிய பொருட்களைப் பெற உதவுகின்றன.'
+                    ? 'எங்கள் Educating Bank System மூலம் வழங்கப்படும் மாணவர் பரிசு வவுச்சர்கள், மாணவர்கள் VENTERPRISE வழியாக கல்வி உபகரணங்கள் மற்றும் புத்தகங்களை சிறப்பு சலுகை விலையில் பெற உதவுகின்றன.'
                     : isSi
-                    ? 'අපගේ සමූහ වැඩසටහන් හරහා ලබා දෙන ත්‍යාග වවුචර මගින් සිසුන්ට සහ පවුල්වලට VENTERPRISE හරහා අවශ්‍ය ද්‍රව්‍ය ලබා ගැනීමට උපකාරී වේ.'
-                    : 'Gift vouchers provided through our community programmes help students and families access essential items through VENTERPRISE.'}
+                    ? 'අපගේ අධ්‍යාපන බැංකු පද්ධතිය හරහා පිරිනමන ශිෂ්‍ය ත්‍යාග වවුචර මඟින් සිසුන්ට VENTERPRISE හරහා විශේෂ වට්ටම් සහිතව ඉගෙනුම් ද්‍රව්‍ය ලබා ගැනීමට උපකාරී වේ.'
+                    : 'Gift vouchers provided through our Educating Bank System help registered V2CC students access subsidized textbooks, stationery, and educational essentials through VENTERPRISE.'}
                 </p>
               </div>
             </div>
 
-            {/* Right Column: 2 Voucher Interactive Cards */}
-            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8">
-              
-              {/* 1. Student Gift Voucher Card */}
-              <div data-entrance="left" data-entrance-delay="120" className="flex min-w-0 flex-col justify-between gap-5 rounded-2xl border border-[#e5e7eb] bg-white p-5 text-gray-900 shadow-[0_5px_16px_-10px_#4e152333] transition-[transform,translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-12px_#4e152340] motion-reduce:hover:translate-y-0 sm:p-6">
+            {/* Right Column: Student Gift Voucher Interactive Card */}
+            <div className="lg:col-span-8 flex justify-center lg:justify-end">
+              <div data-entrance="left" data-entrance-delay="120" className="w-full max-w-md flex min-w-0 flex-col justify-between gap-5 rounded-2xl border border-[#e5e7eb] bg-white p-5 text-gray-900 shadow-[0_5px_16px_-10px_#4e152333] transition-[transform,translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-12px_#4e152340] motion-reduce:hover:translate-y-0 sm:p-6">
                 
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FCE4E6] text-[#800020] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                  <div className="w-11 h-11 rounded-xl bg-[#FCE4E6] text-[#800020] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                     <GraduationCap className="w-6 h-6 stroke-[2.2]" />
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <h4 className="text-[15px] font-bold leading-snug text-[#800020]">
+                    <h4 className="text-[16px] font-black leading-snug text-[#800020]">
                       {isTa ? 'மாணவர் பரிசு வவுச்சர்' : isSi ? 'ශිෂ්‍ය ත්‍යාග වවුචරය' : 'Student Gift Voucher'}
                     </h4>
                     <p className="text-[10px] text-[#64748B] font-semibold">Supported by</p>
-                    <span className="inline-block bg-[#FCE4E6] text-[#800020] text-[10px] font-semibold px-2 py-1 rounded-md max-w-full whitespace-normal">
+                    <span className="inline-block bg-[#FCE4E6] text-[#800020] text-[10px] font-bold px-2 py-0.5 rounded-md max-w-full whitespace-normal">
                       Educating Bank System of V2CC
                     </span>
                   </div>
                 </div>
 
+                <p className="text-xs text-gray-600 font-medium">
+                  {isTa
+                    ? 'பதிவுசெய்யப்பட்ட மாணவர்களுக்கான பிரத்தியேக வவுச்சர் சலுகை. விண்ணப்பித்து, நிர்வாகி ஒப்புதல் பெற்றதும் உங்கள் வவுச்சர் குறியீட்டைப் பெற்றுக்கொள்ளுங்கள்.'
+                    : 'Exclusive educational voucher benefit for registered students. Apply and obtain your verified discount voucher code.'}
+                </p>
+
                 {/* Dynamic Status Toggle Display */}
-                <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs">
                   <span className="text-gray-600 font-bold text-[11px]">Status:</span>
                   
                   {!voucher && (
                     <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
-                      <span>ON</span>
+                      <span>ON (AVAILABLE)</span>
                       <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
                     </div>
                   )}
 
                   {voucher?.status === 'PENDING' && (
-                    <div className="inline-flex items-center gap-1.5 bg-gray-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-amber-500 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <Clock className="w-3 h-3" />
-                      <span>PENDING</span>
+                      <span>PENDING VERIFICATION</span>
                     </div>
                   )}
 
                   {voucher?.status === 'VERIFIED' && (
-                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <ShieldCheck className="w-3 h-3" />
                       <span>VERIFIED & ACTIVE</span>
                     </div>
                   )}
 
                   {voucher?.status === 'REJECTED' && (
-                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
+                    <div className="inline-flex items-center gap-1.5 bg-red-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
                       <XCircle className="w-3 h-3" />
                       <span>REJECTED</span>
                     </div>
@@ -251,79 +214,13 @@ export default function PromoBanners() {
                 >
                   <span>
                     {voucher?.status === 'PENDING'
-                      ? (isTa ? 'நிலுவையில் உள்ளது (View Status)' : 'Pending Verification')
+                      ? (isTa ? 'விண்ணப்ப நிலை (View Status)' : 'Check Application Status')
                       : voucher?.status === 'VERIFIED'
-                      ? (isTa ? 'அங்கீகரிக்கப்பட்டது (View Voucher)' : 'Verified (Use Voucher)')
-                      : (isTa ? 'மாணவர் வவுச்சரைப் பயன்படுத்துக' : 'Use Student Voucher')}
+                      ? (isTa ? 'வவுச்சரை சரிபார்த்து பயன்படுத்துக' : 'Verify & Redeem Voucher')
+                      : (isTa ? 'மாணவர் வவுச்சருக்கு விண்ணப்பிக்கவும்' : 'Apply for Student Voucher')}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
-              </div>
-
-              {/* 2. Family Support / Community Voucher Card (DYNAMIC ON/OFF STATUS) */}
-              <div data-entrance="right" data-entrance-delay="240" className="flex min-w-0 flex-col justify-between gap-5 rounded-2xl border border-[#e5e7eb] bg-white p-5 text-gray-900 shadow-[0_5px_16px_-10px_#4e152333] transition-[transform,translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-12px_#4e152340] motion-reduce:hover:translate-y-0 sm:p-6">
-                
-                <div className="flex items-start gap-3">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs mt-0.5 bg-[#FCE4E6] text-[#800020]"
-                  >
-                    <Home className="w-6 h-6 stroke-[2.2]" />
-                  </div>
-                  <div className="space-y-0.5 min-w-0">
-                    <h4 className="text-[15px] font-bold leading-snug text-[#800020]">
-                      {familyVoucher?.title || (isTa ? 'குடும்ப ஆதரவு வவுச்சர்' : 'Family Support Voucher')}
-                    </h4>
-                    <p className="text-[10px] text-[#64748B] font-semibold">Supported by</p>
-                    <span className="inline-block bg-[#FCE4E6] text-[#800020] text-[10px] font-semibold px-2 py-1 rounded-md max-w-full whitespace-normal">
-                      {familyVoucher?.supportedBy || 'TMSAP Project of V2CC'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Status Toggle Display: ON or OFF */}
-                <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
-                  <span className="text-gray-600 font-bold text-[11px]">Status:</span>
-                  
-                  {isFamilyOn ? (
-                    <div className="inline-flex items-center gap-1.5 bg-[#800020] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black shadow-xs">
-                      <span>ON</span>
-                      <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-                    </div>
-                  ) : (
-                    <div className="inline-flex items-center gap-1.5 bg-gray-200 text-gray-600 px-2.5 py-0.5 rounded-full text-[10px] font-black">
-                      <div className="w-2.5 h-2.5 rounded-full bg-gray-400" />
-                      <span>OFF</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Dynamic Action Button */}
-                {isFamilyOn ? (
-                  <button
-                    onClick={() => handleCopyCode(familyVoucher?.voucherCode || 'FAMILY-V2CC')}
-                    className="w-full min-h-11 py-2.5 px-3 bg-[#800020] hover:bg-[#650019] text-white text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-sm hover:shadow transition-all text-center cursor-pointer"
-                  >
-                    {copiedCode === (familyVoucher?.voucherCode || 'FAMILY-V2CC') ? (
-                      <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Code Copied ({familyVoucher?.voucherCode})!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Use Code ({familyVoucher?.voucherCode})</span>
-                      </>
-                    )}
-                  </button>
-                ) : (
-                  <Link
-                    href="/vouchers#family"
-                    className="w-full min-h-11 py-2.5 px-3 bg-white hover:bg-[#fff5f6] text-[#800020] border border-[#800020] text-xs font-bold rounded-full flex items-center justify-center gap-1.5 shadow-2xs hover:shadow-xs transition-all text-center"
-                  >
-                    <span>{isTa ? 'விபரங்களைப் பார்க்க' : isSi ? 'විස්තර බලන්න' : 'View Details'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                )}
               </div>
 
             </div>
