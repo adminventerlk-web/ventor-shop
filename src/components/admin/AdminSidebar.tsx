@@ -30,20 +30,40 @@ export default function AdminSidebar() {
   const { user, logoutUser } = useAuth();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  const links = [
-    { label: 'Overview', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag className="w-4 h-4 text-emerald-400" /> },
-    { label: 'Products', href: '/admin/products', icon: <Package className="w-4 h-4 text-blue-400" /> },
-    { label: 'Shop Approvals', href: '/admin/shops', icon: <Store className="w-4 h-4 text-[#FFB800]" /> },
-    { label: 'Vouchers & Offers', href: '/admin/vouchers', icon: <Ticket className="w-4 h-4 text-purple-400" /> },
-    { label: 'Categories', href: '/admin/categories', icon: <Layers className="w-4 h-4" /> },
-    { label: 'V2CC-PMS Members', href: '/admin/communities', icon: <Users className="w-4 h-4" /> },
-    { label: 'Customers', href: '/admin/customers', icon: <Users className="w-4 h-4" /> },
-    { label: 'Storefront Ads', href: '/admin/ads', icon: <Megaphone className="w-4 h-4 text-[#FFB800]" /> },
-    { label: 'Revenue Donations', href: '/admin/donations', icon: <HeartHandshake className="w-4 h-4" /> },
-    { label: 'Featured Products', href: '/admin/featured', icon: <Sparkles className="w-4 h-4 text-[#FFB800]" /> },
-    { label: 'Global Settings', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
-    { label: 'Audit Logs', href: '/admin/audit', icon: <Clock className="w-4 h-4" /> },
+  const linkGroups = [
+    {
+      group: 'Core Operations',
+      links: [
+        { label: 'Overview', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { label: 'Shop Approvals', href: '/admin/shops', icon: <Store className="w-4 h-4 text-[#FFB800]" />, highlight: true },
+        { label: 'Vouchers & Offers', href: '/admin/vouchers', icon: <Ticket className="w-4 h-4 text-purple-400" />, highlight: true },
+        { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag className="w-4 h-4 text-emerald-400" /> },
+        { label: 'Products & Stock', href: '/admin/products', icon: <Package className="w-4 h-4 text-blue-400" /> },
+      ],
+    },
+    {
+      group: 'Community & Members',
+      links: [
+        { label: 'V2CC-PMS Members', href: '/admin/communities', icon: <Users className="w-4 h-4 text-sky-400" /> },
+        { label: 'Customers & B2B', href: '/admin/customers', icon: <Users className="w-4 h-4 text-gray-300" /> },
+      ],
+    },
+    {
+      group: 'Storefront & Promos',
+      links: [
+        { label: 'Storefront Ads', href: '/admin/ads', icon: <Megaphone className="w-4 h-4 text-[#FFB800]" /> },
+        { label: 'Categories', href: '/admin/categories', icon: <Layers className="w-4 h-4" /> },
+        { label: 'Featured Products', href: '/admin/featured', icon: <Sparkles className="w-4 h-4 text-[#FFB800]" /> },
+        { label: 'Revenue Donations', href: '/admin/donations', icon: <HeartHandshake className="w-4 h-4 text-rose-400" /> },
+      ],
+    },
+    {
+      group: 'System Control',
+      links: [
+        { label: 'Global Settings', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
+        { label: 'Audit Logs', href: '/admin/audit', icon: <Clock className="w-4 h-4" /> },
+      ],
+    },
   ];
 
   return (
@@ -116,25 +136,37 @@ export default function AdminSidebar() {
               )}
 
               {/* Navigation Links */}
-              <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-230px)]">
-                {links.map((link, idx) => {
-                  const isActive = pathname === link.href;
-                  return (
-                    <Link
-                      key={idx}
-                      href={link.href}
-                      onClick={() => setMobileDrawerOpen(false)}
-                      className={`flex items-center gap-3 py-2.5 px-3.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
-                        isActive
-                          ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
-                          : 'text-gray-300 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      <span className={isActive ? 'text-[#FFB800]' : 'text-gray-400'}>{link.icon}</span>
-                      <span>{link.label}</span>
-                    </Link>
-                  );
-                })}
+              <nav className="p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-230px)]">
+                {linkGroups.map((group, gIdx) => (
+                  <div key={gIdx} className="space-y-1">
+                    <p className="px-3 text-[9px] font-black uppercase tracking-wider text-blue-300/60">
+                      {group.group}
+                    </p>
+                    {group.links.map((link, idx) => {
+                      const isActive = pathname === link.href;
+                      return (
+                        <Link
+                          key={idx}
+                          href={link.href}
+                          onClick={() => setMobileDrawerOpen(false)}
+                          className={`flex items-center justify-between gap-3 py-2 px-3 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
+                            isActive
+                              ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
+                              : 'text-gray-300 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className={isActive ? 'text-[#FFB800]' : 'text-gray-400'}>{link.icon}</span>
+                            <span>{link.label}</span>
+                          </div>
+                          {link.highlight && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FFB800] animate-pulse" />
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
               </nav>
             </div>
 
@@ -192,24 +224,36 @@ export default function AdminSidebar() {
           )}
 
           {/* Menu Navigation */}
-          <nav className="p-3 space-y-1">
-            {links.map((link, idx) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={idx}
-                  href={link.href}
-                  className={`flex items-center gap-3 py-2.5 px-3.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
-                    isActive
-                      ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <span className={isActive ? 'text-[#FFB800]' : 'text-gray-400'}>{link.icon}</span>
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
+          <nav className="p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-220px)]">
+            {linkGroups.map((group, gIdx) => (
+              <div key={gIdx} className="space-y-1">
+                <p className="px-3.5 text-[9px] font-black uppercase tracking-wider text-blue-300/60">
+                  {group.group}
+                </p>
+                {group.links.map((link, idx) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={idx}
+                      href={link.href}
+                      className={`flex items-center justify-between gap-3 py-2 px-3.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
+                        isActive
+                          ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
+                          : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className={isActive ? 'text-[#FFB800]' : 'text-gray-400'}>{link.icon}</span>
+                        <span>{link.label}</span>
+                      </div>
+                      {link.highlight && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#FFB800] animate-pulse" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </div>
 

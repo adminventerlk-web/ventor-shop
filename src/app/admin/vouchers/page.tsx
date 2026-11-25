@@ -263,7 +263,7 @@ export default function AdminVouchersPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse min-w-[720px]">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 uppercase text-[10px] tracking-wider">
                       <th className="py-3 px-4 font-extrabold">Student Info</th>

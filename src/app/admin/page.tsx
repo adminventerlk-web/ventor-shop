@@ -12,6 +12,13 @@ import {
   ChevronRight,
   ShieldCheck,
   CheckCircle,
+  Store,
+  Ticket,
+  Package,
+  Megaphone,
+  Sparkles,
+  Layers,
+  ArrowRight,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -161,19 +168,279 @@ export default function AdminOverviewDashboard() {
         </div>
       </div>
 
+      {/* ── PRIORITY MANAGEMENT HUB (Top Operations) ── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-black uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#E53935]" />
+            High Priority Operations & Quick Management
+          </h2>
+          <span className="text-[10px] text-gray-400 font-bold uppercase">Immediate Focus</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Shop Approvals */}
+          <Link
+            href="/admin/shops"
+            className="group bg-gradient-to-br from-[#021838] to-[#010e24] text-white p-4 rounded-2xl border border-[#0052CC]/40 hover:border-[#FFB800] transition-all shadow-md flex flex-col justify-between"
+          >
+            <div className="flex items-start justify-between">
+              <div className="p-2.5 bg-[#FFB800]/15 border border-[#FFB800]/30 rounded-xl text-[#FFB800]">
+                <Store className="w-5 h-5" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-wider bg-[#FFB800] text-[#021838] px-2 py-0.5 rounded-full">
+                Verify
+              </span>
+            </div>
+            <div className="mt-3">
+              <h3 className="font-black text-sm text-white group-hover:text-[#FFB800] transition-colors">
+                Shop Approvals
+              </h3>
+              <p className="text-[11px] text-blue-200/70 mt-0.5 line-clamp-1">
+                Verify vendor applications & activate storefronts
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-bold text-[#FFB800]">
+              <span>Manage Shops</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Student Vouchers & Offers */}
+          <Link
+            href="/admin/vouchers"
+            className="group bg-gradient-to-br from-[#2a0845] to-[#16002c] text-white p-4 rounded-2xl border border-purple-500/40 hover:border-purple-400 transition-all shadow-md flex flex-col justify-between"
+          >
+            <div className="flex items-start justify-between">
+              <div className="p-2.5 bg-purple-500/20 border border-purple-400/30 rounded-xl text-purple-300">
+                <Ticket className="w-5 h-5" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-wider bg-purple-400 text-[#16002c] px-2 py-0.5 rounded-full">
+                Vouchers
+              </span>
+            </div>
+            <div className="mt-3">
+              <h3 className="font-black text-sm text-white group-hover:text-purple-300 transition-colors">
+                Student Vouchers
+              </h3>
+              <p className="text-[11px] text-purple-200/70 mt-0.5 line-clamp-1">
+                Approve V2CC percentage & amount voucher codes
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-bold text-purple-300">
+              <span>Review Requests</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Orders Management */}
+          <Link
+            href="/admin/orders"
+            className="group bg-gradient-to-br from-[#06302b] to-[#011a17] text-white p-4 rounded-2xl border border-emerald-500/40 hover:border-emerald-400 transition-all shadow-md flex flex-col justify-between"
+          >
+            <div className="flex items-start justify-between">
+              <div className="p-2.5 bg-emerald-500/20 border border-emerald-400/30 rounded-xl text-emerald-300">
+                <ShoppingBag className="w-5 h-5" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-400 text-[#011a17] px-2 py-0.5 rounded-full">
+                {metrics?.activeOrders ?? 0} Active
+              </span>
+            </div>
+            <div className="mt-3">
+              <h3 className="font-black text-sm text-white group-hover:text-emerald-300 transition-colors">
+                Store Orders
+              </h3>
+              <p className="text-[11px] text-emerald-200/70 mt-0.5 line-clamp-1">
+                Track shipments, confirm dispatches & invoices
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-bold text-emerald-300">
+              <span>Process Orders</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Products & Inventory */}
+          <Link
+            href="/admin/products"
+            className="group bg-gradient-to-br from-[#102a45] to-[#041324] text-white p-4 rounded-2xl border border-sky-500/40 hover:border-sky-400 transition-all shadow-md flex flex-col justify-between"
+          >
+            <div className="flex items-start justify-between">
+              <div className="p-2.5 bg-sky-500/20 border border-sky-400/30 rounded-xl text-sky-300">
+                <Package className="w-5 h-5" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-wider bg-sky-400 text-[#041324] px-2 py-0.5 rounded-full">
+                Catalog
+              </span>
+            </div>
+            <div className="mt-3">
+              <h3 className="font-black text-sm text-white group-hover:text-sky-300 transition-colors">
+                Products & Variants
+              </h3>
+              <p className="text-[11px] text-sky-200/70 mt-0.5 line-clamp-1">
+                Configure prices, sizes, stock levels & Ceylon items
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-bold text-sky-300">
+              <span>Manage Catalog</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+        </div>
+
+        {/* Quick Operations Links Toolbar */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Quick Actions:</span>
+          <Link
+            href="/admin/ads"
+            className="px-3 py-1.5 bg-white border border-gray-200 hover:border-[#0052CC] rounded-lg text-xs font-bold text-gray-700 hover:text-[#0052CC] transition-colors flex items-center gap-1.5 shadow-2xs"
+          >
+            <Megaphone className="w-3.5 h-3.5 text-[#FFB800]" />
+            <span>Storefront Ads</span>
+          </Link>
+          <Link
+            href="/admin/communities"
+            className="px-3 py-1.5 bg-white border border-gray-200 hover:border-[#0052CC] rounded-lg text-xs font-bold text-gray-700 hover:text-[#0052CC] transition-colors flex items-center gap-1.5 shadow-2xs"
+          >
+            <Users className="w-3.5 h-3.5 text-blue-500" />
+            <span>V2CC-PMS Members</span>
+          </Link>
+          <Link
+            href="/admin/categories"
+            className="px-3 py-1.5 bg-white border border-gray-200 hover:border-[#0052CC] rounded-lg text-xs font-bold text-gray-700 hover:text-[#0052CC] transition-colors flex items-center gap-1.5 shadow-2xs"
+          >
+            <Layers className="w-3.5 h-3.5 text-purple-500" />
+            <span>Categories</span>
+          </Link>
+          <Link
+            href="/admin/featured"
+            className="px-3 py-1.5 bg-white border border-gray-200 hover:border-[#0052CC] rounded-lg text-xs font-bold text-gray-700 hover:text-[#0052CC] transition-colors flex items-center gap-1.5 shadow-2xs"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>Featured Items</span>
+          </Link>
+          <Link
+            href="/admin/customers"
+            className="px-3 py-1.5 bg-white border border-gray-200 hover:border-[#0052CC] rounded-lg text-xs font-bold text-gray-700 hover:text-[#0052CC] transition-colors flex items-center gap-1.5 shadow-2xs"
+          >
+            <Briefcase className="w-3.5 h-3.5 text-red-500" />
+            <span>B2B Wholesale</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* High Priority Operations & Quick Actions Hub */}
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xs font-black uppercase tracking-wider text-[#101A2D] flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#E53935]" />
+            High Priority Management
+          </h2>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Link
+              href="/admin/ads"
+              className="px-2.5 py-1 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg text-[10px] font-extrabold uppercase text-[#101A2D] flex items-center gap-1 transition-colors"
+            >
+              <Megaphone className="w-3 h-3 text-[#FFB800]" />
+              <span>Ads</span>
+            </Link>
+            <Link
+              href="/admin/communities"
+              className="px-2.5 py-1 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg text-[10px] font-extrabold uppercase text-[#101A2D] flex items-center gap-1 transition-colors"
+            >
+              <Users className="w-3 h-3 text-sky-600" />
+              <span>V2CC-PMS</span>
+            </Link>
+            <Link
+              href="/admin/categories"
+              className="px-2.5 py-1 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg text-[10px] font-extrabold uppercase text-[#101A2D] flex items-center gap-1 transition-colors"
+            >
+              <Layers className="w-3 h-3 text-indigo-600" />
+              <span>Categories</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+          <Link
+            href="/admin/shops"
+            className="group bg-gradient-to-br from-[#021838] to-[#003893] text-white p-4 rounded-xl border border-[#0052CC]/40 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2.5 bg-white/10 text-[#FFB800] rounded-xl shrink-0">
+                <Store className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-wider truncate">Shop Approvals</p>
+                <p className="text-[11px] text-blue-200/80 font-medium truncate">Verify vendor stores</p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#FFB800] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+
+          <Link
+            href="/admin/vouchers"
+            className="group bg-white p-4 rounded-xl border border-purple-200 hover:border-purple-400 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl border border-purple-100 shrink-0">
+                <Ticket className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-wider text-[#101A2D] truncate">Student Vouchers</p>
+                <p className="text-[11px] text-gray-500 font-medium truncate">Approve & issue codes</p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-purple-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+
+          <Link
+            href="/admin/orders"
+            className="group bg-white p-4 rounded-xl border border-emerald-200 hover:border-emerald-400 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 shrink-0">
+                <ShoppingBag className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-wider text-[#101A2D] truncate">Orders Hub</p>
+                <p className="text-[11px] text-gray-500 font-medium truncate">Fulfill & dispatch</p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-emerald-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+
+          <Link
+            href="/admin/products"
+            className="group bg-white p-4 rounded-xl border border-blue-200 hover:border-blue-400 shadow-2xs hover:shadow-sm transition-all flex items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl border border-blue-100 shrink-0">
+                <Package className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-wider text-[#101A2D] truncate">Products & Stock</p>
+                <p className="text-[11px] text-gray-500 font-medium truncate">Catalog & variants</p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-blue-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+      </div>
+
       {/* Stats KPI Grid */}
       {metrics && (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {/* Revenue */}
-          <div className="bg-white p-5 rounded-xl border border-gray-150 shadow-2xs flex items-center gap-4">
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-150 shadow-2xs flex items-center gap-3 sm:gap-4 min-w-0">
             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100 shrink-0">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <div>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+            <div className="min-w-0">
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate">
                 {selectedMonth === 'ALL' ? 'Total Sales Revenue' : `Revenue (${selectedMonth})`}
               </p>
-              <h4 className="text-xl font-black text-[#101A2D]">{formatCurrency(metrics.totalRevenue)}</h4>
+              <h4 className="text-lg sm:text-xl font-black text-[#101A2D] truncate">{formatCurrency(metrics.totalRevenue)}</h4>
               {selectedMonth !== 'ALL' && metrics.overallRevenue !== undefined && (
                 <p className="text-[10px] text-gray-400 font-semibold mt-0.5">
                   Overall: {formatCurrency(metrics.overallRevenue)}
