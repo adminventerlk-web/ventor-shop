@@ -44,7 +44,7 @@ interface ICalculationResult {
 }
 
 export default function CheckoutContentClient() {
-  const { cart, clearCart, appliedVoucherCode } = useCart();
+  const { cart, clearCart, appliedVoucherCode, appliedVoucherStudentName } = useCart();
   const { user } = useAuth();
   const { t, language } = useTranslation();
   const router = useRouter();
@@ -110,6 +110,7 @@ export default function CheckoutContentClient() {
         body: JSON.stringify({
           items: cart,
           voucherCode: appliedVoucherCode,
+          studentFullName: appliedVoucherStudentName,
         }),
       });
 
@@ -122,7 +123,7 @@ export default function CheckoutContentClient() {
     } finally {
       setLoading(false);
     }
-  }, [cart, appliedVoucherCode]);
+  }, [cart, appliedVoucherCode, appliedVoucherStudentName]);
 
   useEffect(() => {
     fetchCheckoutTotals();
@@ -175,6 +176,7 @@ export default function CheckoutContentClient() {
           items: cart,
           deliveryAddress: addressForm,
           voucherCode: appliedVoucherCode,
+          studentFullName: appliedVoucherStudentName,
         }),
       });
 

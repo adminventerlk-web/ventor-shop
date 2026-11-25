@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { doesStudentNameMatch } from '@/lib/utils/voucher';
 import mongoose from 'mongoose';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
@@ -19,7 +20,7 @@ import { getAllInMemoryShops } from '@/lib/shops/inMemoryShops';
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
-    const { items, deliveryAddress, voucherCode } = await request.json();
+    const { items, deliveryAddress, voucherCode, studentFullName } = await request.json();
 
     // 1. Validate basic input parameters
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -57,6 +58,18 @@ export async function POST(request: Request) {
       });
 
       if (matchingStudentVoucher) {
+        const nameMatches = doesStudentNameMatch(
+          matchingStudentVoucher.userName,
+          studentFullName || deliveryAddress?.fullName
+        );
+
+        if (!nameMatches) {
+          return NextResponse.json(
+            { error: 'Verification failed: Student Full Name does not match this voucher code.' },
+            { status: 400 }
+          );
+        }
+
         if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
           const pct = matchingStudentVoucher.discountValue || 15;
           voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;

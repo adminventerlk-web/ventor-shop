@@ -26,6 +26,8 @@ interface CartContextType {
   clearCart: () => void;
   appliedVoucherCode: string | null;
   setAppliedVoucherCode: (code: string | null) => void;
+  appliedVoucherStudentName: string | null;
+  setAppliedVoucherStudentName: (name: string | null) => void;
   addedItemNotification: IAddedItemNotification | null;
   closeNotification: () => void;
 }
@@ -35,6 +37,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<ICartItem[]>([]);
   const [appliedVoucherCode, setAppliedVoucherCode] = useState<string | null>(null);
+  const [appliedVoucherStudentName, setAppliedVoucherStudentName] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // 1. Load cart from localStorage on mount
@@ -47,6 +50,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const storedVoucher = localStorage.getItem('venterprise_voucher') || localStorage.getItem('ventershop_voucher');
       if (storedVoucher) {
         setAppliedVoucherCode(storedVoucher);
+      }
+      const storedName = localStorage.getItem('venterprise_voucher_name');
+      if (storedName) {
+        setAppliedVoucherStudentName(storedName);
       }
     } catch (e) {
       console.error('Failed to load cart from localStorage:', e);
@@ -64,7 +71,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [cart, isLoaded]);
 
-  // 3. Persist voucher code
+  // 3. Persist voucher code and student name
   useEffect(() => {
     if (!isLoaded) return;
     try {
@@ -74,10 +81,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('venterprise_voucher');
         localStorage.removeItem('ventershop_voucher');
       }
+
+      if (appliedVoucherStudentName) {
+        localStorage.setItem('venterprise_voucher_name', appliedVoucherStudentName);
+      } else {
+        localStorage.removeItem('venterprise_voucher_name');
+      }
     } catch (e) {
       console.error('Failed to save voucher to localStorage:', e);
     }
-  }, [appliedVoucherCode, isLoaded]);
+  }, [appliedVoucherCode, appliedVoucherStudentName, isLoaded]);
 
   const [addedItemNotification, setAddedItemNotification] = useState<IAddedItemNotification | null>(null);
 
@@ -158,6 +171,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = useCallback(() => {
     setCart([]);
     setAppliedVoucherCode(null);
+    setAppliedVoucherStudentName(null);
   }, []);
 
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
@@ -173,6 +187,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         appliedVoucherCode,
         setAppliedVoucherCode,
+        appliedVoucherStudentName,
+        setAppliedVoucherStudentName,
         addedItemNotification,
         closeNotification,
       }}

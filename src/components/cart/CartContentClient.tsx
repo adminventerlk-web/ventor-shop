@@ -16,6 +16,7 @@ import {
   Truck,
   ArrowRight,
   CheckCircle2,
+  GraduationCap,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -42,28 +43,46 @@ interface ICalculationResult {
   deliveryFee: number;
   freeDeliveryThreshold: number;
   total: number;
-  appliedVoucher: { code: string; discountAmount: number } | null;
+  appliedVoucher: {
+    code: string;
+    discountAmount: number;
+    discountType?: string;
+    discountValue?: number;
+    studentName?: string;
+  } | null;
   voucherError: string | null;
 }
 
 export default function CartContentClient() {
-  const { cart, updateQuantity, removeFromCart, appliedVoucherCode, setAppliedVoucherCode } = useCart();
+  const {
+    cart,
+    updateQuantity,
+    removeFromCart,
+    appliedVoucherCode,
+    setAppliedVoucherCode,
+    appliedVoucherStudentName,
+    setAppliedVoucherStudentName,
+  } = useCart();
   const { user } = useAuth();
   const { t, language } = useTranslation();
   const router = useRouter();
 
   const [calcResult, setCalcResult] = useState<ICalculationResult | null>(null);
   const [voucherInput, setVoucherInput] = useState('');
+  const [studentNameInput, setStudentNameInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [applyingVoucher, setApplyingVoucher] = useState(false);
   const [voucherErrorMsg, setVoucherErrorMsg] = useState<string | null>(null);
 
-  // Sync input value with active voucher code
+  // Sync inputs with active voucher
   useEffect(() => {
     if (appliedVoucherCode) {
       setVoucherInput(appliedVoucherCode);
     }
-  }, [appliedVoucherCode]);
+    if (appliedVoucherStudentName) {
+      setStudentNameInput(appliedVoucherStudentName);
+    }
+  }, [appliedVoucherCode, appliedVoucherStudentName]);
 
   // 1. Core Calculator fetch caller
   const calculateCartTotals = useCallback(async () => {
@@ -80,6 +99,7 @@ export default function CartContentClient() {
         body: JSON.stringify({
           items: cart,
           voucherCode: appliedVoucherCode,
+          studentFullName: appliedVoucherStudentName,
         }),
       });
 
@@ -107,13 +127,13 @@ export default function CartContentClient() {
     } finally {
       setLoading(false);
     }
-  }, [cart, appliedVoucherCode, removeFromCart]);
+  }, [cart, appliedVoucherCode, appliedVoucherStudentName, removeFromCart]);
 
   useEffect(() => {
     calculateCartTotals();
   }, [calculateCartTotals]);
 
-  // 2. Handle Apply Voucher action
+  // 2. Handle Apply Voucher action with Student Full Name Verification
   const handleApplyVoucher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!voucherInput.trim()) return;
@@ -133,6 +153,7 @@ export default function CartContentClient() {
         body: JSON.stringify({
           items: cart,
           voucherCode: voucherInput.trim().toUpperCase(),
+          studentFullName: studentNameInput.trim(),
         }),
       });
 
@@ -142,8 +163,10 @@ export default function CartContentClient() {
         if (data.voucherError) {
           setVoucherErrorMsg(data.voucherError);
           setAppliedVoucherCode(null);
+          setAppliedVoucherStudentName(null);
         } else {
           setAppliedVoucherCode(voucherInput.trim().toUpperCase());
+          setAppliedVoucherStudentName(studentNameInput.trim());
           setVoucherErrorMsg(null);
         }
       }
@@ -156,7 +179,9 @@ export default function CartContentClient() {
 
   const handleRemoveVoucher = () => {
     setAppliedVoucherCode(null);
+    setAppliedVoucherStudentName(null);
     setVoucherInput('');
+    setStudentNameInput('');
     setVoucherErrorMsg(null);
   };
 
@@ -448,25 +473,44 @@ export default function CartContentClient() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleApplyVoucher} className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Voucher code (e.g. WELCOME10)"
-                    value={voucherInput}
-                    onChange={(e) => {
-                      setVoucherInput(e.target.value.toUpperCase());
-                      setVoucherErrorMsg(null);
-                    }}
-                    className="min-w-0 flex-1 px-3 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg text-xs outline-none focus:bg-white focus:border-[#0759D6] text-[#082B68] font-bold uppercase tracking-wider"
-                    disabled={applyingVoucher}
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-[#071F50] hover:bg-[#082B68] text-white text-xs font-bold rounded-lg transition-colors disabled:bg-gray-400 cursor-pointer"
-                    disabled={applyingVoucher || !voucherInput.trim()}
-                  >
-                    {applyingVoucher ? 'Applying...' : 'Apply'}
-                  </button>
+                <form onSubmit={handleApplyVoucher} className="space-y-2">
+                  <div className="relative">
+                    <GraduationCap className="w-3.5 h-3.5 text-[#0759D6] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Student Full Name (for V2CC Student Vouchers)"
+                      value={studentNameInput}
+                      onChange={(e) => {
+                        setStudentNameInput(e.target.value);
+                        setVoucherErrorMsg(null);
+                      }}
+                      className="w-full pl-8 pr-3 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg text-xs outline-none focus:bg-white focus:border-[#0759D6] text-[#082B68] font-semibold"
+                      disabled={applyingVoucher}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Voucher code (e.g. WELCOME10)"
+                      value={voucherInput}
+                      onChange={(e) => {
+                        setVoucherInput(e.target.value.toUpperCase());
+                        setVoucherErrorMsg(null);
+                      }}
+                      className="min-w-0 flex-1 px-3 py-2.5 bg-[#f2f8ff] border border-[#c7def5] rounded-lg text-xs outline-none focus:bg-white focus:border-[#0759D6] text-[#082B68] font-bold uppercase tracking-wider"
+                      disabled={applyingVoucher}
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-[#071F50] hover:bg-[#082B68] text-white text-xs font-bold rounded-lg transition-colors disabled:bg-gray-400 cursor-pointer shrink-0"
+                      disabled={applyingVoucher || !voucherInput.trim()}
+                    >
+                      {applyingVoucher ? 'Applying...' : 'Apply'}
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-gray-500 leading-relaxed">
+                    Student Full Name is required for V2CC Student Vouchers. Leave blank for standard promo codes.
+                  </p>
                 </form>
               )}
 

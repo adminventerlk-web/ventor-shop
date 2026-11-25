@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { doesStudentNameMatch } from '@/lib/utils/voucher';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
 import { PricingService } from '@/lib/services/pricingService';
@@ -8,7 +9,7 @@ import StudentVoucher from '@/models/StudentVoucher';
 
 export async function POST(request: Request) {
   try {
-    const { items, voucherCode } = await request.json();
+    const { items, voucherCode, studentFullName } = await request.json();
 
     if (!items || !Array.isArray(items)) {
       return NextResponse.json({ error: 'Invalid items payload' }, { status: 400 });
@@ -53,58 +54,71 @@ export async function POST(request: Request) {
     let voucherError: string | null = null;
     let appliedVoucher = null;
 
-    // 2. Validate voucher if present (or check if user has active VERIFIED Student Voucher)
+    // 2. Validate voucher if present
     if (voucherCode) {
       const cleanCode = voucherCode.toUpperCase().trim();
 
-      // Check if it's a verified student voucher code
+      // Check if it's an approved student voucher code
       const matchingStudentVoucher = await StudentVoucher.findOne({
         discountCode: cleanCode,
         status: 'VERIFIED',
       });
 
       if (matchingStudentVoucher) {
-        if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
-          const pct = matchingStudentVoucher.discountValue || 15;
-          voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
+        // STRICT NAME VERIFICATION REQUIRED!
+        if (!studentFullName || !studentFullName.trim()) {
+          voucherError = 'Student Full Name is required to verify and apply this voucher.';
         } else {
-          voucherDiscount = Math.min(
-            matchingStudentVoucher.discountValue || matchingStudentVoucher.voucherAmount || 2500,
-            breakdown.subtotal
-          );
+          const nameMatches = doesStudentNameMatch(matchingStudentVoucher.userName, studentFullName);
+
+          if (!nameMatches) {
+            voucherError = 'Verification failed: Student Full Name does not match this voucher code.';
+          } else {
+            // Success! Calculate discount (Percentage or Fixed Amount)
+            if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
+              const pct = matchingStudentVoucher.discountValue || 15;
+              voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
+            } else {
+              voucherDiscount = Math.min(
+                matchingStudentVoucher.discountValue || matchingStudentVoucher.voucherAmount || 2500,
+                breakdown.subtotal
+              );
+            }
+
+            appliedVoucher = {
+              code: matchingStudentVoucher.discountCode,
+              discountAmount: voucherDiscount,
+              discountType: matchingStudentVoucher.discountType || 'FIXED',
+              discountValue: matchingStudentVoucher.discountValue,
+              studentName: matchingStudentVoucher.userName,
+            };
+          }
         }
-
+      } else if (cleanCode === 'WELCOME10') {
+        voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
         appliedVoucher = {
-          code: matchingStudentVoucher.discountCode,
+          code: 'WELCOME10',
           discountAmount: voucherDiscount,
-          discountType: matchingStudentVoucher.discountType || 'FIXED',
-          discountValue: matchingStudentVoucher.discountValue,
         };
-      }
-    }
-
-    if (!appliedVoucher && userId) {
-      const activeStudentVoucher = await StudentVoucher.findOne({
-        userId: userId,
-        status: 'VERIFIED',
-      });
-      if (activeStudentVoucher && (!voucherCode || voucherCode.toUpperCase().trim() === (activeStudentVoucher.discountCode || '').toUpperCase())) {
-        if (activeStudentVoucher.discountType === 'PERCENTAGE') {
-          const pct = activeStudentVoucher.discountValue || 15;
-          voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
-        } else {
-          voucherDiscount = Math.min(
-            activeStudentVoucher.discountValue || activeStudentVoucher.voucherAmount || 2500,
-            breakdown.subtotal
+      } else if (!userId) {
+        voucherError = 'Please register or log in to apply this voucher code.';
+      } else {
+        try {
+          const voucherRes = await VoucherService.validateVoucher(
+            voucherCode,
+            userId,
+            items,
+            customerType,
+            communityId
           );
+          voucherDiscount = voucherRes.discountAmount;
+          appliedVoucher = {
+            code: voucherRes.code,
+            discountAmount: voucherRes.discountAmount,
+          };
+        } catch (err: any) {
+          voucherError = err.message || 'Voucher is invalid for this order';
         }
-
-        appliedVoucher = {
-          code: activeStudentVoucher.discountCode || 'STUDENT-V2CC',
-          discountAmount: voucherDiscount,
-          discountType: activeStudentVoucher.discountType || 'FIXED',
-          discountValue: activeStudentVoucher.discountValue,
-        };
       }
     }
 

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { doesStudentNameMatch } from '@/lib/utils/voucher';
 import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
 import StudentVoucher from '@/models/StudentVoucher';
@@ -44,17 +45,9 @@ export async function POST(req: Request) {
     }
 
     // Verify name match
-    const voucherName = (voucher.userName || '').trim().toLowerCase();
-    const authUserName = `${user.firstName || ''} ${user.lastName || ''}`.trim().toLowerCase();
-    const isOwner = voucher.userId === (user.id || (user as any)._id);
+    const nameMatches = doesStudentNameMatch(voucher.userName, cleanInputName);
 
-    const nameMatches =
-      voucherName.includes(cleanInputName) ||
-      cleanInputName.includes(voucherName) ||
-      authUserName.includes(cleanInputName) ||
-      cleanInputName.includes(authUserName);
-
-    if (!nameMatches && !isOwner) {
+    if (!nameMatches) {
       return NextResponse.json(
         {
           error:
