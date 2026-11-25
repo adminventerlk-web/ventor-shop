@@ -29,15 +29,20 @@ export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
     if (!user) {
-      return NextResponse.json({ error: 'Please log in to claim a student voucher.' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Only registered students can apply for the V2CC Student Voucher. Please register or log in first.' },
+        { status: 401 }
+      );
     }
 
     const body = await req.json();
-    const { institution, studentIdNumber } = body;
+    const { fullName, institution, studentIdNumber, phone, gradeOrYear } = body;
 
     if (!institution || !institution.trim()) {
-      return NextResponse.json({ error: 'School / University name is required.' }, { status: 400 });
+      return NextResponse.json({ error: 'School / University / Institute name is required.' }, { status: 400 });
     }
+
+    const resolvedFullName = (fullName && fullName.trim()) || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
 
     await connectToDatabase();
 
@@ -47,29 +52,49 @@ export async function POST(req: Request) {
     if (existing) {
       if (existing.status === 'PENDING') {
         return NextResponse.json({
-          message: 'Your student voucher application is already pending verification.',
+          message: 'Your student voucher application is already submitted and pending admin verification.',
           voucher: existing,
         });
       }
       if (existing.status === 'VERIFIED') {
         return NextResponse.json({
-          message: 'Your student voucher is already verified and active!',
+          message: 'Your student voucher is already verified and active! Check your code below.',
+          voucher: existing,
+        });
+      }
+      if (existing.status === 'REJECTED') {
+        // Allow re-submission
+        existing.userName = resolvedFullName;
+        existing.institution = institution.trim();
+        existing.studentIdNumber = studentIdNumber ? studentIdNumber.trim() : '';
+        existing.phone = phone ? phone.trim() : '';
+        existing.gradeOrYear = gradeOrYear ? gradeOrYear.trim() : '';
+        existing.status = 'PENDING';
+        existing.appliedAt = new Date();
+        await existing.save();
+
+        return NextResponse.json({
+          success: true,
+          message: 'Student Gift Voucher re-application submitted successfully! Pending verification by admin.',
           voucher: existing,
         });
       }
     }
 
-    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
-
     const voucher = await StudentVoucher.create({
       userId: (user.id || (user as any)._id),
       userEmail: user.email,
-      userName: fullName,
+      userName: resolvedFullName,
       institution: institution.trim(),
       studentIdNumber: studentIdNumber ? studentIdNumber.trim() : '',
+      phone: phone ? phone.trim() : '',
+      gradeOrYear: gradeOrYear ? gradeOrYear.trim() : '',
       status: 'PENDING',
-      voucherAmount: 2500, // LKR 2,500 default value
-      discountCode: 'STUDENT-V2CC',
+      discountType: 'PERCENTAGE',
+      discountValue: 15, // Default percentage
+      voucherAmount: 0,
+      discountCode: 'PENDING_APPROVAL',
+      isRedeemed: false,
       appliedAt: new Date(),
     });
 

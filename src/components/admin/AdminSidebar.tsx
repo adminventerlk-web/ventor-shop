@@ -32,16 +32,16 @@ export default function AdminSidebar() {
 
   const links = [
     { label: 'Overview', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { label: 'Shop Approvals', href: '/admin/shops', icon: <Store className="w-4 h-4" /> },
-    { label: 'Featured Products', href: '/admin/featured', icon: <Sparkles className="w-4 h-4 text-[#FFB800]" /> },
-    { label: 'Storefront Ads', href: '/admin/ads', icon: <Megaphone className="w-4 h-4 text-[#FFB800]" /> },
-    { label: 'Revenue Donations', href: '/admin/donations', icon: <HeartHandshake className="w-4 h-4" /> },
-    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag className="w-4 h-4" /> },
-    { label: 'Products', href: '/admin/products', icon: <Package className="w-4 h-4" /> },
+    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag className="w-4 h-4 text-emerald-400" /> },
+    { label: 'Products', href: '/admin/products', icon: <Package className="w-4 h-4 text-blue-400" /> },
+    { label: 'Shop Approvals', href: '/admin/shops', icon: <Store className="w-4 h-4 text-[#FFB800]" /> },
+    { label: 'Vouchers & Offers', href: '/admin/vouchers', icon: <Ticket className="w-4 h-4 text-purple-400" /> },
     { label: 'Categories', href: '/admin/categories', icon: <Layers className="w-4 h-4" /> },
     { label: 'V2CC-PMS Members', href: '/admin/communities', icon: <Users className="w-4 h-4" /> },
     { label: 'Customers', href: '/admin/customers', icon: <Users className="w-4 h-4" /> },
-    { label: 'Vouchers & Offers', href: '/admin/vouchers', icon: <Ticket className="w-4 h-4" /> },
+    { label: 'Storefront Ads', href: '/admin/ads', icon: <Megaphone className="w-4 h-4 text-[#FFB800]" /> },
+    { label: 'Revenue Donations', href: '/admin/donations', icon: <HeartHandshake className="w-4 h-4" /> },
+    { label: 'Featured Products', href: '/admin/featured', icon: <Sparkles className="w-4 h-4 text-[#FFB800]" /> },
     { label: 'Global Settings', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
     { label: 'Audit Logs', href: '/admin/audit', icon: <Clock className="w-4 h-4" /> },
   ];

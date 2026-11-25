@@ -40,7 +40,7 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { voucherId, action, voucherAmount, adminNotes } = body;
+    const { voucherId, action, discountType, discountValue, voucherAmount, discountCode, adminNotes } = body;
 
     if (!voucherId || !action) {
       return NextResponse.json({ error: 'Voucher ID and Action are required.' }, { status: 400 });
@@ -56,8 +56,20 @@ export async function PATCH(req: Request) {
     if (action === 'APPROVE' || action === 'VERIFY') {
       voucher.status = 'VERIFIED';
       voucher.verifiedAt = new Date();
-      if (voucherAmount && typeof voucherAmount === 'number') {
-        voucher.voucherAmount = voucherAmount;
+
+      // Configure Discount Type (Percentage vs Fixed Amount)
+      const finalDiscountType = discountType === 'PERCENTAGE' ? 'PERCENTAGE' : 'FIXED';
+      voucher.discountType = finalDiscountType;
+
+      const val = Number(discountValue || voucherAmount || (finalDiscountType === 'PERCENTAGE' ? 15 : 2500));
+      voucher.discountValue = val;
+      voucher.voucherAmount = finalDiscountType === 'FIXED' ? val : 0;
+
+      // Assign exclusive student voucher code if requested or generated
+      if (discountCode && discountCode.trim()) {
+        voucher.discountCode = discountCode.trim().toUpperCase();
+      } else if (!voucher.discountCode || voucher.discountCode === 'STUDENT-V2CC' || voucher.discountCode === 'PENDING_APPROVAL') {
+        voucher.discountCode = `STU-${Math.floor(10000 + Math.random() * 90000)}`;
       }
     } else if (action === 'REJECT') {
       voucher.status = 'REJECTED';
@@ -82,7 +94,7 @@ export async function PATCH(req: Request) {
         action: `STUDENT_VOUCHER_${action}`,
         targetModel: 'StudentVoucher',
         targetId: voucher._id.toString(),
-        details: `Student Voucher for ${voucher.userName} (${voucher.userEmail}) set to ${voucher.status} (Amount: LKR ${voucher.voucherAmount}).`,
+        details: `Student Voucher for ${voucher.userName} (${voucher.userEmail}) set to ${voucher.status} (Type: ${voucher.discountType}, Value: ${voucher.discountValue}, Code: ${voucher.discountCode}).`,
         ipAddress: '127.0.0.1',
       });
     } catch (e) {

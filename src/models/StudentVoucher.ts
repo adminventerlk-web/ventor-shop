@@ -6,9 +6,14 @@ export interface IStudentVoucher extends Document {
   userName: string;
   institution: string;
   studentIdNumber?: string;
+  phone?: string;
+  gradeOrYear?: string;
   status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
-  voucherAmount: number;
+  discountType: 'FIXED' | 'PERCENTAGE';
+  discountValue: number;
+  voucherAmount: number; // For backward compatibility / fixed amount fallback
   discountCode: string;
+  isRedeemed: boolean;
   appliedAt: Date;
   verifiedAt?: Date;
   rejectedAt?: Date;
@@ -23,14 +28,23 @@ const StudentVoucherSchema: Schema<IStudentVoucher> = new Schema(
     userName: { type: String, required: true },
     institution: { type: String, required: true },
     studentIdNumber: { type: String, default: '' },
+    phone: { type: String, default: '' },
+    gradeOrYear: { type: String, default: '' },
     status: {
       type: String,
       enum: ['PENDING', 'VERIFIED', 'REJECTED', 'USED'],
       default: 'PENDING',
       index: true,
     },
-    voucherAmount: { type: Number, default: 2500 }, // Default voucher value
+    discountType: {
+      type: String,
+      enum: ['FIXED', 'PERCENTAGE'],
+      default: 'FIXED',
+    },
+    discountValue: { type: Number, default: 2500 },
+    voucherAmount: { type: Number, default: 2500 }, // Stored amount in LKR
     discountCode: { type: String, default: 'STUDENT-V2CC' },
+    isRedeemed: { type: Boolean, default: false },
     appliedAt: { type: Date, default: Date.now },
     verifiedAt: { type: Date },
     rejectedAt: { type: Date },

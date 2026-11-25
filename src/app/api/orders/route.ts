@@ -7,6 +7,7 @@ import Product from '@/models/Product';
 import Shop from '@/models/Shop';
 import User from '@/models/User';
 import { Voucher, VoucherUsage } from '@/models/Voucher';
+import StudentVoucher from '@/models/StudentVoucher';
 import { PricingService } from '@/lib/services/pricingService';
 import { VoucherService } from '@/lib/services/voucherService';
 import { EmailService } from '@/lib/services/emailService';
@@ -46,11 +47,29 @@ export async function POST(request: Request) {
     let voucherDoc: any = null;
 
     if (voucherCode) {
-      if (voucherCode.toUpperCase() === 'WELCOME10') {
+      const cleanCode = voucherCode.toUpperCase().trim();
+      await connectToDatabase();
+
+      // Check if it's an approved student voucher code
+      const matchingStudentVoucher = await StudentVoucher.findOne({
+        discountCode: cleanCode,
+        status: 'VERIFIED',
+      });
+
+      if (matchingStudentVoucher) {
+        if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
+          const pct = matchingStudentVoucher.discountValue || 15;
+          voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
+        } else {
+          voucherDiscount = Math.min(
+            matchingStudentVoucher.discountValue || matchingStudentVoucher.voucherAmount || 2500,
+            breakdown.subtotal
+          );
+        }
+      } else if (cleanCode === 'WELCOME10') {
         voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
       } else {
         try {
-          await connectToDatabase();
           const voucherRes = await VoucherService.validateVoucher(
             voucherCode,
             userId,

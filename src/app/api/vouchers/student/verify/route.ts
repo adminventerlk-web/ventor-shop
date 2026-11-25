@@ -1,0 +1,93 @@
+import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb/mongoose';
+import { getCurrentUser } from '@/lib/auth/auth';
+import StudentVoucher from '@/models/StudentVoucher';
+
+// POST: Verify Student Full Name and Voucher Code to redeem/obtain offer
+export async function POST(req: Request) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Please log in to verify and redeem your Student Voucher.' },
+        { status: 401 }
+      );
+    }
+
+    const body = await req.json();
+    const { studentFullName, voucherCode } = body;
+
+    if (!studentFullName || !studentFullName.trim()) {
+      return NextResponse.json({ error: 'Student full name is required for verification.' }, { status: 400 });
+    }
+
+    if (!voucherCode || !voucherCode.trim()) {
+      return NextResponse.json({ error: 'Voucher code is required.' }, { status: 400 });
+    }
+
+    await connectToDatabase();
+
+    const normalizedCode = voucherCode.trim().toUpperCase();
+    const cleanInputName = studentFullName.trim().toLowerCase();
+
+    // Look for verified student voucher with this code
+    const voucher = await StudentVoucher.findOne({
+      discountCode: normalizedCode,
+      status: 'VERIFIED',
+    });
+
+    if (!voucher) {
+      return NextResponse.json(
+        { error: 'Voucher code not found or has not been approved by admin yet.' },
+        { status: 404 }
+      );
+    }
+
+    // Verify name match
+    const voucherName = (voucher.userName || '').trim().toLowerCase();
+    const authUserName = `${user.firstName || ''} ${user.lastName || ''}`.trim().toLowerCase();
+    const isOwner = voucher.userId === (user.id || (user as any)._id);
+
+    const nameMatches =
+      voucherName.includes(cleanInputName) ||
+      cleanInputName.includes(voucherName) ||
+      authUserName.includes(cleanInputName) ||
+      cleanInputName.includes(authUserName);
+
+    if (!nameMatches && !isOwner) {
+      return NextResponse.json(
+        {
+          error:
+            'Student Full Name does not match the approved voucher record. Please enter your exact registered full name.',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Mark as redeemed/activated
+    voucher.isRedeemed = true;
+    await voucher.save();
+
+    const offerDescription =
+      voucher.discountType === 'PERCENTAGE'
+        ? `${voucher.discountValue}% OFF on educational books, stationery, and student essentials`
+        : `LKR ${voucher.discountValue.toLocaleString()} OFF on educational books, stationery, and student essentials`;
+
+    return NextResponse.json({
+      success: true,
+      message: 'Student voucher verified successfully! Offer activated on your account.',
+      voucher: {
+        code: voucher.discountCode,
+        discountType: voucher.discountType || 'FIXED',
+        discountValue: voucher.discountValue || voucher.voucherAmount || 2500,
+        voucherAmount: voucher.voucherAmount || (voucher.discountType === 'FIXED' ? voucher.discountValue : 0),
+        offerDescription,
+        studentName: voucher.userName,
+        institution: voucher.institution,
+      },
+    });
+  } catch (error: any) {
+    console.error('Error verifying student voucher:', error);
+    return NextResponse.json({ error: 'Failed to verify voucher' }, { status: 500 });
+  }
+}

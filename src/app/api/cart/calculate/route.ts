@@ -54,16 +54,56 @@ export async function POST(request: Request) {
     let appliedVoucher = null;
 
     // 2. Validate voucher if present (or check if user has active VERIFIED Student Voucher)
-    if (userId) {
+    if (voucherCode) {
+      const cleanCode = voucherCode.toUpperCase().trim();
+
+      // Check if it's a verified student voucher code
+      const matchingStudentVoucher = await StudentVoucher.findOne({
+        discountCode: cleanCode,
+        status: 'VERIFIED',
+      });
+
+      if (matchingStudentVoucher) {
+        if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
+          const pct = matchingStudentVoucher.discountValue || 15;
+          voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
+        } else {
+          voucherDiscount = Math.min(
+            matchingStudentVoucher.discountValue || matchingStudentVoucher.voucherAmount || 2500,
+            breakdown.subtotal
+          );
+        }
+
+        appliedVoucher = {
+          code: matchingStudentVoucher.discountCode,
+          discountAmount: voucherDiscount,
+          discountType: matchingStudentVoucher.discountType || 'FIXED',
+          discountValue: matchingStudentVoucher.discountValue,
+        };
+      }
+    }
+
+    if (!appliedVoucher && userId) {
       const activeStudentVoucher = await StudentVoucher.findOne({
         userId: userId,
         status: 'VERIFIED',
       });
-      if (activeStudentVoucher && (!voucherCode || voucherCode.toUpperCase() === 'STUDENT-V2CC')) {
-        voucherDiscount = Math.min(activeStudentVoucher.voucherAmount, breakdown.subtotal);
+      if (activeStudentVoucher && (!voucherCode || voucherCode.toUpperCase().trim() === (activeStudentVoucher.discountCode || '').toUpperCase())) {
+        if (activeStudentVoucher.discountType === 'PERCENTAGE') {
+          const pct = activeStudentVoucher.discountValue || 15;
+          voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
+        } else {
+          voucherDiscount = Math.min(
+            activeStudentVoucher.discountValue || activeStudentVoucher.voucherAmount || 2500,
+            breakdown.subtotal
+          );
+        }
+
         appliedVoucher = {
           code: activeStudentVoucher.discountCode || 'STUDENT-V2CC',
           discountAmount: voucherDiscount,
+          discountType: activeStudentVoucher.discountType || 'FIXED',
+          discountValue: activeStudentVoucher.discountValue,
         };
       }
     }
