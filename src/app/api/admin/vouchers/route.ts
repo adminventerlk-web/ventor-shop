@@ -71,7 +71,7 @@ export async function POST(req: Request) {
       userId: '',
       userEmail: studentEmail ? studentEmail.trim().toLowerCase() : '',
       userName: hasName ? studentFullName.trim() : '',
-      institution: institution ? institution.trim() : 'V2CC Student Program',
+      institution: institution ? institution.trim() : 'VENTERPRISE Student Program',
       status: initialStatus,
       discountType: finalDiscountType,
       discountValue: finalDiscountValue,

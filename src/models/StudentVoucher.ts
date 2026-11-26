@@ -44,7 +44,7 @@ const StudentVoucherSchema: Schema<IStudentVoucher> = new Schema(
     },
     discountValue: { type: Number, default: 2500 },
     voucherAmount: { type: Number, default: 2500 }, // Stored amount in LKR
-    discountCode: { type: String, default: 'STUDENT-V2CC', index: true },
+    discountCode: { type: String, default: 'STUDENT-OFFER', index: true },
     isRedeemed: { type: Boolean, default: false },
     appliedAt: { type: Date, default: Date.now },
     verifiedAt: { type: Date },

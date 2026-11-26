@@ -478,7 +478,7 @@ export default function CartContentClient() {
                     <GraduationCap className="w-3.5 h-3.5 text-[#0759D6] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
-                      placeholder="Student Full Name (for V2CC Student Vouchers)"
+                      placeholder="Student Full Name (for Student Vouchers)"
                       value={studentNameInput}
                       onChange={(e) => {
                         setStudentNameInput(e.target.value);
@@ -509,7 +509,7 @@ export default function CartContentClient() {
                     </button>
                   </div>
                   <p className="text-[10px] text-gray-500 leading-relaxed">
-                    Student Full Name is required for V2CC Student Vouchers. Leave blank for standard promo codes.
+                    Student Full Name is required for Student Vouchers. Leave blank for standard promo codes.
                   </p>
                 </form>
               )}

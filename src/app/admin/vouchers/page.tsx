@@ -71,7 +71,7 @@ export default function AdminVouchersPage() {
   const [issueModalOpen, setIssueModalOpen] = useState(false);
   const [issueName, setIssueName] = useState('');
   const [issueEmail, setIssueEmail] = useState('');
-  const [issueInstitution, setIssueInstitution] = useState('V2CC Student Program');
+  const [issueInstitution, setIssueInstitution] = useState('VENTERPRISE Student Program');
   const [issueCode, setIssueCode] = useState('');
   const [issueDiscountType, setIssueDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
   const [issueDiscountValue, setIssueDiscountValue] = useState<number>(15);
@@ -138,7 +138,7 @@ export default function AdminVouchersPage() {
   const handleOpenIssueModal = () => {
     setIssueName('');
     setIssueEmail('');
-    setIssueInstitution('V2CC Student Program');
+    setIssueInstitution('VENTERPRISE Student Program');
     setIssueCode(`STU-${Math.floor(10000 + Math.random() * 90000)}`);
     setIssueDiscountType('PERCENTAGE');
     setIssueDiscountValue(15);

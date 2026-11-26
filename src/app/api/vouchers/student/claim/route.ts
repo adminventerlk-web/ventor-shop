@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json(
-        { error: 'Only registered students can apply for the V2CC Student Voucher. Please register or log in first.' },
+        { error: 'Only registered students can apply for the Student Gift Voucher. Please register or log in first.' },
         { status: 401 }
       );
     }

@@ -253,8 +253,8 @@ export default function VouchersClient() {
     {
       q: isTa ? 'மாணவர் பரிசு வவுச்சரை யார் பெறலாம்?' : 'Who is eligible for the Student Gift Voucher?',
       a: isTa
-        ? 'VENTERPRISE தளத்தில் பதிவு செய்துள்ள மாணவர்கள் மற்றும் V2CC கல்வி வங்கி திட்டத்தின் கீழ் இணைந்த கற்பவர்கள் இந்த வவுச்சருக்கு விண்ணப்பிக்கலாம்.'
-        : 'Registered students on VENTERPRISE and learners associated with the V2CC Educating Bank System can apply for this subsidy voucher.',
+        ? 'VENTERPRISE தளத்தில் பதிவு செய்துள்ள மாணவர்கள் மற்றும் கல்வி நிறுவனங்களில் பயிலும் கற்பவர்கள் இந்த வவுச்சருக்கு விண்ணப்பிக்கலாம்.'
+        : 'Registered students on VENTERPRISE and learners enrolled in schools, colleges, or universities can apply for this student voucher.',
     },
     {
       q: isTa ? 'வவுச்சர் குறியீடு எவ்வாறு கிடைக்கும்?' : 'How do I receive my voucher code?',
@@ -289,14 +289,14 @@ export default function VouchersClient() {
           <div className="relative z-10 max-w-2xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#dceaff] text-[11px] font-extrabold uppercase tracking-widest">
               <Gift className="w-3.5 h-3.5 text-[#FFC400]" />
-              <span>{isTa ? 'V2CC கல்வி வங்கி ஆதரவு' : 'Supported by Educating Bank System of V2CC'}</span>
+              <span>{isTa ? 'VENTERPRISE சிறப்பு வவுச்சர் திட்டங்கள்' : 'VENTERPRISE Exclusive Voucher Programs'}</span>
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-serif font-black tracking-tight leading-tight">
               {isTa ? (
-                <>மாணவர் கல்வி <span className="text-[#FFC400]">பரிசு வவுச்சர்</span> திட்டம்</>
+                <>சமூக & மாணவர் <span className="text-[#FFC400]">பரிசு வவுச்சர்</span> திட்டம்</>
               ) : (
-                <>V2CC Student <span className="text-[#FFC400]">Gift Voucher</span> Program</>
+                <>Community & Student <span className="text-[#FFC400]">Gift Voucher</span> Programs</>
               )}
             </h1>
 
@@ -486,11 +486,11 @@ export default function VouchersClient() {
                     {isTa ? 'மாணவர் பரிசு வவுச்சர்' : 'Student Educational Gift Voucher'}
                   </h2>
                   <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
-                    V2CC Active
+                    Students Only
                   </span>
                 </div>
                 <p className="text-xs text-[#526681] font-semibold">
-                  Official Sponsor: <strong className="text-[#0759D6]">Educating Bank System of V2CC</strong>
+                  Program: <strong className="text-[#0759D6]">VENTERPRISE Student Educational Program</strong>
                 </p>
               </div>
             </div>
@@ -545,8 +545,8 @@ export default function VouchersClient() {
                 </h3>
                 <p className="text-xs text-blue-200/80 leading-relaxed font-medium">
                   {isTa
-                    ? 'இந்த மாணவர் பரிசு வவுச்சரை பெற நீங்கள் VENTERPRISE தளத்தில் மாணவராக அல்லது V2CC உறுப்பினராக பதிவு செய்திருக்க வேண்டும். தயவுசெய்து முதலில் பதிவு செய்யவும் அல்லது உள்நுழையவும்.'
-                    : 'To apply for the V2CC Student Gift Voucher, you must be a registered student or V2CC community member. Please register or sign in to submit your voucher request.'}
+                    ? 'இந்த மாணவர் பரிசு வவுச்சரை பெற நீங்கள் VENTERPRISE தளத்தில் மாணவராக பதிவு செய்திருக்க வேண்டும். தயவுசெய்து முதலில் பதிவு செய்யவும் அல்லது உள்நுழையவும்.'
+                    : 'To apply for or claim a Student Gift Voucher, you must be a registered student on VENTERPRISE. Please register or sign in first.'}
                 </p>
               </div>
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -861,7 +861,7 @@ export default function VouchersClient() {
                   </div>
                   <div>
                     <h3 className="text-base sm:text-lg font-black text-[#082B68]">
-                      {isTa ? 'மாணவர் பரிசு வவுச்சருக்கு விண்ணப்பிக்கவும்' : 'Apply for V2CC Student Gift Voucher'}
+                      {isTa ? 'மாணவர் பரிசு வவுச்சருக்கு விண்ணப்பிக்கவும்' : 'Apply for Student Gift Voucher'}
                     </h3>
                     <p className="text-xs text-[#526681] font-medium mt-0.5">
                       {isTa
@@ -962,7 +962,7 @@ export default function VouchersClient() {
 
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <span className="text-[11px] text-gray-500 font-medium">
-                      {isTa ? 'உங்கள் தகவல்கள் V2CC கல்வி வங்கி சரிபார்ப்புக்கு மட்டுமே பயன்படுத்தப்படும்.' : 'Your details are strictly used for V2CC student educational subsidy verification.'}
+                      {isTa ? 'உங்கள் தகவல்கள் மாணவர் கல்வி மானிய சரிபார்ப்புக்கு மட்டுமே பயன்படுத்தப்படும்.' : 'Your details are strictly used for student educational voucher verification.'}
                     </span>
 
                     <button
