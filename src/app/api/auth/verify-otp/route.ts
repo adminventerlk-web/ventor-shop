@@ -229,8 +229,11 @@ export async function POST(request: Request) {
 
     let userRole: 'CUSTOMER' | 'ADMIN' | 'SUPER_ADMIN' = 'CUSTOMER';
     const isVendor = Boolean(requestedIsVendor || requestedCustomerType === 'SELLER_SUPPLIER');
+    const isV2CCRequest = validatedCustomerType === 'V2CC_PMS_MEMBER' || validatedCustomerType === 'COMMUNITY';
     const vendorStatus = isVendor ? 'PENDING' : 'NONE';
-    let customerType: any = isVendor ? 'SELLER_SUPPLIER' : validatedCustomerType;
+    const communityStatus: 'NONE' | 'PENDING' | 'APPROVED' = isV2CCRequest ? 'PENDING' : 'NONE';
+    // V2CC members stay BUYER until Admin verifies them in Community -> V2CC section
+    let customerType: any = isVendor ? 'SELLER_SUPPLIER' : isV2CCRequest ? 'BUYER' : validatedCustomerType;
     let userId = 'usr_' + Date.now();
     const userFirstName = firstName?.trim() || 'Valued';
     const userLastName = lastName?.trim() || 'Customer';
@@ -308,7 +311,8 @@ export async function POST(request: Request) {
             phone: phone?.trim() || '',
             customerType: customerType as any,
             status: 'ACTIVE',
-            communityStatus: customerType === 'COMMUNITY' ? 'APPROVED' : 'NONE',
+            communityStatus,
+            communityJoinDate: isV2CCRequest ? new Date() : undefined,
             preferredLanguage: preferredLanguage || 'en',
             isVendor,
             vendorStatus,

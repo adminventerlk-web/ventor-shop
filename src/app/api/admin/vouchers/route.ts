@@ -31,6 +31,69 @@ export async function GET() {
   }
 }
 
+// POST: Admin manually creates/issues a Student Voucher for specific students
+export async function POST(req: Request) {
+  try {
+    const adminUser = await checkAdmin();
+    if (!adminUser) {
+      return NextResponse.json({ error: 'Unauthorized. Admin access required.' }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const {
+      studentFullName,
+      studentEmail,
+      institution,
+      discountCode,
+      discountType,
+      discountValue,
+      adminNotes,
+      autoVerify,
+    } = body;
+
+    const cleanCode = (discountCode && discountCode.trim())
+      ? discountCode.trim().toUpperCase()
+      : `STU-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    await connectToDatabase();
+
+    const existingCode = await StudentVoucher.findOne({ discountCode: cleanCode });
+    if (existingCode) {
+      return NextResponse.json({ error: `Voucher code "${cleanCode}" already exists.` }, { status: 400 });
+    }
+
+    const finalDiscountType = discountType === 'PERCENTAGE' ? 'PERCENTAGE' : 'FIXED';
+    const finalDiscountValue = Number(discountValue || (finalDiscountType === 'PERCENTAGE' ? 15 : 2500));
+    const hasName = Boolean(studentFullName && studentFullName.trim());
+    const initialStatus = autoVerify && hasName ? 'VERIFIED' : 'ISSUED';
+
+    const voucher = await StudentVoucher.create({
+      userId: '',
+      userEmail: studentEmail ? studentEmail.trim().toLowerCase() : '',
+      userName: hasName ? studentFullName.trim() : '',
+      institution: institution ? institution.trim() : 'V2CC Student Program',
+      status: initialStatus,
+      discountType: finalDiscountType,
+      discountValue: finalDiscountValue,
+      voucherAmount: finalDiscountType === 'FIXED' ? finalDiscountValue : 0,
+      discountCode: cleanCode,
+      isRedeemed: false,
+      appliedAt: new Date(),
+      verifiedAt: initialStatus === 'VERIFIED' ? new Date() : undefined,
+      adminNotes: adminNotes ? adminNotes.trim() : 'Manually issued by Admin',
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Student voucher ${cleanCode} created (${initialStatus}).`,
+      voucher,
+    });
+  } catch (error: any) {
+    console.error('Error creating student voucher:', error);
+    return NextResponse.json({ error: 'Failed to create student voucher' }, { status: 500 });
+  }
+}
+
 // PATCH: Approve (Verify) or Reject a Student Voucher
 export async function PATCH(req: Request) {
   try {

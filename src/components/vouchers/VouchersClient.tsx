@@ -24,6 +24,8 @@ import {
   Send,
   RefreshCw,
   BookOpen,
+  Users,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface IStudentVoucher {
@@ -46,14 +48,31 @@ interface IStudentVoucher {
   adminNotes?: string;
 }
 
+interface ICommunityVoucher {
+  _id: string;
+  title: string;
+  supportedBy: string;
+  communityType: string;
+  voucherCode: string;
+  discountType?: 'FIXED' | 'PERCENTAGE';
+  discountValue?: number;
+  voucherAmount: number;
+  status: 'ON' | 'OFF';
+  noticeMessage?: string;
+  features?: string[];
+  hasUsed?: boolean;
+}
+
 export default function VouchersClient() {
   const { language } = useTranslation();
   const isTa = language === 'ta';
   const { user } = useAuth();
-  const { setAppliedVoucherCode, appliedVoucherCode } = useCart();
+  const { setAppliedVoucherCode, setAppliedVoucherStudentName, appliedVoucherCode } = useCart();
 
   const [loading, setLoading] = useState(true);
   const [studentVoucher, setStudentVoucher] = useState<IStudentVoucher | null>(null);
+  const [communityVouchers, setCommunityVouchers] = useState<ICommunityVoucher[]>([]);
+  const [commSuccessMsg, setCommSuccessMsg] = useState<string | null>(null);
 
   // Request Form States
   const [fullName, setFullName] = useState('');
@@ -107,8 +126,21 @@ export default function VouchersClient() {
     }
   };
 
+  const fetchCommunityVouchers = async () => {
+    try {
+      const res = await fetch('/api/vouchers/community');
+      if (res.ok) {
+        const data = await res.json();
+        setCommunityVouchers(data.vouchers || []);
+      }
+    } catch (err) {
+      console.error('Failed to load community vouchers:', err);
+    }
+  };
+
   useEffect(() => {
     fetchStudentVoucher();
+    fetchCommunityVouchers();
   }, [user]);
 
   // Handle Submit Application
@@ -179,14 +211,20 @@ export default function VouchersClient() {
 
       const data = await res.json();
       if (res.ok) {
-        const cleanCode = verifyCode.trim().toUpperCase();
-        setAppliedVoucherCode(cleanCode);
-        setVerifySuccess(
-          isTa
-            ? `வவுச்சர் வெற்றிகரமாக சரிபார்க்கப்பட்டது! சலுகை உங்கள் கார்ட்டில் செயல்படுத்தப்பட்டுள்ளது (${data.voucher?.discountType === 'PERCENTAGE' ? data.voucher?.discountValue + '% தள்ளுபடி' : formatCurrency(data.voucher?.discountValue) + ' தள்ளுபடி'}).`
-            : `Voucher successfully verified! ${data.voucher?.discountType === 'PERCENTAGE' ? data.voucher?.discountValue + '% OFF' : formatCurrency(data.voucher?.discountValue) + ' OFF'} has been activated on your cart.`
-        );
-        await fetchStudentVoucher();
+        if (data.pendingVerification) {
+          setVerifySuccess(data.message);
+          await fetchStudentVoucher();
+        } else {
+          const cleanCode = verifyCode.trim().toUpperCase();
+          setAppliedVoucherCode(cleanCode);
+          setAppliedVoucherStudentName(verifyName.trim());
+          setVerifySuccess(
+            isTa
+              ? `வவுச்சர் வெற்றிகரமாக சரிபார்க்கப்பட்டது! சலுகை உங்கள் கார்ட்டில் செயல்படுத்தப்பட்டுள்ளது (${data.voucher?.discountType === 'PERCENTAGE' ? data.voucher?.discountValue + '% தள்ளுபடி' : formatCurrency(data.voucher?.discountValue) + ' தள்ளுபடி'}).`
+              : `Voucher successfully verified! ${data.voucher?.discountType === 'PERCENTAGE' ? data.voucher?.discountValue + '% OFF' : formatCurrency(data.voucher?.discountValue) + ' OFF'} has been activated on your cart.`
+          );
+          await fetchStudentVoucher();
+        }
       } else {
         setVerifyError(data.error || 'Verification failed. Please check full name and code.');
       }
@@ -280,8 +318,160 @@ export default function VouchersClient() {
         </div>
       </section>
 
-      {/* 3. Main Student Voucher Card & Workflow */}
+      {/* 3. Main Vouchers & Workflow */}
       <main className="max-w-6xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* 3A. V2CC COMMUNITY MEMBER VOUCHER SECTION */}
+        <section aria-label="V2CC Community Member Vouchers" className="bg-white rounded-3xl border border-[#c7def5] p-6 sm:p-10 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#e2eefb]">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-[#071F50] text-[#FFC400] flex items-center justify-center shrink-0 shadow-md">
+                <Users className="w-7 h-7" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-xl sm:text-2xl font-black text-[#082B68]">
+                    {isTa ? 'V2CC சமூக உறுப்பினர் வவுச்சர்' : 'V2CC Community Member Voucher'}
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/15 text-[#0759D6] border border-blue-500/30">
+                    One-Time Use
+                  </span>
+                </div>
+                <p className="text-xs text-[#526681] font-semibold">
+                  {isTa
+                    ? 'Admin சரிபார்த்த V2CC உறுப்பினர்கள் மட்டும் இந்த சலுகையை ஒரு முறை பயன்படுத்த முடியும்.'
+                    : 'Exclusively for Admin-verified V2CC-PMS Community Members. Valid for one-time redemption per member.'}
+                </p>
+              </div>
+            </div>
+
+            {user && (user.communityStatus === 'APPROVED' || ((user.customerType === 'COMMUNITY' || user.customerType === 'V2CC_PMS_MEMBER') && user.communityStatus !== 'PENDING')) ? (
+              <span className="self-start sm:self-auto px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-600 text-white shadow-sm flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4" />
+                <span>{isTa ? 'சரிபார்க்கப்பட்ட V2CC உறுப்பினர்' : 'Verified V2CC Member'}</span>
+              </span>
+            ) : user?.communityStatus === 'PENDING' ? (
+              <span className="self-start sm:self-auto px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500 text-white shadow-sm flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                <span>{isTa ? 'Admin சரிபார்ப்பு நிலுவையில்' : 'V2CC Verification Pending'}</span>
+              </span>
+            ) : (
+              <span className="self-start sm:self-auto px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-gray-100 text-gray-700 border border-gray-200">
+                {isTa ? 'V2CC உறுப்பினர்களுக்கு மட்டும்' : 'V2CC Members Only'}
+              </span>
+            )}
+          </div>
+
+          {commSuccessMsg && (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl text-xs font-bold flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <span>{commSuccessMsg}</span>
+              </div>
+              <Link href="/cart" className="px-4 py-1.5 bg-emerald-700 text-white rounded-xl font-black uppercase text-[10px] shrink-0">
+                {isTa ? 'கார்ட்டிற்கு செல்லவும்' : 'Go to Cart'}
+              </Link>
+            </div>
+          )}
+
+          {communityVouchers.filter((cv) => cv.status === 'ON').length === 0 ? (
+            <div className="p-6 bg-[#f7fbff] border border-[#d6e7f8] rounded-2xl text-center text-xs text-gray-600 font-semibold">
+              {isTa
+                ? 'தற்போது செயலில் உள்ள V2CC சமூக வவுச்சர்கள் இல்லை.'
+                : 'No V2CC Community Vouchers are currently active. Please check back later.'}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {communityVouchers
+                .filter((cv) => cv.status === 'ON')
+                .map((cv) => {
+                  const isVerifiedV2CC =
+                    user &&
+                    (user.communityStatus === 'APPROVED' ||
+                      ((user.customerType === 'COMMUNITY' || user.customerType === 'V2CC_PMS_MEMBER') &&
+                        user.communityStatus !== 'PENDING'));
+
+                  const offerLabel =
+                    cv.discountType === 'PERCENTAGE'
+                      ? `${cv.discountValue || 10}% OFF`
+                      : formatCurrency(cv.discountValue || cv.voucherAmount || 0);
+
+                  return (
+                    <div key={cv._id} className="bg-gradient-to-br from-[#071F50] to-[#082B68] text-white rounded-2xl p-5 sm:p-6 space-y-4 shadow-md border border-[#4d80cc]/30 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC400]">
+                              {cv.supportedBy}
+                            </span>
+                            <h3 className="text-lg font-black text-white">{cv.title}</h3>
+                          </div>
+                          <span className="px-3 py-1 bg-[#FFC400] text-[#021430] rounded-xl font-black text-xs shrink-0">
+                            {offerLabel}
+                          </span>
+                        </div>
+                        {cv.noticeMessage && (
+                          <p className="text-xs text-blue-100/80 leading-relaxed">{cv.noticeMessage}</p>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <span className="text-[10px] text-blue-200 uppercase font-bold block">Voucher Code</span>
+                          <span className="font-mono font-black text-sm text-[#FFC400] tracking-wider">
+                            {isVerifiedV2CC ? cv.voucherCode : 'V2CC-VERIFIED-ONLY'}
+                          </span>
+                        </div>
+
+                        {!user ? (
+                          <Link
+                            href="/login?tab=register&callbackUrl=/vouchers"
+                            className="px-4 py-2 bg-[#FFC400] hover:bg-[#ffae00] text-[#021430] rounded-xl font-black text-xs uppercase tracking-wider transition-all"
+                          >
+                            {isTa ? 'V2CC உறுப்பினராக பதிவு செய்' : 'Register as V2CC Member'}
+                          </Link>
+                        ) : user.communityStatus === 'PENDING' ? (
+                          <span className="px-3 py-1.5 bg-amber-500/20 border border-amber-400/40 text-amber-200 rounded-xl text-[11px] font-bold">
+                            {isTa ? 'Admin சரிபார்ப்பிற்காக காத்திருக்கிறது' : 'Awaiting Admin Verification'}
+                          </span>
+                        ) : !isVerifiedV2CC ? (
+                          <Link
+                            href="/dashboard"
+                            className="px-4 py-2 bg-white/15 hover:bg-white/25 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                          >
+                            {isTa ? 'V2CC-ல் இணையவும்' : 'Join V2CC Community'}
+                          </Link>
+                        ) : cv.hasUsed ? (
+                          <span className="px-3 py-1.5 bg-white/10 text-gray-300 rounded-xl text-[11px] font-bold">
+                            {isTa ? 'ஏற்கனவே பயன்படுத்தப்பட்டது' : 'Already Redeemed (1-Time)'}
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAppliedVoucherCode(cv.voucherCode);
+                              setAppliedVoucherStudentName(null);
+                              setCommSuccessMsg(
+                                isTa
+                                  ? `V2CC சமூக வவுச்சர் (${cv.voucherCode}) உங்கள் கார்ட்டில் சேர்க்கப்பட்டது!`
+                                  : `V2CC Community Voucher (${cv.voucherCode}) applied to your cart! Remaining balance can be paid at checkout.`
+                              );
+                            }}
+                            className="px-4 py-2 bg-[#FFC400] hover:bg-[#ffae00] text-[#021430] rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+                          >
+                            {appliedVoucherCode === cv.voucherCode
+                              ? (isTa ? 'கார்ட்டில் உள்ளது ✓' : 'Applied to Cart ✓')
+                              : (isTa ? 'வவுச்சரைப் பயன்படுத்து' : 'Apply to Cart')}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </section>
+
+        {/* 3B. STUDENT VOUCHER CARD & WORKFLOW */}
         <div className="bg-white rounded-3xl border border-[#c7def5] p-6 sm:p-10 shadow-sm space-y-8">
           
           {/* Top Badge & Header */}
@@ -379,6 +569,18 @@ export default function VouchersClient() {
             <div className="py-12 flex flex-col items-center justify-center gap-3">
               <RefreshCw className="w-6 h-6 text-[#0759D6] animate-spin" />
               <p className="text-xs text-gray-500 font-bold">{isTa ? 'விவரங்கள் ஏற்றப்படுகின்றன...' : 'Checking student voucher status...'}</p>
+            </div>
+          ) : studentVoucher?.status === 'USED' ? (
+            <div className="bg-gray-50 border border-gray-200 rounded-3xl p-6 sm:p-8 text-center space-y-3">
+              <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+              <h3 className="text-lg font-black text-[#082B68]">
+                {isTa ? 'மாணவர் வவுச்சர் பயன்படுத்தப்பட்டது' : 'Student Voucher Already Redeemed'}
+              </h3>
+              <p className="text-xs text-gray-600 max-w-md mx-auto">
+                {isTa
+                  ? `உங்கள் வவுச்சர் (${studentVoucher.discountCode}) ஏற்கனவே ஒரு ஆர்டரில் பயன்படுத்தப்பட்டுவிட்டது. ஒரு வவுச்சரை ஒரு முறை மட்டுமே பயன்படுத்த முடியும்.`
+                  : `Your student voucher (${studentVoucher.discountCode}) has already been used on an order. Each voucher can only be used once.`}
+              </p>
             </div>
           ) : studentVoucher?.status === 'VERIFIED' ? (
             /* 2. APPROVED BY ADMIN -> SHOW CODE + VERIFICATION INPUT BOX (Full Name + Code) */
@@ -582,6 +784,75 @@ export default function VouchersClient() {
                   </div>
                 </div>
               )}
+
+              {/* MANUAL ADMIN CODE CLAIM BOX (For students who received a code directly from Admin) */}
+              <div className="bg-[#EAF5FF] border border-[#BFDBFE] rounded-3xl p-6 sm:p-8 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 rounded-xl bg-[#082B68] text-[#FFC400] shadow-sm shrink-0">
+                    <KeyRound className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-black text-[#082B68]">
+                      {isTa ? 'Admin வழங்கிய வவுச்சர் குறியீடு உள்ளதா?' : 'Have a Manual Voucher Code from Admin?'}
+                    </h3>
+                    <p className="text-xs text-[#526681] font-medium mt-0.5">
+                      {isTa
+                        ? 'உங்கள் முழுப் பெயர் மற்றும் Admin வழங்கிய குறியீட்டை உள்ளிடவும். Admin சரிபார்த்ததும் சலுகை கிடைக்கும்.'
+                        : 'Enter your Full Name and the Voucher Code provided by Admin. It will be sent to Admin Dashboard for verification (or activated immediately if pre-verified).'}
+                    </p>
+                  </div>
+                </div>
+
+                {verifyError && (
+                  <div className="p-3 bg-red-500/15 border border-red-500/40 text-red-900 rounded-xl text-xs font-bold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                    <span>{verifyError}</span>
+                  </div>
+                )}
+
+                {verifySuccess && (
+                  <div className="p-3 bg-emerald-500/15 border border-emerald-500/40 text-emerald-900 rounded-xl text-xs font-bold flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{verifySuccess}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleVerifyAndRedeem} className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                  <div>
+                    <label className="text-xs font-bold text-[#082B68] block mb-1">
+                      {isTa ? 'முழுப் பெயர் *' : 'Student Full Name *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Your Full Name"
+                      value={verifyName}
+                      onChange={(e) => setVerifyName(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white border border-[#BFDBFE] rounded-xl text-xs font-bold text-[#082B68] outline-none focus:border-[#0759D6]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-[#082B68] block mb-1">
+                      {isTa ? 'வவுச்சர் குறியீடு *' : 'Admin Voucher Code *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. STU-12345"
+                      value={verifyCode}
+                      onChange={(e) => setVerifyCode(e.target.value.toUpperCase())}
+                      className="w-full px-3.5 py-2.5 bg-white border border-[#BFDBFE] rounded-xl text-xs font-mono font-bold text-[#082B68] outline-none focus:border-[#0759D6]"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={verifying}
+                    className="px-5 py-2.5 bg-[#0759D6] hover:bg-[#082B68] text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer h-[38px]"
+                  >
+                    {verifying ? (isTa ? 'சரிபார்க்கிறது...' : 'Submitting...') : (isTa ? 'சரிபார்த்து சமர்ப்பி' : 'Submit & Verify Code')}
+                  </button>
+                </form>
+              </div>
 
               <div className="bg-[#f7fbff] border border-[#BFDBFE] rounded-3xl p-6 sm:p-8 space-y-5">
                 <div className="flex items-start gap-3">

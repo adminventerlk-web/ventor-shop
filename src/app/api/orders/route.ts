@@ -9,6 +9,7 @@ import Shop from '@/models/Shop';
 import User from '@/models/User';
 import { Voucher, VoucherUsage } from '@/models/Voucher';
 import StudentVoucher from '@/models/StudentVoucher';
+import CommunityProgramVoucher from '@/models/CommunityProgramVoucher';
 import { PricingService } from '@/lib/services/pricingService';
 import { VoucherService } from '@/lib/services/voucherService';
 import { EmailService } from '@/lib/services/emailService';
@@ -46,18 +47,32 @@ export async function POST(request: Request) {
 
     let voucherDiscount = 0;
     let voucherDoc: any = null;
+    let usedStudentVoucherDoc: any = null;
+    let usedCommunityVoucherDoc: any = null;
 
     if (voucherCode) {
       const cleanCode = voucherCode.toUpperCase().trim();
       await connectToDatabase();
 
-      // Check if it's an approved student voucher code
+      // Check if it's a Student Voucher code
       const matchingStudentVoucher = await StudentVoucher.findOne({
         discountCode: cleanCode,
-        status: 'VERIFIED',
       });
 
       if (matchingStudentVoucher) {
+        if (matchingStudentVoucher.status === 'USED') {
+          return NextResponse.json(
+            { error: 'This student voucher has already been used. Each voucher can only be used once.' },
+            { status: 400 }
+          );
+        }
+        if (matchingStudentVoucher.status !== 'VERIFIED') {
+          return NextResponse.json(
+            { error: 'This student voucher has not been verified by Admin yet.' },
+            { status: 400 }
+          );
+        }
+
         const nameMatches = doesStudentNameMatch(
           matchingStudentVoucher.userName,
           studentFullName || deliveryAddress?.fullName
@@ -79,21 +94,68 @@ export async function POST(request: Request) {
             breakdown.subtotal
           );
         }
-      } else if (cleanCode === 'WELCOME10') {
-        voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
+        usedStudentVoucherDoc = matchingStudentVoucher;
       } else {
-        try {
-          const voucherRes = await VoucherService.validateVoucher(
-            voucherCode,
-            userId,
-            items,
-            customerType,
-            communityId
-          );
-          voucherDiscount = voucherRes.discountAmount;
-          voucherDoc = await Voucher.findById(voucherRes.voucherId);
-        } catch (err: any) {
-          console.warn('Voucher validation warning:', err.message);
+        // Check if it's a V2CC Community Program Voucher
+        const communityVoucher = await CommunityProgramVoucher.findOne({
+          voucherCode: cleanCode,
+          status: 'ON',
+        });
+
+        if (communityVoucher) {
+          if (!user) {
+            return NextResponse.json(
+              { error: 'Please log in as a verified V2CC Member to use this Community Voucher.' },
+              { status: 401 }
+            );
+          }
+
+          const dbUser = await User.findById(user.id).select('communityStatus customerType');
+          const isVerifiedV2CC =
+            dbUser &&
+            (dbUser.communityStatus === 'APPROVED' ||
+              dbUser.customerType === 'COMMUNITY' ||
+              dbUser.customerType === 'V2CC_PMS_MEMBER') &&
+            dbUser.communityStatus !== 'PENDING';
+
+          if (!isVerifiedV2CC) {
+            return NextResponse.json(
+              { error: 'Only Admin-verified V2CC Community Members can use this voucher.' },
+              { status: 403 }
+            );
+          }
+
+          if ((communityVoucher.usedByUserIds || []).includes(String(user.id))) {
+            return NextResponse.json(
+              { error: 'You have already used this V2CC Community Voucher. Each voucher can only be used once.' },
+              { status: 400 }
+            );
+          }
+
+          const dType = communityVoucher.discountType || 'FIXED';
+          const dVal = communityVoucher.discountValue ?? communityVoucher.voucherAmount ?? 0;
+          if (dType === 'PERCENTAGE') {
+            voucherDiscount = Math.round((breakdown.subtotal * (dVal / 100)) * 100) / 100;
+          } else {
+            voucherDiscount = Math.min(dVal, breakdown.subtotal);
+          }
+          usedCommunityVoucherDoc = communityVoucher;
+        } else if (cleanCode === 'WELCOME10') {
+          voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
+        } else {
+          try {
+            const voucherRes = await VoucherService.validateVoucher(
+              voucherCode,
+              userId,
+              items,
+              customerType,
+              communityId
+            );
+            voucherDiscount = voucherRes.discountAmount;
+            voucherDoc = await Voucher.findById(voucherRes.voucherId);
+          } catch (err: any) {
+            console.warn('Voucher validation warning:', err.message);
+          }
         }
       }
     }
@@ -179,6 +241,25 @@ export async function POST(request: Request) {
         });
         await Voucher.findByIdAndUpdate(voucherDoc._id, {
           $inc: { usedCount: 1 },
+        });
+      }
+
+      // Single-use enforcement: Lock Student Voucher as USED
+      if (usedStudentVoucherDoc) {
+        await StudentVoucher.findByIdAndUpdate(usedStudentVoucherDoc._id, {
+          $set: {
+            status: 'USED',
+            isRedeemed: true,
+            usedAt: new Date(),
+            usedOrderId: createdOrderId,
+          },
+        });
+      }
+
+      // Single-use enforcement: Record V2CC Member redemption on Community Program Voucher
+      if (usedCommunityVoucherDoc && user) {
+        await CommunityProgramVoucher.findByIdAndUpdate(usedCommunityVoucherDoc._id, {
+          $addToSet: { usedByUserIds: String(user.id) },
         });
       }
     } catch (dbErr) {

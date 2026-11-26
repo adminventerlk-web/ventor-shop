@@ -31,20 +31,60 @@ export async function POST(req: Request) {
     const normalizedCode = voucherCode.trim().toUpperCase();
     const cleanInputName = studentFullName.trim().toLowerCase();
 
-    // Look for verified student voucher with this code
+    // Look for student voucher with this code
     const voucher = await StudentVoucher.findOne({
       discountCode: normalizedCode,
-      status: 'VERIFIED',
     });
 
     if (!voucher) {
       return NextResponse.json(
-        { error: 'Voucher code not found or has not been approved by admin yet.' },
+        { error: 'Voucher code not found. Please check the code provided by Admin.' },
         { status: 404 }
       );
     }
 
-    // Verify name match
+    if (voucher.status === 'USED') {
+      return NextResponse.json(
+        { error: 'This student voucher has already been used. Each voucher can only be used once.' },
+        { status: 400 }
+      );
+    }
+
+    if (voucher.status === 'REJECTED') {
+      return NextResponse.json(
+        { error: 'This student voucher verification was rejected by Admin.' },
+        { status: 400 }
+      );
+    }
+
+    // If Admin manually issued this code (ISSUED), link the student's Full Name & account and send to Admin for verification!
+    if (voucher.status === 'ISSUED') {
+      voucher.userId = String(user.id || (user as any)._id || '');
+      voucher.userEmail = user.email;
+      voucher.userName = studentFullName.trim();
+      voucher.status = 'PENDING';
+      voucher.appliedAt = new Date();
+      await voucher.save();
+
+      return NextResponse.json({
+        success: true,
+        pendingVerification: true,
+        message:
+          'Your Full Name and Voucher Code have been submitted to the Admin Dashboard! Once Admin verifies you, your offer will be unlocked.',
+        voucher,
+      });
+    }
+
+    if (voucher.status === 'PENDING') {
+      return NextResponse.json({
+        success: true,
+        pendingVerification: true,
+        message: 'Your voucher claim is pending Admin verification. Please wait for Admin approval.',
+        voucher,
+      });
+    }
+
+    // Status is VERIFIED -> Verify name match
     const nameMatches = doesStudentNameMatch(voucher.userName, cleanInputName);
 
     if (!nameMatches) {
@@ -57,7 +97,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Mark as redeemed/activated
+    // Mark as verified/activated in session (actual single-use lock happens at order placement)
     voucher.isRedeemed = true;
     await voucher.save();
 

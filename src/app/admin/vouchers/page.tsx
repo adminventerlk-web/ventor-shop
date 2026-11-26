@@ -16,6 +16,9 @@ import {
   X,
   Percent,
   Tag,
+  Plus,
+  Users,
+  Power,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -28,7 +31,7 @@ interface IStudentVoucherData {
   studentIdNumber?: string;
   phone?: string;
   gradeOrYear?: string;
-  status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
+  status: 'ISSUED' | 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
   discountType?: 'FIXED' | 'PERCENTAGE';
   discountValue?: number;
   voucherAmount: number;
@@ -40,7 +43,23 @@ interface IStudentVoucherData {
   adminNotes?: string;
 }
 
+interface ICommunityVoucherData {
+  _id: string;
+  title: string;
+  supportedBy: string;
+  communityType: string;
+  voucherCode: string;
+  discountType?: 'FIXED' | 'PERCENTAGE';
+  discountValue?: number;
+  voucherAmount: number;
+  status: 'ON' | 'OFF';
+  noticeMessage?: string;
+  usedCount?: number;
+}
+
 export default function AdminVouchersPage() {
+  const [activeTab, setActiveTab] = useState<'student' | 'community'>('student');
+
   // Student Vouchers State
   const [vouchers, setVouchers] = useState<IStudentVoucherData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,12 +67,53 @@ export default function AdminVouchersPage() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [processingId, setProcessingId] = useState<string | null>(null);
 
+  // Manual Issue Student Voucher Modal State
+  const [issueModalOpen, setIssueModalOpen] = useState(false);
+  const [issueName, setIssueName] = useState('');
+  const [issueEmail, setIssueEmail] = useState('');
+  const [issueInstitution, setIssueInstitution] = useState('V2CC Student Program');
+  const [issueCode, setIssueCode] = useState('');
+  const [issueDiscountType, setIssueDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
+  const [issueDiscountValue, setIssueDiscountValue] = useState<number>(15);
+  const [issueNotes, setIssueNotes] = useState('');
+  const [issueAutoVerify, setIssueAutoVerify] = useState(false);
+  const [issuing, setIssuing] = useState(false);
+
+  // Community Vouchers State
+  const [communityVouchers, setCommunityVouchers] = useState<ICommunityVoucherData[]>([]);
+  const [commLoading, setCommLoading] = useState(false);
+  const [commModalOpen, setCommModalOpen] = useState(false);
+  const [editingCommId, setEditingCommId] = useState<string | null>(null);
+  const [commTitle, setCommTitle] = useState('V2CC Community Member Voucher');
+  const [commSupportedBy, setCommSupportedBy] = useState('V2CC-PMS Community Program');
+  const [commCode, setCommCode] = useState('V2CC-COMMUNITY');
+  const [commDiscountType, setCommDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
+  const [commDiscountValue, setCommDiscountValue] = useState<number>(10);
+  const [commStatus, setCommStatus] = useState<'ON' | 'OFF'>('ON');
+  const [commNotice, setCommNotice] = useState('');
+  const [savingComm, setSavingComm] = useState(false);
+
   // Student Approval Modal State
   const [approveModalVoucher, setApproveModalVoucher] = useState<IStudentVoucherData | null>(null);
   const [approvalDiscountType, setApprovalDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
   const [approvalDiscountValue, setApprovalDiscountValue] = useState<number>(15);
   const [approvalDiscountCode, setApprovalDiscountCode] = useState<string>('');
   const [approvalAdminNotes, setApprovalAdminNotes] = useState<string>('');
+
+  const fetchCommunityVouchers = async () => {
+    setCommLoading(true);
+    try {
+      const res = await fetch('/api/vouchers/community');
+      if (res.ok) {
+        const data = await res.json();
+        setCommunityVouchers(data.vouchers || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch community vouchers:', err);
+    } finally {
+      setCommLoading(false);
+    }
+  };
 
   const fetchVouchers = async () => {
     setLoading(true);
@@ -72,7 +132,122 @@ export default function AdminVouchersPage() {
 
   useEffect(() => {
     fetchVouchers();
+    fetchCommunityVouchers();
   }, []);
+
+  const handleOpenIssueModal = () => {
+    setIssueName('');
+    setIssueEmail('');
+    setIssueInstitution('V2CC Student Program');
+    setIssueCode(`STU-${Math.floor(10000 + Math.random() * 90000)}`);
+    setIssueDiscountType('PERCENTAGE');
+    setIssueDiscountValue(15);
+    setIssueNotes('');
+    setIssueAutoVerify(false);
+    setIssueModalOpen(true);
+  };
+
+  const handleCreateStudentVoucher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIssuing(true);
+    try {
+      const res = await fetch('/api/admin/vouchers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentFullName: issueName.trim(),
+          studentEmail: issueEmail.trim(),
+          institution: issueInstitution.trim(),
+          discountCode: issueCode.trim().toUpperCase(),
+          discountType: issueDiscountType,
+          discountValue: Number(issueDiscountValue),
+          adminNotes: issueNotes.trim(),
+          autoVerify: issueAutoVerify,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIssueModalOpen(false);
+        await fetchVouchers();
+      } else {
+        alert(data.error || 'Failed to issue student voucher');
+      }
+    } catch {
+      alert('Network error while issuing student voucher');
+    } finally {
+      setIssuing(false);
+    }
+  };
+
+  const openCommModal = (cv?: ICommunityVoucherData) => {
+    if (cv) {
+      setEditingCommId(cv._id);
+      setCommTitle(cv.title);
+      setCommSupportedBy(cv.supportedBy);
+      setCommCode(cv.voucherCode);
+      setCommDiscountType(cv.discountType === 'PERCENTAGE' ? 'PERCENTAGE' : 'FIXED');
+      setCommDiscountValue(cv.discountValue ?? cv.voucherAmount ?? 10);
+      setCommStatus(cv.status);
+      setCommNotice(cv.noticeMessage || '');
+    } else {
+      setEditingCommId(null);
+      setCommTitle('V2CC Community Member Voucher');
+      setCommSupportedBy('V2CC-PMS Community Program');
+      setCommCode(`V2CC-${Math.floor(1000 + Math.random() * 9000)}`);
+      setCommDiscountType('PERCENTAGE');
+      setCommDiscountValue(10);
+      setCommStatus('ON');
+      setCommNotice('Exclusive one-time voucher for verified V2CC Community Members.');
+    }
+    setCommModalOpen(true);
+  };
+
+  const handleSaveCommunityVoucher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingComm(true);
+    try {
+      const res = await fetch('/api/vouchers/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingCommId,
+          title: commTitle.trim(),
+          supportedBy: commSupportedBy.trim(),
+          communityType: 'V2CC_PMS',
+          voucherCode: commCode.trim().toUpperCase(),
+          discountType: commDiscountType,
+          discountValue: Number(commDiscountValue),
+          status: commStatus,
+          noticeMessage: commNotice.trim(),
+        }),
+      });
+      if (res.ok) {
+        setCommModalOpen(false);
+        await fetchCommunityVouchers();
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to save community voucher');
+      }
+    } catch {
+      alert('Network error saving community voucher');
+    } finally {
+      setSavingComm(false);
+    }
+  };
+
+  const handleToggleCommunityStatus = async (cv: ICommunityVoucherData) => {
+    const nextStatus = cv.status === 'ON' ? 'OFF' : 'ON';
+    try {
+      const res = await fetch('/api/vouchers/community', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voucherId: cv._id, status: nextStatus }),
+      });
+      if (res.ok) await fetchCommunityVouchers();
+    } catch {
+      alert('Failed to toggle community voucher status');
+    }
+  };
 
   const handleUpdateStatus = async (
     voucherId: string,
@@ -178,16 +353,127 @@ export default function AdminVouchersPage() {
           </div>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2">
+          {activeTab === 'student' ? (
+            <button
+              onClick={handleOpenIssueModal}
+              className="px-4 py-2 bg-[#801414] hover:bg-[#640f0f] text-white rounded-xl flex items-center gap-2 font-black cursor-pointer transition-colors shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Issue Student Voucher</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => openCommModal()}
+              className="px-4 py-2 bg-[#0759D6] hover:bg-[#0544a6] text-white rounded-xl flex items-center gap-2 font-black cursor-pointer transition-colors shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add V2CC Community Voucher</span>
+            </button>
+          )}
+          <button
+            onClick={() => { fetchVouchers(); fetchCommunityVouchers(); }}
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl flex items-center gap-2 font-bold cursor-pointer transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${(loading || commLoading) ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Section Tabs: Student Vouchers vs V2CC Community Vouchers */}
+      <div className="flex gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 w-full sm:w-fit shadow-2xs">
         <button
-          onClick={fetchVouchers}
-          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl flex items-center gap-2 font-bold cursor-pointer transition-colors"
+          onClick={() => setActiveTab('student')}
+          className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'student' ? 'bg-[#801414] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'
+          }`}
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
+          <GraduationCap className="w-4 h-4" />
+          <span>Student Vouchers ({vouchers.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('community')}
+          className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'community' ? 'bg-[#0759D6] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>V2CC Community Vouchers ({communityVouchers.length})</span>
         </button>
       </div>
 
+      {/* V2CC COMMUNITY VOUCHERS MANAGEMENT */}
+      {activeTab === 'community' && (
+        <div className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-xs text-blue-900 font-medium">
+            <strong>V2CC Community Member Vouchers:</strong> Only users who register as V2CC Members and are verified by Admin under{' '}
+            <span className="font-bold underline">V2CC-PMS Members</span> can redeem these vouchers. Each member can use a voucher <strong>only once</strong>.
+          </div>
+
+          {commLoading ? (
+            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500">
+              Loading V2CC Community Vouchers...
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {communityVouchers.map((cv) => (
+                <div key={cv._id} className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm space-y-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-blue-600">{cv.supportedBy}</span>
+                      <h3 className="text-base font-black text-gray-900">{cv.title}</h3>
+                      <p className="text-[11px] text-gray-500 mt-1">{cv.noticeMessage}</p>
+                    </div>
+                    <button
+                      onClick={() => handleToggleCommunityStatus(cv)}
+                      className={`px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1 cursor-pointer shrink-0 ${
+                        cv.status === 'ON'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          : 'bg-gray-100 text-gray-600 border border-gray-200'
+                      }`}
+                    >
+                      <Power className="w-3 h-3" />
+                      <span>{cv.status}</span>
+                    </button>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 border border-gray-100">
+                    <div>
+                      <span className="text-[10px] text-gray-400 uppercase font-bold block">Code</span>
+                      <span className="font-mono font-black text-sm text-[#0759D6]">{cv.voucherCode}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-400 uppercase font-bold block">Offer Value</span>
+                      <span className="font-black text-sm text-[#801414]">
+                        {cv.discountType === 'PERCENTAGE'
+                          ? `${cv.discountValue || 10}% OFF`
+                          : formatCurrency(cv.discountValue || cv.voucherAmount || 0)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-400 uppercase font-bold block">Used Count</span>
+                      <span className="font-black text-sm text-gray-800">{cv.usedCount || 0} members</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => openCommModal(cv)}
+                      className="px-4 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold text-xs cursor-pointer"
+                    >
+                      Edit Amount / Percentage / Code
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* STUDENT VOUCHERS VERIFICATION & WORKFLOW */}
+      {activeTab === 'student' && (
       <div className="space-y-6">
           
           {/* Summary KPI Cards */}
@@ -233,7 +519,7 @@ export default function AdminVouchersPage() {
             </div>
 
             <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
-              {['ALL', 'PENDING', 'VERIFIED', 'REJECTED'].map((st) => (
+              {['ALL', 'ISSUED', 'PENDING', 'VERIFIED', 'USED', 'REJECTED'].map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
@@ -276,8 +562,10 @@ export default function AdminVouchersPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-xs">
                     {filteredVouchers.map((item) => {
+                      const isIssued = item.status === 'ISSUED';
                       const isPending = item.status === 'PENDING';
                       const isVerified = item.status === 'VERIFIED';
+                      const isUsed = item.status === 'USED';
                       const isRejected = item.status === 'REJECTED';
 
                       return (
@@ -285,12 +573,16 @@ export default function AdminVouchersPage() {
                           <td className="py-4 px-4 space-y-0.5">
                             <div className="flex items-center gap-2">
                               <User className="w-3.5 h-3.5 text-gray-400" />
-                              <span className="font-black text-gray-900">{item.userName}</span>
+                              <span className="font-black text-gray-900">
+                                {item.userName || <span className="italic text-gray-400">Unclaimed (Manual Code)</span>}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-2 text-gray-500 text-[11px]">
-                              <Mail className="w-3 h-3 text-gray-400" />
-                              <span>{item.userEmail}</span>
-                            </div>
+                            {item.userEmail && (
+                              <div className="flex items-center gap-2 text-gray-500 text-[11px]">
+                                <Mail className="w-3 h-3 text-gray-400" />
+                                <span>{item.userEmail}</span>
+                              </div>
+                            )}
                           </td>
 
                           <td className="py-4 px-4">
@@ -321,6 +613,12 @@ export default function AdminVouchersPage() {
                           </td>
 
                           <td className="py-4 px-4">
+                            {isIssued && (
+                              <span className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-blue-200">
+                                <Tag className="w-3 h-3" />
+                                <span>MANUAL ISSUED (AWAITING CLAIM)</span>
+                              </span>
+                            )}
                             {isPending && (
                               <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-amber-200">
                                 <Clock className="w-3 h-3" />
@@ -331,6 +629,12 @@ export default function AdminVouchersPage() {
                               <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-emerald-200">
                                 <CheckCircle className="w-3 h-3 text-emerald-600" />
                                 <span>VERIFIED & APPROVED</span>
+                              </span>
+                            )}
+                            {isUsed && (
+                              <span className="inline-flex items-center gap-1.5 bg-gray-200 text-gray-700 text-[10px] font-black px-2.5 py-1 rounded-full border border-gray-300">
+                                <CheckCircle className="w-3 h-3 text-gray-600" />
+                                <span>USED (REDEEMED ONCE)</span>
                               </span>
                             )}
                             {isRejected && (
@@ -404,6 +708,7 @@ export default function AdminVouchersPage() {
             )}
           </div>
         </div>
+      )}
 
       {/* Student Voucher Approval Modal (Percentage OR Fixed Amount) */}
       {approveModalVoucher && (
@@ -625,6 +930,232 @@ export default function AdminVouchersPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* MANUAL ISSUE STUDENT VOUCHER MODAL */}
+      {issueModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <form onSubmit={handleCreateStudentVoucher} className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-gray-200 text-gray-900 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div>
+                <h3 className="font-black text-base uppercase text-gray-900">Issue Manual Student Voucher</h3>
+                <p className="text-[11px] text-gray-500">Create a single-use voucher code for specific students.</p>
+              </div>
+              <button type="button" onClick={() => setIssueModalOpen(false)} className="p-1 text-gray-400 hover:text-gray-700 cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Voucher Code *</label>
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    required
+                    value={issueCode}
+                    onChange={(e) => setIssueCode(e.target.value.toUpperCase())}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-mono font-black text-xs uppercase"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIssueCode(`STU-${Math.floor(10000 + Math.random() * 90000)}`)}
+                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl cursor-pointer"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Student Full Name (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="Leave blank to verify when student claims"
+                  value={issueName}
+                  onChange={(e) => setIssueName(e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => { setIssueDiscountType('PERCENTAGE'); setIssueDiscountValue(15); }}
+                className={`p-2.5 rounded-xl border-2 text-left text-xs font-black cursor-pointer ${
+                  issueDiscountType === 'PERCENTAGE' ? 'border-[#801414] bg-red-50/50 text-[#801414]' : 'border-gray-200 text-gray-600'
+                }`}
+              >
+                Percentage (%)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setIssueDiscountType('FIXED'); setIssueDiscountValue(2500); }}
+                className={`p-2.5 rounded-xl border-2 text-left text-xs font-black cursor-pointer ${
+                  issueDiscountType === 'FIXED' ? 'border-[#801414] bg-red-50/50 text-[#801414]' : 'border-gray-200 text-gray-600'
+                }`}
+              >
+                Fixed Amount (LKR)
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  {issueDiscountType === 'PERCENTAGE' ? 'Discount Percentage (%)' : 'Discount Amount (LKR)'}
+                </label>
+                <input
+                  type="number"
+                  required
+                  min={1}
+                  max={issueDiscountType === 'PERCENTAGE' ? 100 : 100000}
+                  value={issueDiscountValue}
+                  onChange={(e) => setIssueDiscountValue(Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-black text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Institution / Program</label>
+                <input
+                  type="text"
+                  value={issueInstitution}
+                  onChange={(e) => setIssueInstitution(e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold"
+                />
+              </div>
+            </div>
+
+            {issueName.trim() && (
+              <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={issueAutoVerify}
+                  onChange={(e) => setIssueAutoVerify(e.target.checked)}
+                />
+                <span>Pre-Verify immediately for {issueName.trim()}</span>
+              </label>
+            )}
+
+            <div className="pt-2 flex justify-end gap-2 border-t border-gray-100">
+              <button type="button" onClick={() => setIssueModalOpen(false)} className="px-4 py-2 bg-gray-100 rounded-xl text-xs font-bold cursor-pointer">
+                Cancel
+              </button>
+              <button type="submit" disabled={issuing} className="px-5 py-2 bg-[#801414] text-white rounded-xl text-xs font-black cursor-pointer">
+                {issuing ? 'Issuing...' : 'Issue Voucher'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ADD / EDIT V2CC COMMUNITY VOUCHER MODAL */}
+      {commModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <form onSubmit={handleSaveCommunityVoucher} className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-gray-200 text-gray-900 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div>
+                <h3 className="font-black text-base uppercase text-gray-900">
+                  {editingCommId ? 'Edit V2CC Community Voucher' : 'Add V2CC Community Voucher'}
+                </h3>
+                <p className="text-[11px] text-gray-500">One-time use for verified V2CC Community Members.</p>
+              </div>
+              <button type="button" onClick={() => setCommModalOpen(false)} className="p-1 text-gray-400 hover:text-gray-700 cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Voucher Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={commTitle}
+                  onChange={(e) => setCommTitle(e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Voucher Code *</label>
+                <input
+                  type="text"
+                  required
+                  value={commCode}
+                  onChange={(e) => setCommCode(e.target.value.toUpperCase())}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-mono font-black text-xs uppercase"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => { setCommDiscountType('PERCENTAGE'); setCommDiscountValue(10); }}
+                className={`p-2.5 rounded-xl border-2 text-left text-xs font-black cursor-pointer ${
+                  commDiscountType === 'PERCENTAGE' ? 'border-[#0759D6] bg-blue-50 text-[#0759D6]' : 'border-gray-200 text-gray-600'
+                }`}
+              >
+                Percentage (%)
+              </button>
+              <button
+                type="button"
+                onClick={() => { setCommDiscountType('FIXED'); setCommDiscountValue(3000); }}
+                className={`p-2.5 rounded-xl border-2 text-left text-xs font-black cursor-pointer ${
+                  commDiscountType === 'FIXED' ? 'border-[#0759D6] bg-blue-50 text-[#0759D6]' : 'border-gray-200 text-gray-600'
+                }`}
+              >
+                Fixed Amount (LKR)
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">
+                  {commDiscountType === 'PERCENTAGE' ? 'Discount Percentage (%)' : 'Discount Amount (LKR)'}
+                </label>
+                <input
+                  type="number"
+                  required
+                  min={1}
+                  max={commDiscountType === 'PERCENTAGE' ? 100 : 100000}
+                  value={commDiscountValue}
+                  onChange={(e) => setCommDiscountValue(Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-black text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-700 block mb-1">Status</label>
+                <select
+                  value={commStatus}
+                  onChange={(e) => setCommStatus(e.target.value as 'ON' | 'OFF')}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                >
+                  <option value="ON">ON (Active for Verified V2CC Members)</option>
+                  <option value="OFF">OFF (Disabled)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-gray-700 block mb-1">Description / Notice</label>
+              <textarea
+                rows={2}
+                value={commNotice}
+                onChange={(e) => setCommNotice(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium"
+              />
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2 border-t border-gray-100">
+              <button type="button" onClick={() => setCommModalOpen(false)} className="px-4 py-2 bg-gray-100 rounded-xl text-xs font-bold cursor-pointer">
+                Cancel
+              </button>
+              <button type="submit" disabled={savingComm} className="px-5 py-2 bg-[#0759D6] text-white rounded-xl text-xs font-black cursor-pointer">
+                {savingComm ? 'Saving...' : 'Save Community Voucher'}
+              </button>
+            </div>
+          </form>
         </div>
       )}
 

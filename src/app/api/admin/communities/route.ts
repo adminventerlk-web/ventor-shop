@@ -20,14 +20,25 @@ export async function GET(request: Request) {
     const communities = await Community.find().sort({ createdAt: -1 });
 
     let pendingRequests: any[] = [];
+    let approvedMembers: any[] = [];
     if (includePending) {
       pendingRequests = await User.find({ communityStatus: 'PENDING' })
         .populate('communityId', 'name membershipCode')
-        .select('firstName lastName email communityId communityJoinDate communityStatus')
-        .sort({ communityJoinDate: -1 });
+        .select('firstName lastName email phone communityId communityJoinDate communityStatus customerType')
+        .sort({ communityJoinDate: -1, createdAt: -1 });
+
+      approvedMembers = await User.find({
+        $or: [
+          { communityStatus: 'APPROVED' },
+          { customerType: { $in: ['COMMUNITY', 'V2CC_PMS_MEMBER'] } },
+        ],
+      })
+        .populate('communityId', 'name membershipCode')
+        .select('firstName lastName email phone communityId communityJoinDate communityStatus customerType')
+        .sort({ updatedAt: -1 });
     }
 
-    return NextResponse.json({ communities, pendingRequests });
+    return NextResponse.json({ communities, pendingRequests, approvedMembers });
   } catch (error: any) {
     console.error('Error fetching communities API:', error);
     return NextResponse.json({ error: 'Failed to fetch communities' }, { status: 500 });
@@ -94,7 +105,7 @@ export async function PATCH(request: Request) {
 
     if (action === 'approve') {
       user.communityStatus = 'APPROVED';
-      user.customerType = 'COMMUNITY';
+      user.customerType = 'V2CC_PMS_MEMBER';
       await user.save();
 
       if (user.communityId) {

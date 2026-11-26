@@ -3,25 +3,28 @@ import { connectToDatabase } from '@/lib/mongodb/mongoose';
 import { getCurrentUser } from '@/lib/auth/auth';
 import CommunityProgramVoucher from '@/models/CommunityProgramVoucher';
 
-// Seed default Family Support Voucher if database collection is empty
+// Seed default V2CC Community Voucher if database collection is empty
 async function ensureDefaultVoucher() {
   const count = await CommunityProgramVoucher.countDocuments();
   if (count === 0) {
     await CommunityProgramVoucher.create({
-      title: 'Family Support Voucher',
-      supportedBy: 'TMSAP Project of V2CC',
-      communityType: 'FAMILY_SUPPORT',
-      voucherCode: 'FAMILY-V2CC',
-      voucherAmount: 3000,
-      status: 'OFF', // Default OFF as requested
+      title: 'V2CC Community Member Voucher',
+      supportedBy: 'V2CC-PMS Community Program',
+      communityType: 'V2CC_PMS',
+      voucherCode: 'V2CC-COMMUNITY',
+      discountType: 'PERCENTAGE',
+      discountValue: 10,
+      voucherAmount: 0,
+      status: 'ON',
       noticeMessage:
-        'Community household onboarding and verification are in progress. This voucher program will be activated for enrolled member families shortly.',
+        'Exclusive one-time voucher for verified V2CC-PMS Community Members. Verify your V2CC membership with Admin to redeem.',
       features: [
-        'Monthly Essential Grocery Hampers (Rice, Pulses, Oil)',
-        'Daily Household Essentials & Hygiene Products',
-        'Subsidized Pricing for Verified Community Members',
-        'Direct Doorstep Delivery Logistics Support',
+        'One-Time Discount on Storewide Orders for Verified V2CC Members',
+        'Supports Either Percentage (%) or Fixed Amount (LKR) Savings',
+        'Automatic Verification Against Approved V2CC Membership',
+        'Balance Payable Smoothly at Checkout',
       ],
+      usedByUserIds: [],
     });
   }
 }
@@ -32,8 +35,28 @@ export async function GET() {
     await connectToDatabase();
     await ensureDefaultVoucher();
 
+    const user = await getCurrentUser();
+    const userIdStr = user ? String(user.id || (user as any)._id) : null;
+
     const vouchers = await CommunityProgramVoucher.find().sort({ createdAt: -1 });
-    return NextResponse.json({ vouchers });
+    const sanitized = vouchers.map((v) => ({
+      _id: v._id,
+      title: v.title,
+      supportedBy: v.supportedBy,
+      communityType: v.communityType,
+      voucherCode: v.voucherCode,
+      discountType: v.discountType || 'FIXED',
+      discountValue: v.discountValue ?? v.voucherAmount ?? 0,
+      voucherAmount: v.voucherAmount ?? 0,
+      status: v.status,
+      noticeMessage: v.noticeMessage,
+      features: v.features,
+      usedCount: v.usedByUserIds?.length || 0,
+      hasUsed: userIdStr ? (v.usedByUserIds || []).includes(userIdStr) : false,
+      createdAt: v.createdAt,
+    }));
+
+    return NextResponse.json({ vouchers: sanitized });
   } catch (error: any) {
     console.error('Error fetching community vouchers:', error);
     return NextResponse.json({ error: 'Failed to fetch community vouchers' }, { status: 500 });
@@ -49,9 +72,25 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { id, title, supportedBy, communityType, voucherCode, voucherAmount, status, noticeMessage, features } = body;
+    const {
+      id,
+      title,
+      supportedBy,
+      communityType,
+      voucherCode,
+      discountType,
+      discountValue,
+      voucherAmount,
+      status,
+      noticeMessage,
+      features,
+    } = body;
 
     await connectToDatabase();
+
+    const finalDiscountType = discountType === 'PERCENTAGE' ? 'PERCENTAGE' : 'FIXED';
+    const finalDiscountValue = Number(discountValue ?? voucherAmount ?? (finalDiscountType === 'PERCENTAGE' ? 10 : 3000));
+    const finalVoucherAmount = finalDiscountType === 'FIXED' ? finalDiscountValue : 0;
 
     if (id) {
       // Update existing
@@ -60,9 +99,11 @@ export async function POST(req: Request) {
         {
           title,
           supportedBy,
-          communityType,
-          voucherCode: voucherCode ? voucherCode.toUpperCase().trim() : 'FAMILY-V2CC',
-          voucherAmount: Number(voucherAmount) || 3000,
+          communityType: communityType || 'V2CC_PMS',
+          voucherCode: voucherCode ? voucherCode.toUpperCase().trim() : 'V2CC-COMMUNITY',
+          discountType: finalDiscountType,
+          discountValue: finalDiscountValue,
+          voucherAmount: finalVoucherAmount,
           status: status === 'ON' ? 'ON' : 'OFF',
           noticeMessage,
           features: Array.isArray(features) ? features : [],
@@ -74,14 +115,17 @@ export async function POST(req: Request) {
 
     // Create new
     const created = await CommunityProgramVoucher.create({
-      title: title || 'Family Support Voucher',
-      supportedBy: supportedBy || 'TMSAP Project of V2CC',
-      communityType: communityType || 'FAMILY_SUPPORT',
-      voucherCode: voucherCode ? voucherCode.toUpperCase().trim() : 'COMMUNITY-V2CC',
-      voucherAmount: Number(voucherAmount) || 3000,
+      title: title || 'V2CC Community Member Voucher',
+      supportedBy: supportedBy || 'V2CC-PMS Community Program',
+      communityType: communityType || 'V2CC_PMS',
+      voucherCode: voucherCode ? voucherCode.toUpperCase().trim() : `V2CC-${Math.floor(1000 + Math.random() * 9000)}`,
+      discountType: finalDiscountType,
+      discountValue: finalDiscountValue,
+      voucherAmount: finalVoucherAmount,
       status: status === 'ON' ? 'ON' : 'OFF',
-      noticeMessage: noticeMessage || 'Community member voucher program.',
+      noticeMessage: noticeMessage || 'Exclusive one-time voucher for verified V2CC Community Members.',
       features: Array.isArray(features) ? features : [],
+      usedByUserIds: [],
     });
 
     return NextResponse.json({ success: true, voucher: created });

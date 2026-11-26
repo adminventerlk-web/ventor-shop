@@ -26,8 +26,9 @@ interface IPendingRequest {
 export default function AdminCommunitiesPage() {
   const [communities, setCommunities] = useState<ICommunity[]>([]);
   const [pendingRequests, setPendingRequests] = useState<IPendingRequest[]>([]);
+  const [approvedMembers, setApprovedMembers] = useState<IPendingRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'communities' | 'pending'>('communities');
+  const [activeTab, setActiveTab] = useState<'communities' | 'pending' | 'approved'>('pending');
 
   // Form State
   const [formOpen, setFormOpen] = useState(false);
@@ -44,6 +45,7 @@ export default function AdminCommunitiesPage() {
         const data = await res.json();
         setCommunities(data.communities || []);
         setPendingRequests(data.pendingRequests || []);
+        setApprovedMembers(data.approvedMembers || []);
       }
     } catch (e) {
       console.error('Failed to load communities:', e);
@@ -161,26 +163,74 @@ export default function AdminCommunitiesPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-150 bg-gray-50/50 rounded-lg p-1 gap-1 max-w-sm">
-        <button
-          onClick={() => { setActiveTab('communities'); setFormOpen(false); resetForm(); }}
-          className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${activeTab === 'communities' ? 'bg-[#1A2A4A] text-white shadow-xs' : 'text-gray-500 hover:text-black'}`}
-        >
-          V2CC-PMS Groups
-        </button>
+      <div className="flex flex-wrap border-b border-gray-150 bg-gray-50/50 rounded-lg p-1 gap-1 max-w-xl">
         <button
           onClick={() => { setActiveTab('pending'); setFormOpen(false); }}
-          className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'pending' ? 'bg-[#E53935] text-white shadow-xs' : 'text-gray-500 hover:text-black'}`}
+          className={`flex-1 py-2 px-3 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'pending' ? 'bg-[#E53935] text-white shadow-xs' : 'text-gray-500 hover:text-black'}`}
         >
           <Clock className="w-3.5 h-3.5" />
-          Pending Requests
-          {pendingRequests.length > 0 && (
-            <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-extrabold ${activeTab === 'pending' ? 'bg-white text-[#E53935]' : 'bg-[#E53935] text-white'}`}>
-              {pendingRequests.length}
-            </span>
-          )}
+          V2CC Pending ({pendingRequests.length})
+        </button>
+        <button
+          onClick={() => { setActiveTab('approved'); setFormOpen(false); }}
+          className={`flex-1 py-2 px-3 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'approved' ? 'bg-emerald-700 text-white shadow-xs' : 'text-gray-500 hover:text-black'}`}
+        >
+          <UserCheck className="w-3.5 h-3.5" />
+          Verified V2CC ({approvedMembers.length})
+        </button>
+        <button
+          onClick={() => { setActiveTab('communities'); setFormOpen(false); resetForm(); }}
+          className={`flex-1 py-2 px-3 text-center text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${activeTab === 'communities' ? 'bg-[#1A2A4A] text-white shadow-xs' : 'text-gray-500 hover:text-black'}`}
+        >
+          V2CC Groups
         </button>
       </div>
+
+      {/* VERIFIED V2CC MEMBERS TAB */}
+      {activeTab === 'approved' && (
+        <div className="space-y-4">
+          {approvedMembers.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-150 p-12 text-center text-gray-400 space-y-2">
+              <Users className="w-10 h-10 mx-auto text-gray-300" />
+              <p className="font-bold text-sm text-gray-500">No verified V2CC members yet.</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-150 shadow-2xs overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[650px]">
+                <thead>
+                  <tr className="bg-emerald-50 text-emerald-800 uppercase font-bold border-b border-emerald-100">
+                    <th className="p-4">V2CC Member</th>
+                    <th className="p-4">Group / Program</th>
+                    <th className="p-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
+                  {approvedMembers.map((mem) => (
+                    <tr key={mem._id} className="hover:bg-emerald-50/20">
+                      <td className="p-4">
+                        <p className="font-bold text-[#101A2D]">{mem.firstName} {mem.lastName}</p>
+                        <p className="text-[10px] text-gray-400">{mem.email}</p>
+                      </td>
+                      <td className="p-4">
+                        {mem.communityId ? (
+                          <span className="font-bold text-[#1A2A4A]">{mem.communityId.name}</span>
+                        ) : (
+                          <span className="font-bold text-[#1A2A4A]">V2CC-PMS Member</span>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full font-extrabold text-[10px] inline-flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" /> VERIFIED V2CC MEMBER
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* PENDING REQUESTS TAB */}
       {activeTab === 'pending' && (
@@ -217,7 +267,7 @@ export default function AdminCommunitiesPage() {
                             <p className="text-[10px] text-gray-400 font-mono">{req.communityId.membershipCode}</p>
                           </div>
                         ) : (
-                          <span className="text-gray-400">Unknown</span>
+                          <span className="font-bold text-[#1A2A4A]">V2CC-PMS Member Registration</span>
                         )}
                       </td>
                       <td className="p-4 text-gray-500">

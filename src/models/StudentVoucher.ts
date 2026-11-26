@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IStudentVoucher extends Document {
-  userId: string;
-  userEmail: string;
+  userId?: string;
+  userEmail?: string;
   userName: string;
-  institution: string;
+  institution?: string;
   studentIdNumber?: string;
   phone?: string;
   gradeOrYear?: string;
-  status: 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
+  status: 'ISSUED' | 'PENDING' | 'VERIFIED' | 'REJECTED' | 'USED';
   discountType: 'FIXED' | 'PERCENTAGE';
   discountValue: number;
   voucherAmount: number; // For backward compatibility / fixed amount fallback
@@ -18,21 +18,22 @@ export interface IStudentVoucher extends Document {
   verifiedAt?: Date;
   rejectedAt?: Date;
   usedAt?: Date;
+  usedOrderId?: string;
   adminNotes?: string;
 }
 
 const StudentVoucherSchema: Schema<IStudentVoucher> = new Schema(
   {
-    userId: { type: String, required: true, index: true },
-    userEmail: { type: String, required: true },
-    userName: { type: String, required: true },
-    institution: { type: String, required: true },
+    userId: { type: String, default: '', index: true },
+    userEmail: { type: String, default: '' },
+    userName: { type: String, default: '' },
+    institution: { type: String, default: 'General Student Program' },
     studentIdNumber: { type: String, default: '' },
     phone: { type: String, default: '' },
     gradeOrYear: { type: String, default: '' },
     status: {
       type: String,
-      enum: ['PENDING', 'VERIFIED', 'REJECTED', 'USED'],
+      enum: ['ISSUED', 'PENDING', 'VERIFIED', 'REJECTED', 'USED'],
       default: 'PENDING',
       index: true,
     },
@@ -43,12 +44,13 @@ const StudentVoucherSchema: Schema<IStudentVoucher> = new Schema(
     },
     discountValue: { type: Number, default: 2500 },
     voucherAmount: { type: Number, default: 2500 }, // Stored amount in LKR
-    discountCode: { type: String, default: 'STUDENT-V2CC' },
+    discountCode: { type: String, default: 'STUDENT-V2CC', index: true },
     isRedeemed: { type: Boolean, default: false },
     appliedAt: { type: Date, default: Date.now },
     verifiedAt: { type: Date },
     rejectedAt: { type: Date },
     usedAt: { type: Date },
+    usedOrderId: { type: String, default: '' },
     adminNotes: { type: String, default: '' },
   },
   {

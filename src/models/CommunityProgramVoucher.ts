@@ -5,10 +5,13 @@ export interface ICommunityProgramVoucher extends Document {
   supportedBy: string;
   communityType: 'FAMILY_SUPPORT' | 'V2CC_PMS' | 'WHOLESALE' | 'GENERAL';
   voucherCode: string;
+  discountType: 'FIXED' | 'PERCENTAGE';
+  discountValue: number;
   voucherAmount: number;
   status: 'ON' | 'OFF';
   noticeMessage?: string;
   features: string[];
+  usedByUserIds: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,13 +23,20 @@ const CommunityProgramVoucherSchema: Schema<ICommunityProgramVoucher> = new Sche
     communityType: {
       type: String,
       enum: ['FAMILY_SUPPORT', 'V2CC_PMS', 'WHOLESALE', 'GENERAL'],
-      default: 'FAMILY_SUPPORT',
+      default: 'V2CC_PMS',
     },
     voucherCode: { type: String, required: true, uppercase: true, trim: true },
+    discountType: {
+      type: String,
+      enum: ['FIXED', 'PERCENTAGE'],
+      default: 'FIXED',
+    },
+    discountValue: { type: Number, default: 3000 },
     voucherAmount: { type: Number, default: 3000 },
-    status: { type: String, enum: ['ON', 'OFF'], default: 'OFF' },
+    status: { type: String, enum: ['ON', 'OFF'], default: 'ON' },
     noticeMessage: { type: String, default: '' },
     features: [{ type: String }],
+    usedByUserIds: [{ type: String }],
   },
   { timestamps: true }
 );

@@ -6,6 +6,8 @@ import { PricingService } from '@/lib/services/pricingService';
 import { VoucherService } from '@/lib/services/voucherService';
 import Setting from '@/models/Setting';
 import StudentVoucher from '@/models/StudentVoucher';
+import CommunityProgramVoucher from '@/models/CommunityProgramVoucher';
+import User from '@/models/User';
 
 export async function POST(request: Request) {
   try {
@@ -58,95 +60,116 @@ export async function POST(request: Request) {
     if (voucherCode) {
       const cleanCode = voucherCode.toUpperCase().trim();
 
-      // Check if it's an approved student voucher code
+      // 2a. Check if it's a Student Voucher code
       const matchingStudentVoucher = await StudentVoucher.findOne({
         discountCode: cleanCode,
-        status: 'VERIFIED',
       });
 
       if (matchingStudentVoucher) {
-        // STRICT NAME VERIFICATION REQUIRED!
-        if (!studentFullName || !studentFullName.trim()) {
-          voucherError = 'Student Full Name is required to verify and apply this voucher.';
-        } else {
-          const nameMatches = doesStudentNameMatch(matchingStudentVoucher.userName, studentFullName);
-
-          if (!nameMatches) {
-            voucherError = 'Verification failed: Student Full Name does not match this voucher code.';
+        if (matchingStudentVoucher.status === 'USED') {
+          voucherError = 'This student voucher has already been used. Each voucher can only be used once.';
+        } else if (matchingStudentVoucher.status === 'REJECTED') {
+          voucherError = 'This student voucher was rejected by Admin.';
+        } else if (matchingStudentVoucher.status === 'ISSUED' || matchingStudentVoucher.status === 'PENDING') {
+          voucherError = 'This student voucher is pending Admin verification. Please verify it on the Vouchers page first.';
+        } else if (matchingStudentVoucher.status === 'VERIFIED') {
+          // STRICT NAME VERIFICATION REQUIRED!
+          if (!studentFullName || !studentFullName.trim()) {
+            voucherError = 'Student Full Name is required to verify and apply this voucher.';
           } else {
-            // Success! Calculate discount (Percentage or Fixed Amount)
-            if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
-              const pct = matchingStudentVoucher.discountValue || 15;
-              voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
-            } else {
-              voucherDiscount = Math.min(
-                matchingStudentVoucher.discountValue || matchingStudentVoucher.voucherAmount || 2500,
-                breakdown.subtotal
-              );
-            }
+            const nameMatches = doesStudentNameMatch(matchingStudentVoucher.userName, studentFullName);
 
-            appliedVoucher = {
-              code: matchingStudentVoucher.discountCode,
-              discountAmount: voucherDiscount,
-              discountType: matchingStudentVoucher.discountType || 'FIXED',
-              discountValue: matchingStudentVoucher.discountValue,
-              studentName: matchingStudentVoucher.userName,
-            };
+            if (!nameMatches) {
+              voucherError = 'Verification failed: Student Full Name does not match this voucher code.';
+            } else {
+              // Success! Calculate discount (Percentage or Fixed Amount)
+              if (matchingStudentVoucher.discountType === 'PERCENTAGE') {
+                const pct = matchingStudentVoucher.discountValue || 15;
+                voucherDiscount = Math.round((breakdown.subtotal * (pct / 100)) * 100) / 100;
+              } else {
+                voucherDiscount = Math.min(
+                  matchingStudentVoucher.discountValue || matchingStudentVoucher.voucherAmount || 2500,
+                  breakdown.subtotal
+                );
+              }
+
+              appliedVoucher = {
+                code: matchingStudentVoucher.discountCode,
+                discountAmount: voucherDiscount,
+                discountType: matchingStudentVoucher.discountType || 'FIXED',
+                discountValue: matchingStudentVoucher.discountValue,
+                studentName: matchingStudentVoucher.userName,
+              };
+            }
           }
         }
-      } else if (cleanCode === 'WELCOME10') {
-        voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
-        appliedVoucher = {
-          code: 'WELCOME10',
-          discountAmount: voucherDiscount,
-        };
-      } else if (!userId) {
-        voucherError = 'Please register or log in to apply this voucher code.';
       } else {
-        try {
-          const voucherRes = await VoucherService.validateVoucher(
-            voucherCode,
-            userId,
-            items,
-            customerType,
-            communityId
-          );
-          voucherDiscount = voucherRes.discountAmount;
-          appliedVoucher = {
-            code: voucherRes.code,
-            discountAmount: voucherRes.discountAmount,
-          };
-        } catch (err: any) {
-          voucherError = err.message || 'Voucher is invalid for this order';
-        }
-      }
-    }
+        // 2b. Check if it's an active V2CC Community Program Voucher
+        const communityVoucher = await CommunityProgramVoucher.findOne({
+          voucherCode: cleanCode,
+          status: 'ON',
+        });
 
-    if (!appliedVoucher && voucherCode) {
-      if (voucherCode.toUpperCase() === 'WELCOME10') {
-        voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
-        appliedVoucher = {
-          code: 'WELCOME10',
-          discountAmount: voucherDiscount,
-        };
-      } else if (!userId) {
-        voucherError = 'Please register or log in to apply this voucher code.';
-      } else {
-        try {
-          const voucherRes = await VoucherService.validateVoucher(
-            voucherCode,
-            userId,
-            items,
-            customerType,
-            communityId
-          );
-          voucherDiscount = voucherRes.discountAmount;
+        if (communityVoucher) {
+          if (!userId) {
+            voucherError = 'Please log in as a verified V2CC Member to use this Community Voucher.';
+          } else {
+            const dbUser = await User.findById(userId).select('communityStatus customerType');
+            const isVerifiedV2CC =
+              dbUser &&
+              (dbUser.communityStatus === 'APPROVED' ||
+                dbUser.customerType === 'COMMUNITY' ||
+                dbUser.customerType === 'V2CC_PMS_MEMBER') &&
+              dbUser.communityStatus !== 'PENDING';
+
+            if (!isVerifiedV2CC) {
+              voucherError =
+                dbUser?.communityStatus === 'PENDING'
+                  ? 'Your V2CC membership is pending Admin verification. You can use this voucher once approved.'
+                  : 'This Community Voucher is exclusively for verified V2CC Members.';
+            } else if ((communityVoucher.usedByUserIds || []).includes(String(userId))) {
+              voucherError = 'You have already used this Community Voucher. Each voucher can only be used once.';
+            } else {
+              const dType = communityVoucher.discountType || 'FIXED';
+              const dVal = communityVoucher.discountValue ?? communityVoucher.voucherAmount ?? 0;
+              if (dType === 'PERCENTAGE') {
+                voucherDiscount = Math.round((breakdown.subtotal * (dVal / 100)) * 100) / 100;
+              } else {
+                voucherDiscount = Math.min(dVal, breakdown.subtotal);
+              }
+              appliedVoucher = {
+                code: communityVoucher.voucherCode,
+                discountAmount: voucherDiscount,
+                discountType: dType,
+                discountValue: dVal,
+              };
+            }
+          }
+        } else if (cleanCode === 'WELCOME10') {
+          voucherDiscount = Math.round(breakdown.subtotal * 0.1 * 100) / 100;
           appliedVoucher = {
-            code: voucherRes.code,
-            discountAmount: voucherRes.discountAmount,
+            code: 'WELCOME10',
+            discountAmount: voucherDiscount,
           };
-        } catch (err: any) {
-          voucherError = err.message || 'Voucher is invalid for this order';
+        } else if (!userId) {
+          voucherError = 'Please register or log in to apply this voucher code.';
+        } else {
+          try {
+            const voucherRes = await VoucherService.validateVoucher(
+              voucherCode,
+              userId,
+              items,
+              customerType,
+              communityId
+            );
+            voucherDiscount = voucherRes.discountAmount;
+            appliedVoucher = {
+              code: voucherRes.code,
+              discountAmount: voucherRes.discountAmount,
+            };
+          } catch (err: any) {
+            voucherError = err.message || 'Voucher is invalid for this order';
+          }
         }
       }
     }
