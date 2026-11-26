@@ -237,14 +237,24 @@ export default function AdminVouchersPage() {
 
   const handleToggleCommunityStatus = async (cv: ICommunityVoucherData) => {
     const nextStatus = cv.status === 'ON' ? 'OFF' : 'ON';
+    // Optimistic UI update
+    setCommunityVouchers((prev) =>
+      prev.map((item) => (item._id === cv._id ? { ...item, status: nextStatus } : item))
+    );
     try {
       const res = await fetch('/api/vouchers/community', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ voucherId: cv._id, status: nextStatus }),
       });
-      if (res.ok) await fetchCommunityVouchers();
+      if (res.ok) {
+        await fetchCommunityVouchers();
+      } else {
+        await fetchCommunityVouchers();
+        alert('Failed to toggle community voucher status');
+      }
     } catch {
+      await fetchCommunityVouchers();
       alert('Failed to toggle community voucher status');
     }
   };
@@ -380,6 +390,62 @@ export default function AdminVouchersPage() {
           </button>
         </div>
       </div>
+
+      {/* Quick Community Voucher Status & Toggle Banner */}
+      {communityVouchers.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${
+              communityVouchers[0].status === 'ON' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-500 border border-gray-200'
+            }`}>
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-black text-sm text-gray-900">{communityVouchers[0].title}</span>
+                <span className="font-mono font-black text-xs bg-gray-100 text-[#801414] px-2 py-0.5 rounded border border-gray-200">
+                  {communityVouchers[0].voucherCode}
+                </span>
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  {communityVouchers[0].discountType === 'PERCENTAGE'
+                    ? `${communityVouchers[0].discountValue || 10}% OFF`
+                    : formatCurrency(communityVouchers[0].discountValue || communityVouchers[0].voucherAmount || 0)}
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-500 mt-1">
+                Displays on Homepage & Vouchers page. Admin can toggle ON/OFF anytime. Only Admin-verified V2CC-PMS members can redeem this (single-use).
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-auto bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+            <span className="text-xs font-bold text-gray-700">Community Voucher:</span>
+            <button
+              type="button"
+              onClick={() => handleToggleCommunityStatus(communityVouchers[0])}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#801414] focus:ring-offset-2 ${
+                communityVouchers[0].status === 'ON' ? 'bg-emerald-600' : 'bg-gray-300'
+              }`}
+              role="switch"
+              aria-checked={communityVouchers[0].status === 'ON'}
+              title="Click to toggle Community Voucher ON/OFF"
+            >
+              <span className="sr-only">Toggle Community Voucher</span>
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  communityVouchers[0].status === 'ON' ? 'translate-x-7' : 'translate-x-0'
+                }`}
+              />
+            </button>
+            <span className={`text-xs font-black uppercase px-2.5 py-0.5 rounded-full ${
+              communityVouchers[0].status === 'ON' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-200 text-gray-700'
+            }`}>
+              {communityVouchers[0].status}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Section Tabs: Student Vouchers vs V2CC Community Vouchers */}
       <div className="flex gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 w-full sm:w-fit shadow-2xs">

@@ -26,6 +26,23 @@ async function ensureDefaultVoucher() {
       ],
       usedByUserIds: [],
     });
+  } else {
+    // If existing community voucher has old Family title or was default OFF, update to active V2CC voucher with ON status
+    const activeOne = await CommunityProgramVoucher.findOne({ status: 'ON' });
+    if (!activeOne) {
+      await CommunityProgramVoucher.findOneAndUpdate(
+        {},
+        {
+          $set: {
+            status: 'ON',
+            title: 'V2CC Community Member Voucher',
+            supportedBy: 'V2CC-PMS Community Program',
+            communityType: 'V2CC_PMS',
+            voucherCode: 'V2CC-COMMUNITY',
+          },
+        }
+      );
+    }
   }
 }
 
