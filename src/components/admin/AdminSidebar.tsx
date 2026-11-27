@@ -193,7 +193,7 @@ export default function AdminSidebar() {
       )}
 
       {/* ── DESKTOP SIDEBAR (lg+) ── */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-[#021838] text-white flex-col justify-between border-r border-[#0052CC]/30 h-screen max-h-screen sticky top-0 shadow-2xl overflow-hidden z-30">
+      <aside className="hidden lg:flex w-64 shrink-0 bg-[#021838] text-white flex-col justify-between border-r border-[#0052CC]/30 fixed top-0 left-0 bottom-0 h-screen shadow-2xl overflow-hidden z-30">
         <div className="flex flex-col min-h-0 flex-1">
           {/* Brand Header */}
           <div className="p-4 border-b border-[#0052CC]/30 bg-[#010e24] flex items-center gap-3 shrink-0">

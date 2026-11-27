@@ -67,9 +67,9 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   // Authorized Admin: Render full layout
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-[#F8F9FA] text-[#333333] font-sans antialiased overflow-x-hidden">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-[#F8F9FA] text-[#333333] font-sans antialiased overflow-x-clip">
       <AdminSidebar />
-      <main className="flex-1 min-w-0 w-full p-4 sm:p-6 lg:p-10 bg-[#F8F9FA]">
+      <main className="flex-1 min-w-0 w-full lg:w-auto lg:ml-64 p-4 sm:p-6 lg:p-10 bg-[#F8F9FA]">
         {children}
       </main>
     </div>
