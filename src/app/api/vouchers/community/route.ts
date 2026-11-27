@@ -27,7 +27,15 @@ async function ensureDefaultVoucher() {
       usedByUserIds: [],
     });
   } else {
-    // If existing community voucher has old Family title or was default OFF, update to active V2CC voucher with ON status
+    // Delete any old/deprecated Family Support vouchers if they exist
+    await CommunityProgramVoucher.deleteMany({
+      $or: [
+        { voucherCode: 'FAMILY-V2CC' },
+        { title: { $regex: /Family/i } },
+      ],
+    });
+
+    // If existing community voucher was default OFF, update to active V2CC voucher with ON status
     const activeOne = await CommunityProgramVoucher.findOne({ status: 'ON' });
     if (!activeOne) {
       await CommunityProgramVoucher.findOneAndUpdate(
@@ -185,5 +193,40 @@ export async function PATCH(req: Request) {
   } catch (error: any) {
     console.error('Error toggling community voucher status:', error);
     return NextResponse.json({ error: 'Failed to toggle status' }, { status: 500 });
+  }
+}
+
+// DELETE: Delete a community program voucher (Admin only)
+export async function DELETE(req: Request) {
+  try {
+    const user = await getCurrentUser();
+    if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
+      return NextResponse.json({ error: 'Unauthorized Admin access required.' }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    let voucherId = searchParams.get('voucherId') || searchParams.get('id');
+
+    if (!voucherId) {
+      try {
+        const body = await req.json();
+        voucherId = body.voucherId || body.id;
+      } catch {}
+    }
+
+    if (!voucherId) {
+      return NextResponse.json({ error: 'Voucher ID is required.' }, { status: 400 });
+    }
+
+    await connectToDatabase();
+    await CommunityProgramVoucher.findByIdAndDelete(voucherId);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Community voucher deleted successfully!',
+    });
+  } catch (error: any) {
+    console.error('Error deleting community voucher:', error);
+    return NextResponse.json({ error: 'Failed to delete community voucher' }, { status: 500 });
   }
 }

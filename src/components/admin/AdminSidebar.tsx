@@ -193,15 +193,15 @@ export default function AdminSidebar() {
       )}
 
       {/* ── DESKTOP SIDEBAR (lg+) ── */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-[#021838] text-white flex-col justify-between border-r border-[#0052CC]/30 min-h-screen sticky top-0 shadow-2xl">
-        <div>
+      <aside className="hidden lg:flex w-64 shrink-0 bg-[#021838] text-white flex-col justify-between border-r border-[#0052CC]/30 h-screen max-h-screen sticky top-0 shadow-2xl overflow-hidden z-30">
+        <div className="flex flex-col min-h-0 flex-1">
           {/* Brand Header */}
-          <div className="p-5 border-b border-[#0052CC]/30 bg-[#010e24] flex items-center gap-3">
+          <div className="p-4 border-b border-[#0052CC]/30 bg-[#010e24] flex items-center gap-3 shrink-0">
             <div className="p-1.5 bg-[#0052CC] rounded-xl text-[#FFB800] shadow-sm">
-              <ShieldCheck className="w-6 h-6" />
+              <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="font-black text-sm tracking-widest uppercase text-white font-sans">VENTERPRISE</h1>
+              <h1 className="font-black text-xs tracking-widest uppercase text-white font-sans">VENTERPRISE</h1>
               <span className="text-[9px] text-[#FFB800] font-black uppercase tracking-widest flex items-center gap-1">
                 <Sparkles className="w-2.5 h-2.5" /> Admin Panel
               </span>
@@ -210,24 +210,24 @@ export default function AdminSidebar() {
 
           {/* User Card */}
           {user && (
-            <div className="p-4 border-b border-[#0052CC]/30 bg-[#0052CC]/10 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#FFB800] text-[#021838] flex items-center justify-center font-black text-sm shadow-sm">
+            <div className="p-3 border-b border-[#0052CC]/30 bg-[#0052CC]/10 flex items-center gap-2.5 shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#FFB800] text-[#021838] flex items-center justify-center font-black text-xs shadow-sm shrink-0">
                 {user.firstName[0]}
               </div>
               <div className="min-w-0">
                 <p className="font-bold text-xs truncate leading-normal text-white">{user.firstName} {user.lastName}</p>
-                <span className="bg-[#FFB800]/20 text-[#FFB800] text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider inline-block mt-0.5 border border-[#FFB800]/30">
+                <span className="bg-[#FFB800]/20 text-[#FFB800] text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm uppercase tracking-wider inline-block border border-[#FFB800]/30">
                   {user.role}
                 </span>
               </div>
             </div>
           )}
 
-          {/* Menu Navigation */}
-          <nav className="p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-220px)]">
+          {/* Menu Navigation (Independently scrollable) */}
+          <nav className="p-3 space-y-2.5 flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-white/10">
             {linkGroups.map((group, gIdx) => (
-              <div key={gIdx} className="space-y-1">
-                <p className="px-3.5 text-[9px] font-black uppercase tracking-wider text-blue-300/60">
+              <div key={gIdx} className="space-y-0.5">
+                <p className="px-3 text-[9px] font-black uppercase tracking-wider text-blue-300/60 mb-1">
                   {group.group}
                 </p>
                 {group.links.map((link, idx) => {
@@ -236,7 +236,7 @@ export default function AdminSidebar() {
                     <Link
                       key={idx}
                       href={link.href}
-                      className={`flex items-center justify-between gap-3 py-2 px-3.5 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
+                      className={`flex items-center justify-between gap-2.5 py-2 px-3 rounded-xl text-xs font-bold transition-all uppercase tracking-wider ${
                         isActive
                           ? 'bg-[#0052CC] text-white shadow-md border border-blue-400/30'
                           : 'text-gray-300 hover:text-white hover:bg-white/5'
@@ -257,20 +257,20 @@ export default function AdminSidebar() {
           </nav>
         </div>
 
-        {/* Footer controls */}
-        <div className="p-4 border-t border-[#0052CC]/30 space-y-1.5 bg-[#010e24]">
+        {/* Footer controls (Cleanly docked right at bottom with no extra gap) */}
+        <div className="p-3 border-t border-[#0052CC]/30 space-y-1.5 bg-[#010e24] shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-[#0052CC] hover:bg-[#003893] transition-colors shadow-sm"
+            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-[#0052CC] hover:bg-[#003893] transition-colors shadow-sm text-center"
           >
             <ArrowLeft className="w-4 h-4 text-[#FFB800]" />
             <span>Exit to Store</span>
           </Link>
           <button
             onClick={logoutUser}
-            className="w-full flex items-center gap-3 py-2 px-4 text-left rounded-xl text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer text-center"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3.5 h-3.5" />
             <span>Log Out</span>
           </button>
         </div>
